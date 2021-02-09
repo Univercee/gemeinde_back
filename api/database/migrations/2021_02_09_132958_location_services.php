@@ -15,18 +15,16 @@ class LocationServices extends Migration
     {
         Schema::create('location_services', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('location_id');
-            $table->integer('service_id');
+            $table->integer('location_id')->unsigned();
+            $table->integer('service_id')->unsigned();
 
             $table->foreign('location_id')
                 ->references('id')
-                ->on('locations')
-                ->onDelete('cascade');
+                ->on('locations');
 
             $table->foreign('service_id')
                 ->references('id')
-                ->on('services')
-                ->onDelete('cascade');
+                ->on('services');
         });
     }
 

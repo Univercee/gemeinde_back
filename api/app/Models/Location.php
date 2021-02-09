@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Location extends Model
 {
-    public function roles(){
+    public function services(){
         return $this->belongsToMany(Service::class, 'location_services');
     }
 }

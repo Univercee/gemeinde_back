@@ -17,3 +17,4 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 $router->get('/location/{zipcode}/services',"LocationController@getServicesByZipCode");
+$router->get('/location', 'LocationController@getServiceLocations');

@@ -22,4 +22,17 @@ class LocationController extends Controller
 
         return response()->json($results);
     }
+
+
+
+    // [GENA-4]
+    public function getServiceLocations(){
+        $results = app('db')
+                ->select("SELECT id, zipcode, name_en AS 'name', region
+                        FROM locations
+                        WHERE id IN (SELECT DISTINCT location_id 
+                                    FROM location_services)
+                        ");
+        return response()->json(['locations'=>$results]);
+    }
 }

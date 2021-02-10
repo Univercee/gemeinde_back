@@ -10,16 +10,29 @@ class LocationController extends Controller
 {
     // [GENA-5]
     public function getServicesByZipCode($zipcode){
-
+        if(strlen($zipcode) != 4){
+            return response()->json(['error' => 'Bad Request'], 400);
+        }
         $results = app('db')
-            ->select("SELECT l.id, l.zipcode, l.region,l.name_en, s.id, s.name_en
+            ->select("SELECT l.id, l.zipcode, l.region,l.name_en as name, s.id, s.name_en
                         FROM locations l
                             JOIN location_services ls
                                 ON l.id = ls.location_id
                                 JOIN services s
                                 ON s.id = ls.service_id
                                 WHERE l.zipcode = :zipcode", ['zipcode' => $zipcode]);
+        $newArray = [];
+        $services2['services'] = [];
+        foreach($results as $key)
+        {
+            if(!array_key_exists('location', $newArray)){
+                $newArray = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode, "name" => $key->name, "region" => $key->region]];
+            }
 
-        return response()->json($results);
+            $services = ["id" => $key->id, "name"=>$key->name_en];
+            array_push($services2['services'], $services);
+        }
+        $resultArray = array_merge($newArray, $services2);
+        return response()->json($resultArray);
     }
 }

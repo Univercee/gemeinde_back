@@ -10,7 +10,7 @@ class LocationController extends Controller
 {
     // [GENA-5]
     public function getServicesByZipCode($zipcode){
-        if(strlen($zipcode) != 4){
+        if(!preg_match("/^[1-9]\d{3}$/", $zipcode)){ // https://rgxdb.com/r/3GYNWXVR
             return response()->json(['error' => 'Bad Request'], 400);
         }
         $results = app('db')

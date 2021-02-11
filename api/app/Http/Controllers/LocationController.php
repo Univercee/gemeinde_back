@@ -15,7 +15,7 @@ class LocationController extends Controller
             return response()->json(['error' => 'Bad Request'], 400);
         }
         $results = app('db')
-            ->select("SELECT l.id, l.zipcode, l.region,l.name_en as name, s.id, s.name_en
+            ->select("SELECT l.id, l.zipcode, l.region,l.name_en as location_name, s.id, s.name_en as service_name
                         FROM locations l
                             JOIN location_services ls
                                 ON l.id = ls.location_id
@@ -23,17 +23,16 @@ class LocationController extends Controller
                                 ON s.id = ls.service_id
                                 WHERE l.zipcode = :zipcode", ['zipcode' => $zipcode]);
         $locations = [];
-        $services2['services'] = [];
+        $location_services['services'] = [];
         foreach($results as $key)
         {
             if(!array_key_exists('location', $locations)){
-                $locations = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode, "name" => $key->name, "region" => $key->region]];
+                $locations = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode,
+                    "name" => $key->location_name, "region" => $key->region]];
             }
-
-            $services = ["id" => $key->id, "name"=>$key->name_en];
-            array_push($services2['services'], $services);
+            array_push($location_services['services'], ["id" => $key->id, "name"=>$key->service_name]);
         }
-        $resultArray = array_merge($locations, $services2);
+        $resultArray = array_merge($locations, $location_services);
         return response()->json($resultArray);
     }
 }

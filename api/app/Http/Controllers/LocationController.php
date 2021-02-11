@@ -35,4 +35,16 @@ class LocationController extends Controller
         $resultArray = array_merge($locations, $location_services);
         return response()->json($resultArray);
     }
+
+
+
+    // [GENA-4]
+    public function getLocationsHaveServices(){
+        $results = app('db')
+                ->select("SELECT DISTINCT locations.id, zipcode, name_en AS 'name', region, lat, lng
+                        FROM locations
+                        JOIN location_services ON location_services.location_id = locations.id
+                        ");
+        return response()->json(['locations'=>$results]);
+    }
 }

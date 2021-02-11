@@ -19,6 +19,8 @@ class Locations extends Migration
             $table->string('name_en',255);
             $table->string("name_de",255);
             $table->string('region',2);
+            $table->double("lat");
+            $table->double('lng');
         });
     }
 

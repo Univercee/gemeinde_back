@@ -10,6 +10,7 @@ class LocationController extends Controller
 {
     // [GENA-5]
     public function getServicesByZipCode($zipcode){
+
         if(!preg_match("/^[1-9]\d{3}$/", $zipcode)){ // https://rgxdb.com/r/3GYNWXVR
             return response()->json(['error' => 'Bad Request'], 400);
         }
@@ -21,18 +22,18 @@ class LocationController extends Controller
                                 JOIN services s
                                 ON s.id = ls.service_id
                                 WHERE l.zipcode = :zipcode", ['zipcode' => $zipcode]);
-        $newArray = [];
+        $locations = [];
         $services2['services'] = [];
         foreach($results as $key)
         {
-            if(!array_key_exists('location', $newArray)){
-                $newArray = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode, "name" => $key->name, "region" => $key->region]];
+            if(!array_key_exists('location', $locations)){
+                $locations = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode, "name" => $key->name, "region" => $key->region]];
             }
 
             $services = ["id" => $key->id, "name"=>$key->name_en];
             array_push($services2['services'], $services);
         }
-        $resultArray = array_merge($newArray, $services2);
+        $resultArray = array_merge($locations, $services2);
         return response()->json($resultArray);
     }
 }

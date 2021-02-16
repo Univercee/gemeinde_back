@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "GemeindeOnline API",
+        "version": "0.1.0",
+        "description": "Web API for gemeindeonline.ch website and related services",
+        "contact": {
+            "name": "Baltic IT Solutions OÜ",
+            "email": "info@bits.ee",
+        }
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Local environment"
+        }
+    ],
+    "paths": {
+        "/location": {
+            "get": {
+                "summary": "All locations with services",
+                "tags": [ "Locations" ],
+                "description": "Lists locations that offer at least 1 service.",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/location/{zipcode}/services": {
+            "get": {
+                "summary": "Services in given location",
+                "tags": [ "Locations" ],
+                "description": "Lists all services offered in the given location.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "zipcode",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1000,
+                            "maximum": 9999
+                        },
+                        "description": "Swiss ZIP-code, 4 digits in 1000-9999."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+    }
+}

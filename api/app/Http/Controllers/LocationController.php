@@ -14,8 +14,13 @@ class LocationController extends Controller
         if(!preg_match("/^[1-9]\d{3}$/", $zipcode)){ // https://rgxdb.com/r/3GYNWXVR
             return response()->json(['error' => 'Bad Request'], 400);
         }
+        $location_query = app('db')->select("SELECT * FROM locations WHERE zipcode = :zipcode", ['zipcode'=> $zipcode]);
+        if(empty($location_query)){
+            return response()->json(['noLocation']);
+        }
+
         $results = app('db')
-            ->select("SELECT l.id, l.zipcode, l.region,l.name_en as location_name, s.id, s.name_en as service_name
+            ->select("SELECT l.id as location_id, l.zipcode, l.region,l.name_en as location_name, s.id as service_id, s.name_en as service_name
                         FROM locations l
                             JOIN location_services ls
                                 ON l.id = ls.location_id
@@ -27,10 +32,10 @@ class LocationController extends Controller
         foreach($results as $key)
         {
             if(!array_key_exists('location', $locations)){
-                $locations = ['location' => ["id" => $key->id, "zipcode" => $key->zipcode,
+                $locations = ['location' => ["id" => $key->location_id, "zipcode" => $key->zipcode,
                     "name" => $key->location_name, "region" => $key->region]];
             }
-            array_push($location_services['services'], ["id" => $key->id, "name"=>$key->service_name]);
+            array_push($location_services['services'], ["id" => $key->service_id, "name"=>$key->service_name]);
         }
         $resultArray = array_merge($locations, $location_services);
         return response()->json($resultArray);

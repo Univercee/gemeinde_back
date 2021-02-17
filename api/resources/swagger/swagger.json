@@ -12,7 +12,11 @@
     "servers": [
         {
             "url": "/",
-            "description": "Local environment"
+            "description": "Zahhar Local environment"
+        },
+        {
+            "url": "/gena/api/",
+            "description": "Ahmed Local environment"
         }
     ],
     "paths": {

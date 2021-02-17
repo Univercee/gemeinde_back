@@ -14,7 +14,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return view('swagger.index');
 });
 $router->get('/location/{zipcode}/services',"LocationController@getServicesByZipCode");
 $router->get('/location', 'LocationController@getLocationsHaveServices');

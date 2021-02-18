@@ -4,9 +4,9 @@
   <head>
     <meta charset="UTF-8">
     <title>Swagger UI</title>
-    <link rel="stylesheet" type="text/css" href="./resources/swagger/swagger-ui.css" >
-    <link rel="icon" type="image/png" href="./resources/swagger/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="./resources/swagger/favicon-16x16.png" sizes="16x16" />
+    <link rel="stylesheet" type="text/css" href="../resources/libs/swagger-ui/swagger-ui.css" >
+    <link rel="icon" type="image/png" href="../resources/libs/swagger-ui/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="../resources/libs/swagger-ui/favicon-16x16.png" sizes="16x16" />
     <style>
       html
       {
@@ -33,13 +33,13 @@
   <body>
     <div id="swagger-ui"></div>
 
-    <script src="./resources/swagger/swagger-ui-bundle.js" charset="UTF-8"> </script>
-    <script src="./resources/swagger/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script src="../resources/libs/swagger-ui/swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="../resources/libs/swagger-ui/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
     window.onload = function() {
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: "./resources/swagger/swagger.json",
+        url: "../resources/views/api/openapi.json",
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [

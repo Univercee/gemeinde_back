@@ -14,7 +14,15 @@
 */
 
 $router->get('/', function () use ($router) {
-    return view('swagger.index');
+    return view('portal.index');
 });
-$router->get('/location/{zipcode}/services',"LocationController@getServicesByZipCode");
-$router->get('/location', 'LocationController@getLocationsHaveServices');
+
+$router->group(['prefix' => 'api'], function ($router) {
+
+    $router->get('/', function () use ($router) {
+        return view('api.index');
+    });
+
+    $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
+    $router->get('/locations', 'LocationController@getLocationsHaveServices');
+});

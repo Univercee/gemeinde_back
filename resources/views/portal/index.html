@@ -7,6 +7,11 @@
     <meta name="description" content="">
     <link href="../resources/libs/bootstrap/bootstrap.css" rel="stylesheet">
     <link href="../resources/assets/css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@next"></script> 
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&language="></script>
+    
   </head>
   <body>
 
@@ -71,9 +76,11 @@
     		  <h2>Es gibt schon 100 Gemeinden online.</h2>
           <h4>Finden Sie Ihre Gemeinde und verbinden Sie sich mit Nachbarn und verfügbaren Dienstleistungen.</h4>
     	</div>
-    	<div>
-    		  <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#eee"/><text x="45%" y="45%" fill="#aaa">Map placeholder</text></svg>
-    	</div>
+      <div style="width:100%; height:500px;" id="app">
+          
+          <!--<svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#eee"/><text x="45%" y="45%" fill="#aaa">Map placeholder</text></svg>-->
+      </div>
+      
     </div>
 
     <div class="container-fluid my-5 ">
@@ -117,5 +124,16 @@
       </div>
     </div>
   </footer>
+  <script type="module">
+    import map from '/resources/vue_modules/map.js'
+    var map_app = Vue.createApp({
+      template:'<google-map></google-map>',
+      components:{
+        'google-map':map
+      }
+    })
+    map_app.mount("#app")
+  </script>
   </body>
+  
 </html>

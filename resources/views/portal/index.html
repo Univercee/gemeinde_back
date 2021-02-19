@@ -7,26 +7,100 @@
     <meta name="description" content="">
     <link href="../resources/libs/bootstrap/bootstrap.css" rel="stylesheet">
     <link href="../resources/assets/css/style.css" rel="stylesheet">
-    <script src="https://unpkg.com/vue@next"></script> 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script> 
+
+<!--		<link href="/gena/resources/libs/bootstrap/bootstrap.css" rel="stylesheet">-->
+<!--		<link href="/gena/resources/assets/css/style.css" rel="stylesheet">-->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=&language="></script>
-    
+
   </head>
   <body>
-
+	<style>
+		.paragraphs{
+			color: black;
+		}
+		#location_name::first-letter {
+			text-transform: uppercase;
+			color: red;
+		}
+		#modalLabel_location{
+			margin-right: 5px;
+		}
+	</style>
   <header>
 
-    <div class="parallax position-relative">
+    <div class="parallax position-relative" id = "searchbyzipcode">
       <div class="position-absolute bottom-0 end-0 mb-5 me-5 p-4 signupform">
         <h2 class="mb-0">Entdecken Sie Dienstleistungen in Ihrer Gemeinde</h2>
         <div class="mb-2">und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute</div>
-          <form class="d-flex">
+				<form class="d-flex needs-validation" @submit="submit" method="post" novalidate>
             <div class="input-group">
-              <input class="form-control" type="search" placeholder="Ihre PLZ" aria-label="Search">
-              <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
+							<input class="form-control" name="location" id="location" type="search" placeholder="Ihre PLZ" aria-label="Search" v-model="cred.location" required>
+							<div class="invalid-feedback">
+								<p v-if="errors.length">
+								<ul>
+									<li v-for="error in errors">{{ error }}</li>
+								</ul>
+								</p>
+							</div>
+							<button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
             </div>
           </form>
+
+				<!-- Modal -->
+
+				<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="modalLabel_location" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<template v-if="log =='services'">
+									<h5 class="paragraphs" id="location_name"> {{ location_name}},</h5>	&nbsp;
+									<h5 class="paragraphs" id="region_name"> {{ region_name}}</h5>	&nbsp;
+									<h5 class="paragraphs" id="location_zip"> ({{ cred.location}})</h5>
+								</template>
+								<button  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<ul id="array-rendering">
+									<template v-if="log == 'error'"><p class="paragraphs">Bad input. Please write zipcode correctly! </p></template>
+
+									<template v-if="log == 'noLoc'"><p class="paragraphs"> There is no this location. Please fill out form! </p></template>
+									<template v-else-if="log =='noservices'">
+										<p class="paragraphs">
+											There is no services by {{cred.location}} zipcode. Please fill out form!
+										</p>
+									</template>
+									<template v-if="log =='services'">
+										<li class="paragraphs" v-for="(item, index) in list.services" v-bind:key="index">
+											{{ item.name }}
+										</li>
+									</template>
+
+								</ul>
+							</div>
+							<div class="modal-footer">
+								lol
+								<template v-if="log =='services'">
+									<button type="button" class="btn btn-primary">Sign up</button>
+								</template>
+								<template v-else-if="log =='noLoc'">
+									<button type="button" class="btn btn-primary">Fill form</button>
+								</template>
+								<template v-else-if="log =='noservices'">
+									<button type="button" class="btn btn-primary">Fill form</button>
+								</template>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
       </div>
     </div>
 
@@ -77,10 +151,10 @@
           <h4>Finden Sie Ihre Gemeinde und verbinden Sie sich mit Nachbarn und verfügbaren Dienstleistungen.</h4>
     	</div>
       <div style="width:100%; height:500px;" id="app">
-          
+
           <!--<svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#eee"/><text x="45%" y="45%" fill="#aaa">Map placeholder</text></svg>-->
       </div>
-      
+
     </div>
 
     <div class="container-fluid my-5 ">
@@ -124,16 +198,17 @@
       </div>
     </div>
   </footer>
+	<script src="/resources/vue_modules/location_script.js"></script>-->
   <script type="module">
     import map from '/resources/vue_modules/map.js'
     var map_app = Vue.createApp({
       template:'<google-map></google-map>',
       components:{
-        'google-map':map
+        'google-map': map,
       }
     })
     map_app.mount("#app")
   </script>
   </body>
-  
+
 </html>

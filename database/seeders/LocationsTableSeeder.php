@@ -19,8 +19,8 @@ class LocationsTableSeeder extends Seeder
                 'name_en' => "Agriswil",
                 'name_de' => "",
                 'region' => "FR",
-                'lat' => 47.5452177,
-                'lng' => 9.2759004
+                'lat' => 46.9542263,
+                'lng' => 7.1883025
             ],
             [
                 'zipcode' => "1730",

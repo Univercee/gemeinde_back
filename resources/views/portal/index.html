@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+	<link href="../resources/libs/bootstrap/bootstrap.css" rel="stylesheet">
 	<link href="../resources/assets/css/style.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 
@@ -31,6 +31,12 @@
 
 	.gm-ui-hover-effect {
 		right: 10px !important;
+	}
+	#map{
+		width: 100%; height: 500px;
+	}
+	#map-wrapper{
+		width: 100%; height: 500px;
 	}
 </style>
 <header>
@@ -85,7 +91,6 @@
 							</ul>
 						</div>
 						<div class="modal-footer">
-							lol
 							<template v-if="log =='services'">
 								<button type="button" class="btn btn-primary">Sign up</button>
 							</template>
@@ -99,9 +104,6 @@
 					</div>
 				</div>
 			</div>
-
-
-
 		</div>
 	</div>
 
@@ -146,14 +148,14 @@
 
 	<hr class="separator">
 
-	<div class="container-fluid my-5 ">
+	<div class="container-fluid my-5">
 		<div class="text-center">
 			<h2>Es gibt schon 100 Gemeinden online.</h2>
 			<h4>Finden Sie Ihre Gemeinde und verbinden Sie sich mit Nachbarn und verfügbaren Dienstleistungen.</h4>
 		</div>
 
-		<div id="map-wrapper" style="width: 100%; height: 500px;" >
-			<div id="map" style="width: 100%; height: 500px;"></div>
+		<div id="map-wrapper">
+			<div id="map"></div>
 		</div>
 
 	</div>
@@ -200,6 +202,8 @@
 	</div>
 </footer>
 <script>
+
+
 
 
 
@@ -256,13 +260,9 @@
 						await that.getLocationByZipCode(this.title)
 						that.updateState()
 						that.infowindow.open(that.map, this);
-						// console.warn(this)
-						console.warn(typeof that.markers)
-						console.warn('object-1',this)
-						console.warn('object-2',that.markers['4343'])
+
 					})
-					this.markers[marker.title] = marker
-					console.warn("marker", this.markers)
+					this.markers[this.locations[i].zipcode] = marker
 				}
 			},
 			updateState(){
@@ -289,8 +289,6 @@
 	})
 	const map_intsance = map.mount('#map-wrapper')
 
-
-
 	var code = {
 		names: 'location', data() {
 			return {
@@ -309,35 +307,19 @@
 			}
 		},
 		methods: {
-
 			submit(e) {
-
 				this.errors = [];
-
-				const myModal = new bootstrap.Modal(document.getElementById('locationModal'), {
-					keyboard: false
-				})
 				axios.get("http://localhost/gena/api/locations/" + this.cred.location + "/services")
 					.then((resp) => {
-
-
 						this.list = resp.data
-						if (resp.data == 'noLocation') {
-							alert('lol')
-							this.log = 'noLoc'
-							// myModal.show()
-							myFunction()
-						} else if('location' in resp.data) {
+						if('location' in resp.data) {
 							this.location_name = resp.data.location.name
 							this.location_region = resp.data.location.region
 							this.location_zip = resp.data.location.zipcode
-
 							this.location_services = resp.data.services
 							this.log = 'services'
-							myFunction()
-
+							scrollToMap(false)
 							var key = this.location_zip
-							console.warn(map_intsance.markers[key])
 							map_intsance.infowindow.open(map_intsance.map, map_intsance.markers[key])
 							var location_string = this.location_name+', '+this.location_region+' ('+this.location_zip+')'
 							var services_string = ""
@@ -359,11 +341,10 @@
 							map_intsance.infowindow.setContent(infowindow_content)
 						}else{
 							this.log = 'noservices'
-							myFunction()
-							//myModal.show()
+							scrollToMap()
 						}
 						document.getElementById("location").classList.remove("is-invalid")
-						console.warn(resp.data)
+
 					})
 					.catch((err) => {
 						if(!this.cred.location || err.response.status === 400){
@@ -372,8 +353,7 @@
 							document.getElementById("location").classList.add("is-invalid")
 						}
 						else if (err.response.status === 404) {
-							/// myModal.show()
-							myFunction()
+							scrollToMap()
 							this.log = 'noLoc'
 							return
 						}
@@ -381,17 +361,11 @@
 					});
 				e.preventDefault();
 			}
-
-		},
-		mounted: async function(){
-
-
 		},
 	}
 
 
 	var app = Vue.createApp(code)
-
 	app.mount('#searchbyzipcode')
 
 	function modalShow(){
@@ -399,12 +373,15 @@
 			keyboard: false
 		});
 		myModal.show();
-		return
 	}
-	function myFunction() {
-		var elmnt = document.getElementById("map-wrapper");
-		elmnt.scrollIntoView();
-		setTimeout(function(){ modalShow(); },1000);
+	function scrollToMap(modal=true) {
+		const element = document.getElementById("map-wrapper");
+		element.scrollIntoView();
+		if(modal == true) {
+			setTimeout(function () {
+				modalShow();
+			}, 1000);
+		}
 	}
 
 </script>

@@ -29,7 +29,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
     $router->post('/signup', 'SigninupController@store');
 
-    $router->get('/signup/key/{key}', 'SigninupController@onLinkClick');
-    $router->get('/signup/testSetKey', 'SigninupController@testSetKeyView');
-    $router->post('/signup/setLoginKey', 'SigninupController@setLoginKey');
+    $router->get('/signup/key/{key}', 'SigninupController@onLinkClick');      //[GENA-7 Alex]
+    $router->get('/signup/testSetKey', 'SigninupController@testSetKeyView');  //[GENA-7 Alex] [for testing]
+    $router->post('/signup/setLoginKey', 'SigninupController@setLoginKey');   //[GENA-7 Alex] [for testing]
 });

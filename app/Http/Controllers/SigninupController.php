@@ -20,72 +20,71 @@ class SigninupController extends Controller
     
 
 
-    // [GENA-7]
+    // [GENA-7 Alex]
     public function onLinkClick($key){
         $user = SigninupController::getUserByKey($key);
         if(empty($user)){
             return response()->json(['error' => 'Not found'], 404);
+        }
+
+        if(strtotime($user->key_at) < time()){
+            SigninupController::onLinkExpire($user->id);
+            return response()->json(['error' => 'Link has expired'], 404);
         }else{
-            $delta_time = time() - strtotime($user->key_at);
             if(is_null($user->registered_at)){
-                if($delta_time < 86400){
-                    SigninupController::confirmRegistration($user->id);
-                    echo($user->email." registration");
-                }else{
-                    echo($user->email." link expire");
-                }
-            }else{
-                if($delta_time < 600){
-                    SigninupController::confirmLogin($user->id);
-                    echo($user->email. " login");
-                }else{
-                    echo($user->email." link expire");
-                }
+                SigninupController::confirmRegistration($user->id);
+                return response()->json(['action' => 'Registered'], 200);
+            }
+            else{
+                SigninupController::confirmLogin($user->id);
+                return response()->json(['action' => 'Login'], 200);
             }
         }
     }
 
-
-    // [GENA-7]
+    // [GENA-7 Alex]
     public function getUserByKey($key){
-        $user = app('db')->select("SELECT * FROM users                  #id, key_at, registered_at
+        $user = app('db')->select("SELECT id, key_at, registered_at FROM users
                                 WHERE users.key = :k",['k'=>$key]);
         return empty($user) ? $user : $user[0];
     }
 
-
-    // [GENA-7]
+    // [GENA-7 Alex]
     public function confirmRegistration($id){
         app('db')->update("UPDATE users
                         SET registered_at = NOW(),
                             users.key_at = null,
                             users.key = null
                         WHERE users.id = :id",['id'=>$id]);
+        #send welcome email
+        #go to create profile page
     }
 
-
-    // [GENA-7]
+    // [GENA-7 Alex]
     public function confirmLogin($id){
         app('db')->update("UPDATE users
                         SET users.key_at = null,
                             users.key = null
                         WHERE users.id = :id",['id'=>$id]);
+        #go to profile page
     }
 
+    // [GENA-7 Alex]
+    public function onLinkExpire($id){
+        #to do smth if the link has expired 
+    }
 
-    // [GENA-7]
+    // [GENA-7 Alex] [for testing]
     public function setLoginKey(Request $request){
         $email = $request['email'];
-        var_dump($email);
         $key = $request['key'];
-        var_dump($key);
         app('db')->update("UPDATE users
-                        SET users.key_at = NOW(),
+                        SET users.key_at = NOW() + INTERVAL 5 MINUTE,
                             users.key = :k
                         WHERE users.email = :email", ['k'=>$key, 'email'=>$email]);
     }
 
-    //[GENA-7]
+    //[GENA-7 Alex] [for testing]
     public function testSetKeyView(){
         $emails = app('db')->select("SELECT email FROM users");
         return view('api/testSetKey',['emails'=>$emails]);

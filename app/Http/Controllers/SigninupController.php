@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class SigninupController extends Controller
 {
@@ -41,10 +43,10 @@ class SigninupController extends Controller
             }
         }
     }
-
+    
     // [GENA-7 Alex]
     public function getUserByKey($key){
-        $user = app('db')->select("SELECT id, key_at, registered_at FROM users
+        $user = app('db')->select("SELECT id, email, key_at, registered_at FROM users
                                 WHERE users.key = :k",['k'=>$key]);
         return empty($user) ? $user : $user[0];
     }
@@ -56,8 +58,6 @@ class SigninupController extends Controller
                             users.key_at = null,
                             users.key = null
                         WHERE users.id = :id",['id'=>$id]);
-        #send welcome email
-        #go to create profile page
     }
 
     // [GENA-7 Alex]
@@ -66,7 +66,6 @@ class SigninupController extends Controller
                         SET users.key_at = null,
                             users.key = null
                         WHERE users.id = :id",['id'=>$id]);
-        #go to profile page
     }
 
     // [GENA-7 Alex]
@@ -74,20 +73,30 @@ class SigninupController extends Controller
         #to do smth if the link has expired 
     }
 
+
+
+
     // [GENA-7 Alex] [for testing]
     public function setLoginKey(Request $request){
+        session_start();
         $email = $request['email'];
-        $key = $request['key'];
+        $key = md5("salt007".$email.uniqid());
+        $time_value = $request['time_value'];
+        $time_type = $request['time_type'];
         app('db')->update("UPDATE users
-                        SET users.key_at = NOW() + INTERVAL 5 MINUTE,
+                        SET users.key_at = NOW() + INTERVAL $time_value $time_type,
                             users.key = :k
                         WHERE users.email = :email", ['k'=>$key, 'email'=>$email]);
+        $_SESSION['key'] = $key;
+        return redirect('/api/signup/testSetKey');
     }
 
     //[GENA-7 Alex] [for testing]
     public function testSetKeyView(){
+        session_start();
         $emails = app('db')->select("SELECT email FROM users");
-        return view('api/testSetKey',['emails'=>$emails]);
+        $key = isset($_SESSION['key'])?$_SESSION['key']:null;
+        return view('api/testSetKey',['emails'=>$emails, 'key'=>$key]);
     }
 }
 

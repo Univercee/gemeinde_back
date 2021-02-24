@@ -27,6 +27,7 @@ $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
-    $router->post('/signup', 'SigninupController@store');
+    $router->post('/signup', 'SigninupController@signinupflow');
+    $router->get('/confirm/{key}', 'SigninupController@confirm');
 
 });

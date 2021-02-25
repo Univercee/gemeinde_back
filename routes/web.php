@@ -16,7 +16,9 @@
 $router->get('/', function () use ($router) {
     return view('portal.index');
 });
-
+$router->get('/api/auth/email', function () use ($router) {
+    return view('portal.signinup');
+});
 $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/', function () use ($router) {
@@ -25,4 +27,6 @@ $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
+    $router->post('/auth/email', 'SigninupController@signinupflow');
+
 });

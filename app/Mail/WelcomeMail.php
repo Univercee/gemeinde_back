@@ -21,9 +21,9 @@ class WelcomeMail extends Mailable
      */
     public function __construct($sbj)
     {
-
+        $path = getenv('APP_ROOT');
         $this->subject = 'Confirm login/signup';
-        $this->key = 'http://localhost:8080/api/confirm/'.$sbj['key'];
+        $this->key = $path.'/api/auth/email/verify/'.$sbj['key'];
     }
 
     /**

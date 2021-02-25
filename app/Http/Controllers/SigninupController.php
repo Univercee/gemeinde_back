@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,18 @@ class SigninupController extends Controller
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
             return response()->json(['error' => 'Bad Request'], 400);
         }
-        $queryCheckUser = app('db')->select("SELECT * FROM users WHERE email = :email", ['email' => $email]);
+        //check if robot
+        $response = Http::asForm()
+            ->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => '6LehX2caAAAAAEL3F-LR8H8bdaqX9_1uKTdopO9U',
+                'response' => $request->input('token'),
+            ])->json();
+
+        $score = (float)json_encode(floatval($response['score']));
+        if($score < 0.5) {
+            return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
+        }
+        $queryCheckUser = app('db')->select("SELECT email, registered_at FROM users WHERE email = :email", ['email' => $email]);
         if(empty($queryCheckUser)){
             $endTime =  $this->plusTime("+24 hours");
             $secretKey = uniqid();
@@ -33,7 +45,6 @@ class SigninupController extends Controller
         }
         $registered_at = $queryCheckUser[0]->registered_at;
         if($registered_at != null){
-           // $token = $request->input('token');
             $endTime = $this->plusTime("+5 minutes");
             $secretKey = uniqid();
             $updateUser = app('db')->update("UPDATE users
@@ -45,7 +56,6 @@ class SigninupController extends Controller
                 Mail::mailer('log')->to($email)->send(new WelcomeMail($send));
             return response()->json(['message' => 'Email sent'], 200);
         } else {
-            //$token = $request->input('token');
                $endTime =  $this->plusTime("+24 hours");
                $secretKey = uniqid();
                                $updateUser = app('db')->update("UPDATE users
@@ -58,28 +68,6 @@ class SigninupController extends Controller
         }
         return response()->json(['Error' => 'Bad Request'], 400);
     }
-/* for testing needs
-    public function confirm($key){
-        $selectAllUsers = app('db')->select("SELECT * FROM users WHERE secretkey = :key", ['key'=>$key]);
-        if($selectAllUsers) {
-            if ($selectAllUsers[0]->key_until > date("Y-m-d h:i:s")) { // check expiration
-                if ($selectAllUsers[0]->registered_at == null) { //check if not registered
-                    $timeNow = date("Y-m-d h:i:s");
-                    $updateUser = app('db')->update("UPDATE users
-                        SET secretkey = NULL , key_until = NULL , registered_at ='$timeNow'
-                        WHERE email = :email AND secretkey = :secretkey",
-                        ['email' => $selectAllUsers[0]->email, 'secretkey' => $selectAllUsers[0]->secretkey]);
-                    return response()->json(['Message'=>'Successfuly loged in!']);
-                }else{
-                     return response()->json(['Message'=>'Successfuly loged in! registered already']);
-                }
-            }else{
-                    return response()->json(['Error'=>'Key is expired']);
-            }
-        }else{
-            return response()->json(['Error'=>'Key is expired or doesnt exist']);
-        }
 
-    }*/
 }
 

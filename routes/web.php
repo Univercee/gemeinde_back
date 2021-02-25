@@ -16,7 +16,7 @@
 $router->get('/', function () use ($router) {
     return view('portal.index');
 });
-$router->get('/signup', function () use ($router) {
+$router->get('/api/auth/email', function () use ($router) {
     return view('portal.signinup');
 });
 $router->group(['prefix' => 'api'], function ($router) {
@@ -27,10 +27,6 @@ $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
-    $router->post('/signup', 'SigninupController@signinupflow');
-    $router->get('/confirm/{key}', 'SigninupController@confirm');
+    $router->post('/auth/email', 'SigninupController@signinupflow');
 
-    $router->get('/signup/key/{key}', 'SigninupController@onLinkClick');      //[GENA-7 Alex]
-    $router->get('/signup/testSetKey', 'SigninupController@testSetKeyView');  //[GENA-7 Alex] [for testing]
-    $router->post('/signup/setLoginKey', 'SigninupController@setLoginKey');   //[GENA-7 Alex] [for testing]
 });

@@ -11,7 +11,8 @@ class WelcomeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    //protected $subject;
+    public $subject;
+    public $key;
 
     /**
      * Create a new message instance.
@@ -20,7 +21,9 @@ class WelcomeMail extends Mailable
      */
     public function __construct($sbj)
     {
-        $this->subject = $sbj;
+
+        $this->subject = 'Confirm login/signup';
+        $this->key = 'http://localhost:8080/api/confirm/'.$sbj['key'];
     }
 
     /**
@@ -30,6 +33,6 @@ class WelcomeMail extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->subject)->view('emails.welcome');
+        return $this->view('emails.welcome');
     }
 }

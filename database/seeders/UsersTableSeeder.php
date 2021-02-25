@@ -21,8 +21,8 @@ class UsersTableSeeder extends Seeder
                 'last_name' => "Andersson",
                 'username' => "lukas",
                 'registered_at' => null,
-                'key' => null,
-                'key_at' => null,
+                'secretkey' => null,
+                'key_until' => null,
                 'auth_type' => null
             ],
             [
@@ -31,8 +31,8 @@ class UsersTableSeeder extends Seeder
                 'last_name' => "Lindberg",
                 'username' => "josy",
                 'registered_at' => null,
-                'key' => null,
-                'key_at' => null,
+                'secretkey' => null,
+                'key_until' => null,
                 'auth_type' => null
             ],
             [
@@ -41,8 +41,8 @@ class UsersTableSeeder extends Seeder
                 'last_name' => "Lindberg",
                 'username' => "ernst",
                 'registered_at' => null,
-                'key' => null,
-                'key_at' => null,
+                'secretkey' => null,
+                'key_until' => null,
                 'auth_type' => null
             ],
             [
@@ -51,8 +51,8 @@ class UsersTableSeeder extends Seeder
                 'last_name' => "Holm",
                 'username' => "meyer",
                 'registered_at' => null,
-                'key' => null,
-                'key_at' => null,
+                'secretkey' => null,
+                'key_until' => null,
                 'auth_type' => null
             ]
         ]);

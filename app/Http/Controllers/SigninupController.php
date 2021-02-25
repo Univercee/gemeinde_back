@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class SigninupController extends Controller
 {
-    // [GENA-7][Alex]
+    // [GENA-7]
     public function verifyKey($key){
         $user = $this->getUserByKey($key);
         if(empty($user)){
@@ -28,35 +28,35 @@ class SigninupController extends Controller
         }
     }
     
-    // [GENA-7][Alex]
+    // [GENA-7]
     private function getUserByKey($key){
         $user = app('db')->select("SELECT id, email, key_until, registered_at FROM users
-                                WHERE users.key = :k",['k'=>$key]);
+                                WHERE users.secretkey = :k",['k'=>$key]);
         return empty($user) ? $user : $user[0];
     }
 
-    // [GENA-7][Alex]
+    // [GENA-7]
     private function confirmRegistration($id){
         app('db')->update("UPDATE users
                         SET registered_at = NOW(),
                             users.key_until = null,
-                            users.key = null
+                            users.secretkey = null
                         WHERE users.id = :id",['id'=>$id]);
     }
 
-    // [GENA-7][Alex]
+    // [GENA-7]
     private function confirmLogin($id){
         app('db')->update("UPDATE users
                         SET users.key_until = null,
-                            users.key = null
+                            users.secretkey = null
                         WHERE users.id = :id",['id'=>$id]);
     }
 
-    // [GENA-7][Alex]
+    // [GENA-7]
     private function onLinkExpire($id){
         app('db')->update("UPDATE users
                         SET users.key_until = null,
-                            users.key = null
+                            users.secretkey = null
                         WHERE users.id = :id",['id'=>$id]);
     }
 }

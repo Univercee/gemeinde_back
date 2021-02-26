@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-use App\Mail\WelcomeMail;
-use Illuminate\Support\Facades\Mail;
 
 class SigninupController extends Controller
 {
+
+    // [GENA-7]
     private function plusTime($time){ //+24 hours, +5 minutes
         $keyAtTime = date("Y-m-d h:i:s");
         $endTimeConvert = strtotime($time, strtotime($keyAtTime));
         return $endTime = date('Y-m-d h:i:s', $endTimeConvert);
     }
+
+    // [GENA-7]
     public function signinupflow(Request $request){
         $email = $request->input('email');
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
@@ -29,11 +30,6 @@ class SigninupController extends Controller
         $score = (float)json_encode(floatval($response['score']));
         if($score < 0.5) {
             return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
-    // [GENA-7]
-    public function verifyKey($key){
-        $user = $this->getUserByKey($key);
-        if(empty($user)){
-            return response()->json(['error' => 'Not found'], 404);
         }
         $queryCheckUser = app('db')->select("SELECT email, registered_at FROM users WHERE email = :email", ['email' => $email]);
         if(empty($queryCheckUser)){
@@ -44,9 +40,43 @@ class SigninupController extends Controller
                         values(?, ?, ?, ?, ?, ?, 'E')",
                 [$email, null, null, null, $secretKey, $endTime]);
 
-                $send = ['key'=>$secretKey];
-                Mail::to($email)->send(new WelcomeMail($send));
+            $send = ['key'=>$secretKey];
+            Mail::to($email)->send(new WelcomeMail($send));
             return response()->json(['message' => 'Email sent'], 200);
+        }
+        $registered_at = $queryCheckUser[0]->registered_at;
+        if($registered_at != null){
+            $endTime = $this->plusTime("+5 minutes");
+            $secretKey = uniqid();
+            $updateUser = app('db')->update("UPDATE users
+                SET secretkey = '$secretKey' , key_until = '$endTime' , registered_at ='$registered_at'
+                WHERE email = :email AND registered_at = :registered_at",
+                ['email' => $queryCheckUser[0]->email, 'registered_at' => $registered_at]);
+            $send = ['key'=>$secretKey];
+            Mail::to($email)->send(new WelcomeMail($send));
+            Mail::mailer('log')->to($email)->send(new WelcomeMail($send));
+            return response()->json(['message' => 'Email sent'], 200);
+        } else {
+            $endTime =  $this->plusTime("+24 hours");
+            $secretKey = uniqid();
+            $updateUser = app('db')->update("UPDATE users
+                               SET secretkey = '$secretKey', key_until = '$endTime'
+                               WHERE email = :email", ['email'=> $queryCheckUser[0]->email]);
+            $send = ['key'=>$secretKey];
+            Mail::to($email)->send(new WelcomeMail($send));
+            Mail::mailer('log')->to($email)->send(new WelcomeMail(['key'=>$secretKey]));
+            return response()->json(['message' => 'Email sent'], 200);
+        }
+        return response()->json(['Error' => 'Bad Request'], 400);
+    }
+
+    // [GENA-7]
+    public function verifyKey($key){
+        $user = $this->getUserByKey($key);
+        if(empty($user)){
+            return response()->json(['error' => 'Not found'], 404);
+        }
+
         if(strtotime($user->key_until) < time()){
             $this->onLinkExpire($user->id);
             return response()->json(['error' => 'Key has expired'], 403);
@@ -60,30 +90,6 @@ class SigninupController extends Controller
                 return response()->json(['message' => 'User authorized'], 200);
             }
         }
-        $registered_at = $queryCheckUser[0]->registered_at;
-        if($registered_at != null){
-            $endTime = $this->plusTime("+5 minutes");
-            $secretKey = uniqid();
-            $updateUser = app('db')->update("UPDATE users
-                SET secretkey = '$secretKey' , key_until = '$endTime' , registered_at ='$registered_at'
-                WHERE email = :email AND registered_at = :registered_at",
-                ['email' => $queryCheckUser[0]->email, 'registered_at' => $registered_at]);
-                $send = ['key'=>$secretKey];
-                Mail::to($email)->send(new WelcomeMail($send));
-                Mail::mailer('log')->to($email)->send(new WelcomeMail($send));
-            return response()->json(['message' => 'Email sent'], 200);
-        } else {
-               $endTime =  $this->plusTime("+24 hours");
-               $secretKey = uniqid();
-                               $updateUser = app('db')->update("UPDATE users
-                               SET secretkey = '$secretKey', key_until = '$endTime'
-                               WHERE email = :email", ['email'=> $queryCheckUser[0]->email]);
-                   $send = ['key'=>$secretKey];
-                Mail::to($email)->send(new WelcomeMail($send));
-                Mail::mailer('log')->to($email)->send(new WelcomeMail(['key'=>$secretKey]));
-               return response()->json(['message' => 'Email sent'], 200);
-        }
-        return response()->json(['Error' => 'Bad Request'], 400);
     }
 
     // [GENA-7]
@@ -118,4 +124,3 @@ class SigninupController extends Controller
                         WHERE users.id = :id",['id'=>$id]);
     }
 }
-

@@ -97,6 +97,7 @@
                 markers: [],
                 infowindow: null
             },
+            locations: null,
             log: '',
             errors: [],
             cred: {
@@ -107,15 +108,16 @@
 
     mounted: async function() {
         this.initMap();
-        this.getLocations();
+        await this.getLocations();
         window.addEventListener("scroll", _.debounce(this.dropMarkers, 150, { 'leading': true }));
     },
 
     methods: {
-        getLocations() {
-            axios
+        async getLocations() {
+            await axios
                 .get('/locations')
                 .then(response => (this.locations = response.data.locations));
+            console.log(this);
         },
 
         initMap() {
@@ -132,7 +134,6 @@
             if(!this.checkMapInViewport() || this.map.markersDropped) {
                 return;
             }
-
             let m = null;
             for(let i in this.locations) {
                 let zip = this.locations[i].zipcode;
@@ -207,7 +208,7 @@
 
         submit(e) {
             this.errors = [];
-            axios.get(this.api_path+"/locations/" + this.cred.location + "/services")
+            axios.get("/locations/" + this.cred.location + "/services")
                 .then((resp) => {
                     this.list = resp.data
                     if('location' in resp.data) {

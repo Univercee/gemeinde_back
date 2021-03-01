@@ -60,5 +60,55 @@
                 }
             }
         },
+        "/auth/email": {
+            "post": {
+                "summary": "Sign in/up to website",
+                "description": "Sign in/up to website",
+                "tags": [ "Emails" ],
+                "consumes": "application/json",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/auth/email/verify/{key}": {
+            "get": {
+                "summary": "Key verifying",
+                "tags": [ "Emails" ],
+                "description": "Response",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "required": true,
+                        "description": "key is uniid"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
     }
 }

@@ -12,16 +12,16 @@ class SigninupController extends Controller
 
     // [GENA-7]
     private function plusTime($time){ //+24 hours, +5 minutes
-        $keyAtTime = date("Y-m-d h:i:s");
+        $keyAtTime = date("Y-m-d H:i:s");
         $endTimeConvert = strtotime($time, strtotime($keyAtTime));
-        return $endTime = date('Y-m-d h:i:s', $endTimeConvert);
+        return $endTime = date('Y-m-d H:i:s', $endTimeConvert);
     }
 
     // [GENA-7]
     public function signinupflow(Request $request){
         $email = $request->input('email');
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
-            return response()->json(['error' => 'Bad Request'], 400);
+            return response()->json(['error' => 'Bad Request Email'], 400);
         }
         //check if robot
         $response = Http::asForm()
@@ -49,7 +49,7 @@ class SigninupController extends Controller
         }
         $registered_at = $queryCheckUser[0]->registered_at;
         if($registered_at != null){
-            $endTime = $this->plusTime("+5 minutes");
+            $endTime = $this->plusTime("+5 min");
             $secretKey = uniqid();
             $updateUser = app('db')->update("UPDATE users
                 SET secretkey = '$secretKey' , key_until = '$endTime' , registered_at ='$registered_at'

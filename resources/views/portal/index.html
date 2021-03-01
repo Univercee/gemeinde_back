@@ -5,388 +5,86 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
-	<link href="../resources/libs/bootstrap/bootstrap.css" rel="stylesheet">
 	<link href="../resources/assets/css/style.css" rel="stylesheet">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/tom-select@1.1/dist/css/tom-select.css" rel="stylesheet">
+</head>
 
+<body>
+	<div id="vueapp">
+
+		<header>
+			<navbar-component></navbar-component>
+			<div class="parallax"></div>
+		</header>
+
+		<main>
+			<div class="container my-5">
+				<megaicons-component></megaicons-component>
+			</div>
+
+			<hr class="separator">
+
+			<div class="container-fluid my-5">
+				<locator-component></locator-component>
+			</div>
+
+			<hr class="separator">
+
+			<div class="container-fluid my-5">
+				<bottomline-component></bottomline-component>
+			</div>
+		</main>
+
+		<footer-component></footer-component>
+	</div> <!-- end of vuejs app -->
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAa5JmzQorWkWwPn7TBzfcWJiyuYHjawPo&language=en"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@next"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=&language="></script>
-
-</head>
-<body>
-<style>
-	.paragraphs{
-		color: black;
-	}
-	#location_name::first-letter {
-		text-transform: uppercase;
-		color: red;
-	}
-	.gm-ui-hover-effect img {
-		width: 28px !important;
-		height: 28px !important;
-	}
-
-	.gm-ui-hover-effect {
-		right: 10px !important;
-	}
-	#map{
-		width: 100%; height: 500px;
-	}
-	#map-wrapper{
-		width: 100%; height: 500px;
-	}
-</style>
-<header>
-
-	<div class="parallax position-relative" id = "searchbyzipcode">
-		<div class="position-absolute bottom-0 end-0 mb-5 me-5 p-4 signupform">
-			<h2 class="mb-0">Entdecken Sie Dienstleistungen in Ihrer Gemeinde</h2>
-			<div class="mb-2">und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute</div>
-			<form class="d-flex needs-validation" @submit="submit" method="post" novalidate>
-				<div class="input-group">
-					<input class="form-control" name="location" id="location" type="search" placeholder="Ihre PLZ" aria-label="Search" v-model="cred.location" required>
-					<div class="invalid-feedback">
-						<p v-if="errors.length">
-						<ul>
-							<li v-for="error in errors">{{ error }}</li>
-						</ul>
-						</p>
-					</div>
-					<button class="btn btn-primary"  type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
-				</div>
-			</form>
-
-			<!-- Modal -->
-
-			<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="modalLabel_location" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<template v-if="log =='services'">
-								<h5 class="paragraphs" id="location_name"> {{ location_name}},</h5>	&nbsp;
-								<h5 class="paragraphs" id="region_name"> {{ location_region}}</h5>	&nbsp;
-								<h5 class="paragraphs" id="location_zip"> ({{ cred.location}})</h5>
-							</template>
-							<button  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<ul id="array-rendering">
-								<template v-if="log == 'error'"><p class="paragraphs fw-normal fs-5">Bad input. Please write zipcode correctly! </p></template>
-
-								<template v-if="log == 'noLoc'"><p class="paragraphs fw-normal fs-5"> There is no this location. Please fill out form! </p></template>
-								<template v-else-if="log =='noservices'">
-									<p class="paragraphs fw-normal fs-5">
-										There is no services by {{cred.location}} zipcode. Please fill out form!
-									</p>
-								</template>
-								<template v-if="log =='services'">
-									<li class="paragraphs fw-normal fs-5" v-for="(item, index) in list.services" v-bind:key="index">
-										{{ item.name }}
-									</li>
-								</template>
-
-							</ul>
-						</div>
-						<div class="modal-footer">
-							<template v-if="log =='services'">
-								<button type="button" class="btn btn-primary">Sign up</button>
-							</template>
-							<template v-else-if="log =='noLoc'">
-								<button type="button" class="btn btn-primary">Fill form</button>
-							</template>
-							<template v-else-if="log =='noservices'">
-								<button type="button" class="btn btn-primary">Fill form</button>
-							</template>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<nav class="navbar navbar-dark fixed-top bg-dark px-5">
-		<a class="navbar-brand me-md-auto" href="#">
-			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-				<path d="m0 0h32v32h-32z" fill="#da291c"/>
-				<path d="m13 6h6v7h7v6h-7v7h-6v-7h-7v-6h7z" fill="#fff"/>
-			</svg>
-			<span class="h5 ms-1">Gemeinde Online</span>
-		</a>
-		<a class="me-4" href="#">Login</a>
-		<a class="btn btn-primary" href="#">Anmelden</a>
-	</nav>
-
-</header>
-
-<main>
-
-	<div class="container my-5">
-
-		<div class="row text-center">
-			<div class="col-lg-4">
-				<h2>Trusted</h2>
-				<span class="megaicon megaicon-trusted"></span>
-				<p class="mt-2">Get notified about official information and important event notifications sent by local authorities or government agencies.</p>
-			</div>
-
-			<div class="col-lg-4">
-				<h2>Relevant</h2>
-				<span class="megaicon megaicon-relevant"></span>
-				<p class="mt-2">Receive only approved content from your neighbors, alerts from your service providers and offers from local businesses you opted for.</p>
-			</div>
-
-			<div class="col-lg-4">
-				<h2>Personal</h2>
-				<span class="megaicon megaicon-personal"></span>
-				<p class="mt-2">Choose between instant delivery or scheduled digest to your favorite messenger, e-mail, smart device, or SMS.</p>
-			</div>
-		</div>
-	</div>
-
-	<hr class="separator">
-
-	<div class="container-fluid my-5">
-		<div class="text-center">
-			<h2>Es gibt schon 100 Gemeinden online.</h2>
-			<h4>Finden Sie Ihre Gemeinde und verbinden Sie sich mit Nachbarn und verfügbaren Dienstleistungen.</h4>
-		</div>
-
-		<div id="map-wrapper">
-			<div id="map"></div>
-		</div>
-
-	</div>
-
-	<div class="container-fluid my-5 ">
-		<div class="text-center">
-			<h2>Machen Sie mit und verpassen Sie nie etwas Wichtiges in Ihrer Nachbarschaft </h2>
-			<a class="btn btn-primary" href="#">Jetzt registrieren</a>
-		</div>
-	</div>
-
-</main>
-
-<footer class="container-fluid bg-dark text-light mt-5 p-5">
-	<div class="row">
-		<div class="col-md-3">
-			<ul class="list-unstyled">
-				<li><a href="#">Über uns</a></li>
-				<li><a href="#">Wie funktioniert</a></li>
-				<li><a href="#">Für lokale Unternehmen</a></li>
-			</ul>
-		</div>
-
-		<div class="col-md-3">
-			<ul class="list-unstyled">
-				<li><a href="#">Impressum</a></li>
-				<li><a href="#">Datenschutzerklärung</a></li>
-				<li><a href="#">Nutzungsbedingungen</a></li>
-			</ul>
-		</div>
-
-		<div class="col-md-6">
-			<div class="text-muted">Designed and managed by your neighbors in 🇨🇭Switzerland: <a class="fst-italic" href="https://bergdigital.ch">Berg Digital</a>.<br />Built by skilled developers in 🇪🇪 Estonia: <a class="fst-italic" href="https://bits.ee">Baltic IT Solutions OÜ</a>.</div>
-		</div>
-
-	</div>
-
-	<div class="row">
-		<div class="col-md-12">
-			<hr>
-			<div class="float-start">💁‍♀️ <a href="#">Spenden Sie</a>, um die weitere Entwicklung zu unterstützen und diesen Service kostenlos anbieten.</div>
-			<div class="float-end text-muted">&copy; 2021</div>
-		</div>
-	</div>
-</footer>
+	<script src="https://cdn.jsdelivr.net/npm/tom-select@1.1/dist/js/tom-select.complete.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 <script>
+  /* boilerplate for vue3-sfc-loader */
+  const options = {
+    moduleCache: {
+      vue: Vue,
+    },
 
+    getFile(url) {
+      return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
+    },
 
+    addStyle(styleStr) {
+      const style = document.createElement('style');
+      style.textContent = styleStr;
+      const ref = document.head.getElementsByTagName('style')[0] || null;
+      document.head.insertBefore(style, ref);
+    },
 
+    log(type, ...args) {
+      console.log(type, ...args);
+    }
+  }
 
+  const { loadModule, version } = window["vue3-sfc-loader"];
+  /* end of boilerplate for vue3-sfc-loader */
 
-	var map = Vue.createApp({
-		data(){
-			return{
-				api_path:"/api/",
-				init_params:{
-					map_center:{lat:46.8095955,lng:7.1032295},
-					map_zoom:7
-				},
-				marker: null,
-				markers: [],
-				map:null,
-				locations:null,
-				infowindow:null,
-				location:null,
-				location_services:null,
-			}
-		},
+  axios.defaults.baseURL = '/api';
 
-		mounted: async function(){
-			await axios
-				.get(this.api_path+'locations')
-				.then(responce => (this.locations=responce.data.locations))
-			this.mapInit();
-		},
-
-		methods:{
-			async getLocationByZipCode(zipcode){
-				await axios
-					.get(this.api_path+'locations/'+zipcode+'/services')
-					.then(responce => (this.location = responce.data.location, this.location_services = responce.data.services))
-			},
-			mapInit(){
-				this.map = new google.maps.Map(document.getElementById("map"),{
-					center: this.init_params.map_center,
-					zoom: this.init_params.map_zoom
-				})
-				this.infowindow = new google.maps.InfoWindow()
-				var that = this
-				var array = []
-				this.map.addListener("click", async function(){
-					that.infowindow.close()
-				})
-				for(var i=0;i<this.locations.length;i++){
-					const marker = new google.maps.Marker({
-						map: this.map,
-						position: new google.maps.LatLng(this.locations[i].lat,this.locations[i].lng),
-						title: this.locations[i].zipcode,
-					});
-					marker.addListener("click", async function(){
-						that.infowindow.close()
-						await that.getLocationByZipCode(this.title)
-						that.updateState()
-						that.infowindow.open(that.map, this);
-
-					})
-					this.markers[this.locations[i].zipcode] = marker
-				}
-			},
-			updateState(){
-				var location_string = this.location.name+', '+this.location.region+' ('+this.location.zipcode+')'
-				var services_string = ""
-				for(var i=0; i<this.location_services.length; i++){
-					services_string += '<li class="fw-normal fs-5">'+this.location_services[i].name+'</li>'
-				}
-				var infowindow_content = '<div>\
-                            <div class="modal-header"> \
-                                <h3 id="location_name">'+location_string+'</h3>\
-                                </div>\
-                                <div class="modal-body"> \
-                                <ul id="array-rendering">'+services_string+'</ul>\
-                                </div>\
-                                <div class="modal-footer"> \
-                                <div class="d-flex justify-content-end">\
-                                  <a href="" class="btn btn-primary">Sign up</a>\
-                                </div>\
-                              </div>'
-				this.infowindow.setContent(infowindow_content)
-			},
-		}
-	})
-	const map_intsance = map.mount('#map-wrapper')
-
-	var code = {
-		names: 'location', data() {
-			return {
-				log: '',
-				some: undefined,
-				modalOpen: false,
-				errors: [],
-				list: [],
-				location_services: [],
-				location_name: null,
-				location_region: null,
-				location_zip: null,
-				cred: {
-					location: null,
-				},
-			}
-		},
-		methods: {
-			submit(e) {
-				this.errors = [];
-				axios.get("http://localhost/gena/api/locations/" + this.cred.location + "/services")
-					.then((resp) => {
-						this.list = resp.data
-						if('location' in resp.data) {
-							this.location_name = resp.data.location.name
-							this.location_region = resp.data.location.region
-							this.location_zip = resp.data.location.zipcode
-							this.location_services = resp.data.services
-							this.log = 'services'
-							scrollToMap(false)
-							var key = this.location_zip
-							map_intsance.infowindow.open(map_intsance.map, map_intsance.markers[key])
-							var location_string = this.location_name+', '+this.location_region+' ('+this.location_zip+')'
-							var services_string = ""
-							for(var i=0; i<this.location_services.length; i++){
-								services_string += '<li class="fw-normal fs-5">'+this.location_services[i].name+'</li>'
-							}
-							var infowindow_content = '<div>\
-                            <div class="modal-header"> \
-                                <h3 id="location_name">'+location_string+'</h3>\
-                                </div>\
-                                <div class="modal-body"> \
-                                <ul id="array-rendering">'+services_string+'</ul>\
-                                </div>\
-                                <div class="modal-footer"> \
-                                <div class="d-flex justify-content-end">\
-                                  <a href="" class="btn btn-primary">Sign up</a>\
-                                </div>\
-                              </div>'
-							map_intsance.infowindow.setContent(infowindow_content)
-						}else{
-							this.log = 'noservices'
-							scrollToMap()
-						}
-						document.getElementById("location").classList.remove("is-invalid")
-
-					})
-					.catch((err) => {
-						if(!this.cred.location || err.response.status === 400){
-							this.errors.push('Write valid zipcode pls');
-							this.log = 'error'
-							document.getElementById("location").classList.add("is-invalid")
-						}
-						else if (err.response.status === 404) {
-							scrollToMap()
-							this.log = 'noLoc'
-							return
-						}
-						this.list = [];
-					});
-				e.preventDefault();
-			}
-		},
-	}
-
-
-	var app = Vue.createApp(code)
-	app.mount('#searchbyzipcode')
-
-	function modalShow(){
-		const myModal = new bootstrap.Modal(document.getElementById('locationModal'), {
-			keyboard: false
-		});
-		myModal.show();
-	}
-	function scrollToMap(modal=true) {
-		const element = document.getElementById("map-wrapper");
-		element.scrollIntoView();
-		if(modal == true) {
-			setTimeout(function () {
-				modalShow();
-			}, 1000);
-		}
-	}
-
+  const va = Vue.createApp({
+    components: {
+      'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),
+      'navbar-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/navbar.vue', options)),
+      'megaicons-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/megaicons.vue', options)),
+      'bottomline-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/bottomline.vue', options)),
+      'footer-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/footer.vue', options)),
+    }
+  });
+  va.mount('#vueapp');
 </script>
 
-
 </body>
-
 </html>

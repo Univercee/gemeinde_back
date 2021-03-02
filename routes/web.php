@@ -33,5 +33,10 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->group(['prefix' => 'auth'], function ($router) {
         $router->get('/email/verify/{key}', 'SigninupController@verifyKey');
         $router->post('/email', 'SigninupController@signinupflow');
+
+        $router->get('/tg', function(){
+            return view('tg_test.tg');
+        });
+        $router->post('tg/verify','SigninupController@checkTelegramAuthorization');
     });
 });

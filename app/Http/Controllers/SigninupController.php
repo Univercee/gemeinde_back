@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
+define('BOT_TOKEN', env('BOT_TOKEN')); // place bot token of your bot here
 
 class SigninupController extends Controller
 {
@@ -125,5 +126,59 @@ class SigninupController extends Controller
                         SET users.key_until = null,
                             users.secretkey = null
                         WHERE users.id = :id",['id'=>$id]);
+    }
+
+
+
+    // [GENA-9]
+    // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
+    public function checkTelegramAuthorization(Request $request) {    
+        $auth_data = $request['auth_data'];
+        $check_hash = $auth_data['hash'];
+        unset($auth_data['hash']);
+        $data_check_arr = [];
+        foreach ($auth_data as $key => $value) {
+          $data_check_arr[] = $key . '=' . $value;
+        }
+        sort($data_check_arr);
+        $data_check_string = implode("\n", $data_check_arr);
+        $secret_key = hash('sha256', BOT_TOKEN, true);
+        $hash = hash_hmac('sha256', $data_check_string, $secret_key);
+        if (strcmp($hash, $check_hash) !== 0) {
+            return response()->json(['error' => 'Data is NOT from Telegram'], 400);
+        }
+        if ((time() - $auth_data['auth_date']) > 86400) {
+            return response()->json(['error' => 'Data is outdated'], 400);
+        }
+        return $this->confirmTelegramAuthorization($auth_data);
+    }   
+
+    // [GENA-9]
+    private function confirmTelegramAuthorization($auth_data) {
+        $user = $this->getUserByTelegramId($auth_data['id']);
+        if(empty($user)){
+            $first_name = $auth_data['first_name'] ?? null;
+            $last_name = $auth_data['last_name'] ?? null;
+            $username = $auth_data['username'] ?? null;
+            $this->confirmTelegramRegistration($auth_data['id'], $first_name, $last_name, $username);
+            return response()->json(['message' => 'User has been registered'], 200);
+        }
+        else{
+            return response()->json(['message' => 'User authorized'], 200);
+        }
+    }
+
+    // [GENA-9]
+    private function getUserByTelegramId($telegram_id){
+        $user = app('db')->select("SELECT telegram_id
+                                    FROM users
+                                    WHERE telegram_id=:telegram_id",['telegram_id'=>$telegram_id]);
+        return empty($user) ? $user : $user[0];
+    }
+
+    // [GENA-9]
+    private function confirmTelegramRegistration($telegram_id, $first_name, $last_name, $username){
+        app('db')->insert("INSERT INTO users(telegram_id, first_name, last_name, username)
+                            VALUES(?,?,?,?)",[$telegram_id, $first_name, $last_name, $username]);
     }
 }

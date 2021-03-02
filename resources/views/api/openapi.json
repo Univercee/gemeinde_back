@@ -6,7 +6,7 @@
         "description": "Web API for gemeindeonline.ch website and related services",
         "contact": {
             "name": "Baltic IT Solutions OÜ",
-            "email": "info@bits.ee",
+            "email": "info@bits.ee"
         }
     },
     "servers": [
@@ -65,18 +65,26 @@
                 "summary": "Sign in/up to website",
                 "description": "Sign in/up to website",
                 "tags": [ "Emails" ],
-                "consumes": "application/json",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "email"
+                "operationId": "InsertWithForm",
+                "required": true,
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+
+                                    }
+                                }
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Success"

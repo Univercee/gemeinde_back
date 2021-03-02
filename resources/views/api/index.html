@@ -32,13 +32,25 @@
 
   <body>
     <div id="swagger-ui"></div>
-
+		<script src="https://www.google.com/recaptcha/api.js?render=6LehX2caAAAAAKKV2_vQTCGkh4-y4LHTjkTEfAQC"></script>
     <script src="../resources/libs/swagger-ui/swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="../resources/libs/swagger-ui/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
-    window.onload = function() {
+
+		async function getToken() {
+		 var b = await grecaptcha.execute('6LehX2caAAAAAKKV2_vQTCGkh4-y4LHTjkTEfAQC')
+				.then(token => {
+					return token;
+				});
+		 return b;
+		}
+    window.onload = async function() {
+			console.warn("test ",await getToken());
+			window.Kek = await getToken()
+			//alert(Kek)
+			console.log(Kek)
       // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
+      const ui = await SwaggerUIBundle({
         url: "../resources/views/api/openapi.json",
         dom_id: '#swagger-ui',
         deepLinking: true,
@@ -54,7 +66,24 @@
       // End Swagger UI call region
 
       window.ui = ui
+
+			setTimeout(pageFullyLoaded, 1000);
+
     }
-  </script>
+
+	//	window.addEventListener("load", pageFullyLoaded, false);
+	//	window.loler.value = "re"
+		function pageFullyLoaded(e) {
+			document.querySelector(".btn").onclick = function(){
+				setTimeout(putValueAfterClick, 1000);
+			}
+		}
+		function putValueAfterClick(){
+
+			document.querySelector('input[placeholder="token"]').setAttribute("value", Kek);
+			document.querySelector('input[placeholder="token"]').value = Kek;
+
+		}
+		</script>
   </body>
 </html>

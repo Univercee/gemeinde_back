@@ -3,14 +3,22 @@
 	margin: 0 auto;
 }
 
-.parallax {
-  min-height: 500px;
+.webp .parallax {
+  background: url(../images/parallax.webp) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.no-webp .parallax {
   background: url(../images/parallax.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
 }
+
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */

@@ -26,6 +26,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/', function () use ($router) {
         return view('api.index');
     });
+    $router->post('/keys', 'ConfigController@getKeys');
 
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');

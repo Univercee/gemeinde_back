@@ -29,14 +29,12 @@ $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
-
     $router->group(['prefix' => 'auth'], function ($router) {
-        $router->get('/email/verify/{key}', 'SigninupController@verifyKey');
-        $router->post('/email', 'SigninupController@signinupflow');
-
-        $router->get('/tg', function(){
-            return view('tg_test.tg');
-        });
-        $router->post('tg/verify','SigninupController@checkTelegramAuthorization');
+        $router->get('/', function(){return view('portal.signinup');});
+        //email
+        $router->post('/email', 'EmailAuthController@identification');
+        $router->get('/email/verify/{key}', 'EmailAuthController@authentication');
+        //telegram
+        $router->post('/tg/verify', 'TelegramAuthController@authentication');
     });
 });

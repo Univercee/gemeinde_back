@@ -15,14 +15,17 @@ class ServicesTableSeeder extends Seeder
     {
         DB::table('services')->insert([
             [
+                'id' => 1,
                 'name_en' => "Garbage calendar",
                 'name_de' => "",
             ],
             [
+                'id' => 2,
                 'name_en' => "Gemeinde news",
                 'name_de' => "",
             ],
             [
+                'id' => 3,
                 'name_en' => "Weather notifications",
                 'name_de' => "",
             ]

@@ -16,6 +16,7 @@ class UsersTableSeeder extends Seeder
         //
         DB::table('users')->insert([
             [
+                'id' => 1,
                 'email' => "lukas.andersson@switzerland.com",
                 'first_name' => "Lukas",
                 'last_name' => "Andersson",
@@ -26,6 +27,7 @@ class UsersTableSeeder extends Seeder
                 'auth_type' => null
             ],
             [
+                'id' => 2,
                 'email' => "josy.lindberg@switzerland.com",
                 'first_name' => "Josy",
                 'last_name' => "Lindberg",
@@ -36,6 +38,7 @@ class UsersTableSeeder extends Seeder
                 'auth_type' => null
             ],
             [
+                'id' => 3,
                 'email' => "ernst.lindberg@switzerland.com",
                 'first_name' => "Ernst",
                 'last_name' => "Lindberg",
@@ -46,6 +49,7 @@ class UsersTableSeeder extends Seeder
                 'auth_type' => null
             ],
             [
+                'id' => 4,
                 'email' => "meyer.holm@switzerland.com",
                 'first_name' => "Meyer",
                 'last_name' => "Holm",

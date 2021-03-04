@@ -68,11 +68,6 @@ class TelegramAuthController extends Controller{
                                     WHERE telegram_id=:telegram_id",['telegram_id'=>$telegram_id]);
         return empty($user) ? $user : $user[0];
     }
-
-    // [GENA-9]
-    public function getTgBotName(){
-        return "alex_gena_test_bot";
-    }
 }
 
 ?>

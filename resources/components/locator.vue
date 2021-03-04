@@ -14,19 +14,12 @@
             <em class="fs-6">Entdecken Sie Dienstleistungen in Ihrer Gemeinde und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute.</em>
             <div class="clearfix mt-5">
                 <h4 class="float-start">Mein Wohnort</h4>
-                <div class="mt-1 float-end"><a class="link-light" href="#">finde mich</a></div>
+                <div class="mt-1 float-end"><!-- <a class="link-light" href="#">finde mich</a> --></div>
             </div>
-            <form class="d-flex needs-validation" @submit="submit" novalidate>
+            <form class="d-flex" @submit.prevent="submit">
                 <div class="input-group">
-                    <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" v-model="searchable" required>
+                    <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname">
                     <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
-                </div>
-                <div class="invalid-feedback">
-                    <p v-if="errors.length">
-                    <ul class="list-unstyled">
-                        <li v-for="error in errors">{{ error }}</li>
-                    </ul>
-                    </p>
                 </div>
             </form>
         </div>
@@ -52,9 +45,7 @@
                 infowindow: null
             },
             locations: null,
-            log: '',
-            errors: [],
-            searchable: ''
+            ts: null
         }
     },
 
@@ -91,11 +82,22 @@
                 searchField: ['name','zipcode'],
                 labelField: 'name',
                 sortField: 'name',
-                options: this.locations
+                closeAfterSelect: true,
+                searchConjunction: 'or',
+                options: this.locations,
+                render: {
+                    'no_results':function(data,escape){
+			            return '<div class="no-results">😞 At the moment we are not offering any services in "'+escape(data.input)+'". Please <a href="https://docs.google.com/forms/d/e/1FAIpQLScqylrgpCicOf3k3NNkKDdF7Q3MX7XBdfsFmvZbzuWItZOt1A/viewform?vc=0&c=0&w=1&flr=0&gxids=7628&entry.839337160='+escape(data.input)+'">let us know</a> you are interested to join and we will notify you once we add your location.</div>';
+		            }
+                }
              });
 
             this.ts.on('change', id => {
-                this.openInfoWindow(id)
+                this.openInfoWindow(id);
+            });
+
+            this.ts.on('focus', id => {
+                this.ts.clear();
             });
         },
 
@@ -169,16 +171,8 @@
             );
         },
 
-        modalShow() {
-            const myModal = new bootstrap.Modal(document.getElementById('locationModal'), {
-                keyboard: false
-            });
-            myModal.show();
-	    },
-
-        submit(e) {
-            e.preventDefault();
-            console.log(e);
+        submit() {
+            this.ts.open();
         }
     }
 }
@@ -190,7 +184,24 @@
     width: 100%;
   }
 
+  .ts-input {
+    border: none;
+    padding: none;
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    box-sizing: content-box;
+    box-shadow: none;
+    border-radius: none;
+  }
+
+  .ts-input.focus {
+    box-shadow: none;
+  }
+
   .ts-control.single .ts-input:after {
-      content: ''
+    content: none;
   }
 </style>

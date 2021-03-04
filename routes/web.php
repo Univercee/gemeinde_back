@@ -17,18 +17,12 @@ $router->get('/', function () use ($router) {
     return view('portal.index');
 });
 
-$router->get('/signup', function () use ($router) {
-    return view('portal.signinup');
-});
-
 $router->group(['prefix' => 'api'], function ($router) {
 
-    $router->get('/', function () use ($router) {
-        return view('api.index');
-    });
-
+    $router->get('/', function () use ($router) {return view('api.index');});
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
+
     $router->group(['prefix' => 'auth'], function ($router) {
         $router->get('/', function(){return view('portal.signinup');});
         //email
@@ -36,5 +30,6 @@ $router->group(['prefix' => 'api'], function ($router) {
         $router->get('/email/verify/{key}', 'EmailAuthController@authentication');
         //telegram
         $router->post('/tg/verify', 'TelegramAuthController@authentication');
+        $router->post('/tg/key', 'TelegramAuthController@getTgBotName');
     });
 });

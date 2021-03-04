@@ -6,7 +6,7 @@
         "description": "Web API for gemeindeonline.ch website and related services",
         "contact": {
             "name": "Baltic IT Solutions OÜ",
-            "email": "info@bits.ee",
+            "email": "info@bits.ee"
         }
     },
     "servers": [
@@ -60,5 +60,63 @@
                 }
             }
         },
+        "/auth/email": {
+            "post": {
+                "summary": "Sign in/up to website",
+                "description": "Sign in/up to website",
+                "tags": [ "Emails" ],
+                "operationId": "InsertWithForm",
+                "required": true,
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/auth/email/verify/{key}": {
+            "get": {
+                "summary": "Key verifying",
+                "tags": [ "Emails" ],
+                "description": "Response",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "required": true,
+                        "description": "key is uniid"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
     }
 }

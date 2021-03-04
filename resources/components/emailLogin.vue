@@ -16,48 +16,54 @@
                 <button type="submit"  class="btn btn-primary">Submit</button>
             </form>
         </div>
+		<div ref='recaptcha'></div>
     </div>
 </template>
 <script>
 	export default {
-        data() {
+        names: 'location', data() {
 			return {
 				errors: [],
-				path: '',
 				token: null,
+				googleRecaptchaSiteKey: null,
 				cred: {
 					email: null,
 				},
 			}
 		},
-		props: ['googleRecaptchaSiteKey'],
 		methods: {
 			submit(e) {
 				var regex = new RegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])');
-				if(!(regex.test(this.cred.email))){
+				if((regex.test(this.cred.email)) == false){
 					this.errors.push('email is bad')
 					document.getElementById("email").classList.add("is-invalid")
-				}
-				else{
+				}else{
 					document.getElementById("email").classList.remove("is-invalid")
 				}
 				e.preventDefault();
 				const email = this.cred.email
-				const path = this.path
-						grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(function(token) {
-						axios.post(path+"/auth/email",{email: email, token: token})
-							.catch((err) => {
-								console.warn(err.response.data)
-							});
+				grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(function(token) {
+				axios.post("/auth/email",{email: email, token: token})
+					.catch((err) => {
+						console.warn(err.response.data)
 					});
+				});
 			},
+			async getKeys(){
+				await axios.post("/keys").then(responce => (
+					this.googleRecaptchaSiteKey = responce.data.googleRecaptchaSiteKey
+				));
+			}
 		},
 		mounted: async function(){
-		}
+			await this.getKeys();
+			const script = document.createElement('script');
+			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
+			document.body.insertBefore(script,document.getElementById('vuescript'))
+		},
 	}
 </script>
 <style>
-
 	#location_name::first-letter {
 		text-transform: uppercase;
 		color: red;

@@ -129,7 +129,7 @@ class EmailAuthController extends Controller{
     private function getRecaptcha($token){
         $response = Http::asForm()
             ->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => env('RECAPTCHA_TOKEN'),
+                'secret' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
                 'response' => $token,
             ])->json();
         return (float)json_encode(floatval($response['score']));

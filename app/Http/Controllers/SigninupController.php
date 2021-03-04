@@ -42,7 +42,9 @@ class SigninupController extends Controller
                         (email, first_name, last_name, username, secretkey, key_until, auth_type)
                         values(?, ?, ?, ?, ?, ?, 'E')",
                 [$email, null, null, null, $secretKey, $endTime]);
-
+            if(!$addUser){
+                return $response-json(['Error'=>'INSERT SQL ERROR'],400);
+            }
             $send = ['key'=>$secretKey];
             Mail::to($email)->send(new WelcomeMail($send));
             return response()->json(['message' => 'Email sent'], 200);
@@ -55,6 +57,9 @@ class SigninupController extends Controller
                 SET secretkey = '$secretKey' , key_until = '$endTime' , registered_at ='$registered_at'
                 WHERE email = :email AND registered_at = :registered_at",
                 ['email' => $queryCheckUser[0]->email, 'registered_at' => $registered_at]);
+            if(!$updateUser){
+                return $response-json(['Error'=>'UPDATE SQL ERROR'],400);
+            }
             $send = ['key'=>$secretKey];
             Mail::to($email)->send(new WelcomeMail($send));
             Mail::mailer('log')->to($email)->send(new WelcomeMail($send));
@@ -65,6 +70,9 @@ class SigninupController extends Controller
             $updateUser = app('db')->update("UPDATE users
                                SET secretkey = '$secretKey', key_until = '$endTime'
                                WHERE email = :email", ['email'=> $queryCheckUser[0]->email]);
+            if(!$updateUser){
+                return $response-json(['Error'=>'UPDATE SQL ERROR'],400);
+            }
             $send = ['key'=>$secretKey];
             Mail::to($email)->send(new WelcomeMail($send));
             Mail::mailer('log')->to($email)->send(new WelcomeMail(['key'=>$secretKey]));

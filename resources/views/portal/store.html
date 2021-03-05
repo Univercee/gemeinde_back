@@ -7,47 +7,26 @@
     <title>Document</title>
 </head>
 <body>
- 
+    <div id="vueapp">
+        {{user}}
+    </div>
+
 <script src="https://unpkg.com/vue@next"></script>
-<script src="https://unpkg.com/vuex"></script>
+<script src="https://unpkg.com/vuex@next"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="module">
     import store from '../resources/components/store.js'
- /* boilerplate for vue3-sfc-loader */
- const options = {
-    moduleCache: {
-      vue: Vue,
-    },
-
-    getFile(url) {
-      return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-    },
-
-    addStyle(styleStr) {
-      const style = document.createElement('style');
-      style.textContent = styleStr;
-      const ref = document.head.getElementsByTagName('style')[0] || null;
-      document.head.insertBefore(style, ref);
-    },
-
-    log(type, ...args) {
-      console.log(type, ...args);
-    }
-  }
-
-  const { loadModule, version } = window["vue3-sfc-loader"];
-  /* end of boilerplate for vue3-sfc-loader */
-
-  axios.defaults.baseURL = '/api';
-
-  const va = Vue.createApp({
-    components: {
-      'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),
-      'navbar-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/navbar.vue', options)),
-      'megaicons-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/megaicons.vue', options)),
-      'bottomline-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/bottomline.vue', options)),
-      'footer-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/footer.vue', options)),
-    }
-  });
+    const va = Vue.createApp({
+        data() {
+            return {
+                user:null
+            }
+        },
+        async mounted() {
+            await store.dispatch('init')
+            this.user = store.state.user
+        }
+    });
   va.mount('#vueapp');
 </script>
 </body>

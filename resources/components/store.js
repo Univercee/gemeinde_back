@@ -1,34 +1,35 @@
-
-export default ({
+export default new Vuex.Store({
     state:{
-        user_data:null
+        user:null
     },
     getters:{
-        getUserData(){
-            return this.state.user_data
+        getUser(){
+            return this.state.user
+        },
+        getSessionKey(){
+            return sessionStorage.getItem('sessionKey') ?? null
         }
     },
     mutations:{
-        setSessionKey(state, sessionKey){
-            state.sessionKey = sessionKey
-        },
-        setUserData(state, user_data){
-            state.user_data = user_data
+        setUser(state, user){
+            state.user = user
         }
     },
     actions:{
         login(commit, sessionKey){
-            axios.defaults.headers.common['sessionKey'] = sessionKey
-            sessionStorage.setItem('key', sessionKey)
+            sessionStorage.setItem('sessionKey', sessionKey)
+            axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('sessionKey')
         },
-        logout(commit){
-            delete axios.defaults.headers.common['sessionKey']
-            sessionStorage.removeItem('key')
+        logout(){
+            delete axios.defaults.headers.common['Authorization']
+            sessionStorage.removeItem('sessionKey')
+            //axios.post('/deleteSessionKey')
         },
-        async request(commit, url){
-            response = await axios.post(url, sessionStorage.getItem('sessionKey'))
-            await commit('setUserData', response.data)
-            return getUserData()
+        async init(commit){
+            if(sessionStorage.getItem('sessionKey')){
+                let user = await axios.post('/api/keys')
+                this.commit('setUser', user.data.tgBotName)
+            }
         }
     }
 })

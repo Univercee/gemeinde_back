@@ -17,6 +17,7 @@ $router->get('/', function () use ($router) {
     return view('portal.index');
 });
 $router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/store', function(){return view('portal.store');});
 $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/', function () use ($router) {return view('api.index');});

@@ -13,14 +13,39 @@ class LocationServicesTableSeeder extends Seeder
      */
     public function run()
     {
-        $locationsIDs = DB::table('locations')->pluck('id');
-        $servicesIDs= DB::table('services')->pluck('id');
-        $faker = \Faker\Factory::create();
-        foreach(range(0,5) as $i){     
-            DB::table('location_services')->insert([
-                'location_id' => $faker->randomElement($locationsIDs),
-                'service_id' => $faker->randomElement($servicesIDs),
-            ]);
-        }
+        DB::table('location_services')->insert([
+            [
+                'location_id' => 1,
+                'service_id' => 1,
+            ],
+            [
+                'location_id' => 1,
+                'service_id' => 3,
+            ],
+            [
+                'location_id' => 2,
+                'service_id' => 1,
+            ],
+            [
+                'location_id' => 2,
+                'service_id' => 2,
+            ],
+            [
+                'location_id' => 3,
+                'service_id' => 1,
+            ],
+            [
+                'location_id' => 5,
+                'service_id' => 1,
+            ],
+            [
+                'location_id' => 5,
+                'service_id' => 2,
+            ],
+            [
+                'location_id' => 5,
+                'service_id' => 3,
+            ],
+        ]);
     }
 }

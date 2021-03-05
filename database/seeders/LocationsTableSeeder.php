@@ -15,6 +15,7 @@ class LocationsTableSeeder extends Seeder
     {
         DB::table('locations')->insert([
             [
+                'id' => 1,
                 'zipcode' => "3216",
                 'name_en' => "Agriswil",
                 'name_de' => "",
@@ -23,6 +24,7 @@ class LocationsTableSeeder extends Seeder
                 'lng' => 7.1883025
             ],
             [
+                'id' => 2,
                 'zipcode' => "1730",
                 'name_en' => "Ecuvillens",
                 'name_de' => "",
@@ -31,6 +33,7 @@ class LocationsTableSeeder extends Seeder
                 'lng' => 7.0745792
             ],
             [
+                'id' => 3,
                 'zipcode' => "1483",
                 'name_en' => "Vesin",
                 'name_de' => "",
@@ -39,6 +42,7 @@ class LocationsTableSeeder extends Seeder
                 'lng' => 9.2759004
             ],
             [
+                'id' => 4,
                 'zipcode' => "1233",
                 'name_en' => "Bernex",
                 'name_de' => "",
@@ -47,6 +51,7 @@ class LocationsTableSeeder extends Seeder
                 'lng' => 6.6739585
             ],
             [
+                'id' => 5,
                 'zipcode' => "1219",
                 'name_en' => "Chatelaine",
                 'name_de' => "",

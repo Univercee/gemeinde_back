@@ -7,7 +7,7 @@
 			</svg>
 			<span class="h5 ms-1">Gemeinde Online</span>
 		</a>
-		<a class="me-4" href="#">Login</a>
-		<a class="btn btn-primary" href="#">Anmelden</a>
+		<a class="me-4" href="/signup">Einloggen</a>
+		<a class="btn btn-primary" href="/signup">Anmelden</a>
 	</nav>
 </template>

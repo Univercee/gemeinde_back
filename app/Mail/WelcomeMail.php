@@ -23,7 +23,7 @@ class WelcomeMail extends Mailable
     {
         $path = getenv('APP_ROOT');
         $this->subject = 'Confirm login/signup';
-        $this->key = $path.'/api/auth/email/verify/'.$sbj['key'];
+        $this->key = $path.'/email/verify/'.$sbj['key'];
     }
 
     /**

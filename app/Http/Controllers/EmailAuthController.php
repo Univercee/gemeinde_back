@@ -48,16 +48,16 @@ class EmailAuthController extends Controller{
         if(is_null($user->registered_at)){
             $this->confirmRegistration($user->id);
             $sessionKey = uniqid();
-            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
+            app('db')->insert("INSERT INTO sessions(user_id, session_key)
                             VALUES(?, '$sessionKey')", [$user->id]);
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
         else{
             $this->confirmLogin($user->id);
             $sessionKey = uniqid();
-            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
+            app('db')->insert("INSERT INTO sessions(user_id, session_key)
                             VALUES(?, '$sessionKey')", [$user->id]);
-            return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
     }
 

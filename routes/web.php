@@ -20,7 +20,6 @@ $router->get('/email/verify/{key}', function () use ($router){
    return view('portal.verifypage');
 });
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->post('/test','testController@test');
     $router->post('/profile','ProfileController@userInfo');
 });
 

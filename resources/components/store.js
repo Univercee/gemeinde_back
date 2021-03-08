@@ -3,8 +3,8 @@ export default new Vuex.Store({
         user:null
     },
     getters:{
-        getUser(){
-            return this.state.user
+        getUser(state){
+            return state.user
         },
         getSessionKey(){
             return sessionStorage.getItem('sessionKey') ?? null
@@ -18,7 +18,8 @@ export default new Vuex.Store({
     actions:{
         login(commit, sessionKey){
             sessionStorage.setItem('sessionKey', sessionKey)
-            axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('sessionKey')
+            axios.defaults.headers.common['Authorization'] = 'Bearer '+sessionStorage.getItem('sessionKey')
+            console.log(axios.defaults.headers)
         },
         logout(commit){
             delete axios.defaults.headers.common['Authorization']
@@ -27,8 +28,10 @@ export default new Vuex.Store({
         },
         async fetch(commit){
             if(sessionStorage.getItem('sessionKey')){
-                let user = await axios.post('/api/keys')        //it's test url, must change
-                this.commit('setUser', user.data.tgBotName)
+                let user = await axios.post('/api/getUser',{
+                    sessionKey:sessionStorage.getItem('sessionKey')         //сейчас токен передается через параметр, т.к заголовок почему-то не проходит
+                })
+                this.commit('setUser', user.data[0])
             }
         }
     }

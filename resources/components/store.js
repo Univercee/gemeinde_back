@@ -20,14 +20,14 @@ export default new Vuex.Store({
             sessionStorage.setItem('sessionKey', sessionKey)
             axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('sessionKey')
         },
-        logout(){
+        logout(commit){
             delete axios.defaults.headers.common['Authorization']
             sessionStorage.removeItem('sessionKey')
             //axios.post('/deleteSessionKey')
         },
-        async init(commit){
+        async fetch(commit){
             if(sessionStorage.getItem('sessionKey')){
-                let user = await axios.post('/api/keys')
+                let user = await axios.post('/api/keys')        //it's test url, must change
                 this.commit('setUser', user.data.tgBotName)
             }
         }

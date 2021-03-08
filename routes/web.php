@@ -26,6 +26,8 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
     $router->get('/locations', 'LocationController@getLocationsHaveServices');
 
+    $router->post('/getUser', 'AuthController@getUserBySessionKey');
+
     $router->group(['prefix' => 'auth'], function ($router) {
 
         //email

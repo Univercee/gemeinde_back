@@ -9,10 +9,14 @@
 </head>
 <body>
     <div id="vueapp" class="container">
+        <input class="mx-2" v-model="key" type="text" placeholder="Type a session key">
         <button class="btn btn-primary mx-2" v-on:click="$store.dispatch('login', key)">Log in (set session storage key)</button>
         <button class="btn btn-danger mx-2" v-on:click="$store.dispatch('logout')">log out (delete session storage key)</button>
         <br><br>
-        <input class="mx-2" v-model="key" type="text" placeholder="Type a session key">
+        <button class="btn btn-primary mx-2" v-on:click="$store.dispatch('fetch')">Get user data</button>
+        <ul v-for="value,key in $store.getters.getUser">
+            <li>{{key}} : {{value}}</li>
+        </ul>
     </div>
 
 <script src="https://unpkg.com/vue@next"></script>

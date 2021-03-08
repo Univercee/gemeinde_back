@@ -9,75 +9,44 @@
 	<title>Verify</title>
 </head>
 <body>
-<div id="verify-container">
-<h1>Verify Page</h1>
-	<div id="loader" class="spinner-border" role="status">
-		<span class="visually-hidden">Loading...</span>
-	</div>
-	<div class="alert alert-primary" role="alert" v-for="message in messages">
-		{{message}}
-	</div>
+<div id="vueapp" class="container">
+<verify-component></verify-component>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<script>
-
-
-		var code = {
-		names: 'verify', data() {
-		return {
-			resp: null,
-			messages: [],
-		}
-	},
-		methods: {
-		async verify(){
-			const key =	window.location.pathname.split("/").pop()
-
-			await axios.get("/api/auth/email/verify/"+key).then((response) => {
-				this.messages.push('Please wait we try to verify you')
-				this.resp = response.data.sessionkey
-
-			});
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			console.log(this.resp)
+<script id="vuescript">
+	const options = {
+		moduleCache: {
+			vue: Vue,
 		},
 
-			async sendHeader(){
-				await axios({
-					method: 'post', //you can set what request you want to be
-					url: '/profile',
-					data: null,
-					headers: {
-						Authorization: 'Bearer ' + this.resp
-					}
-				}).then((response) => {
-					this.messages.pop()
-					document.getElementById("loader").setAttribute("class", "dont-sping")
-					this.messages.push('You are verified you can proceed to our profile')
-					console.warn(response)
-				});
-			}
-
-	},
-		created: async function(){
-
-
-	},mounted:async function(){
-				await this.verify();
-				await this.sendHeader();
-			}
-
+		getFile(url) {
+			return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
+		},
+		addStyle(styleStr) {
+			const style = document.createElement('style');
+			style.textContent = styleStr;
+			const ref = document.head.getElementsByTagName('style')[0] || null;
+			document.head.insertBefore(style, ref);
+		},
+		log(type, ...args) {
+			console.log(type, ...args);
+		}
 	}
 
+	const { loadModule, version } = window["vue3-sfc-loader"];
 
-		var app = Vue.createApp(code)
+	const va = Vue.createApp({
+		components: {
+			'verify-component': Vue.defineAsyncComponent(() => loadModule('../../resources/components/verify.vue',options)),
+		}
+	});
 
-		app.mount('#verify-container')
+
+	va.mount('#vueapp');
 
 </script>
 
@@ -86,3 +55,4 @@
 
 </body>
 </html>
+

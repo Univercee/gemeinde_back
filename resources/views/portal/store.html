@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div id="vueapp" class="container">
+        <button class="btn btn-primary mx-2" v-on:click="$store.dispatch('login', key)">Log in (set session storage key)</button>
+        <button class="btn btn-danger mx-2" v-on:click="$store.dispatch('logout')">log out (delete session storage key)</button>
+        <br><br>
+        <input class="mx-2" v-model="key" type="text" placeholder="Type a session key">
+    </div>
+
+<script src="https://unpkg.com/vue@next"></script>
+<script src="https://unpkg.com/vuex@next"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="module">
+    import store from '../resources/components/store.js'
+    const va = Vue.createApp({
+        data() {
+            return {
+                key:null,
+                user:null
+            }
+        },
+    });
+    va.use(store)
+    va.mount('#vueapp');
+</script>
+</body>
+
+</html>

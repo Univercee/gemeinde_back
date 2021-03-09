@@ -19,6 +19,21 @@
                 resp: null,
                 messages: [],
             }
+        },    state:{
+            user:null
+        },
+        getters:{
+            getUser(state){
+                return state.user
+            },
+            getSessionKey(){
+                return sessionStorage.getItem('sessionKey') ?? null
+            }
+        },
+        mutations:{
+            setUser(state, user){
+                state.user = user
+            }
         },
         methods: {
             async verify(){
@@ -27,10 +42,9 @@
                 await axios.get("/api/auth/email/verify/"+key).then((response) => {
                     this.messages.push('Please wait we try to verify you')
                     this.resp = response.data.sessionkey
-                    sessionStorage.setItem('sessionKey', this.resp)
-                    axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('sessionKey')
-
+                    this.login(this.resp)
                 });
+
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 console.log(this.resp)
             },
@@ -49,12 +63,18 @@
                     this.messages.push('You are verified you can proceed to our profile')
                     console.warn(response)
                 });
+            },login(sessionKey){
+                sessionStorage.setItem('sessionKey', sessionKey)
+                axios.defaults.headers.common['Authorization'] = 'Bearer '+sessionStorage.getItem('sessionKey')
+                console.log(axios.defaults.headers)
             }
 
-        },mounted:async function(){
+        },
+        mounted:async function(){
             await this.verify();
             await this.sendHeader();
-        }
+           }
 
     }
+
 </script>

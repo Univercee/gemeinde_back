@@ -65,8 +65,6 @@
                 });
             },login(sessionKey){
                 sessionStorage.setItem('sessionKey', sessionKey)
-                axios.defaults.headers.common['Authorization'] = 'Bearer '+sessionStorage.getItem('sessionKey')
-                console.log(axios.defaults.headers)
             }
 
         },

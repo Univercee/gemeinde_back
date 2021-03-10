@@ -22,13 +22,12 @@
             user:null
         },
         methods: {
-            async verify(){
-                const key =	window.location.pathname.split("/").pop()
+            async verify(secretKey){
+                //const key =	window.location.pathname.split("/").pop()
 
-                await axios.get("/auth/email/verify/"+key).then((response) => {
+                await axios.get("/auth/email/verify/"+secretKey).then((response) => {
                     this.messages.push('Please wait we try to verify you')
-                    this.resp = response.data.sessionkey
-                    this.login(this.resp)
+                    sessionStorage.setItem('sessionKey', response.data.sessionkey)
                 });
 
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -50,17 +49,15 @@
                     this.messages.push('You are verified you can proceed to our profile')
                     console.warn(response)
                 });
-            },login(sessionKey){
-                sessionStorage.setItem('sessionKey', sessionKey)
             }
 
         },
-        mounted:async function() {
-          if (window.location.href.indexOf("signup/") > -1) {
-            let urlLength = (window.location.pathname.split("/signup/")[1]).length
-            if ((window.location.pathname.split("/").length - 1 == 2) && urlLength == 13) {
-              await this.verify();
-              await this.sendHeader();
+        mounted:async function() { // TODO http://127.0.0.1/signup#321, check py pathname
+          if (window.location.pathname.startsWith("/signup")) { // TODO check py pathname
+            //let urlLength = (window.location.pathname.split("/signup/")[1]).length
+            let secretKey = window.location.hash.split("#")[1];
+            if (secretKey) {
+              await this.verify(secretKey);
             }
           }
         }

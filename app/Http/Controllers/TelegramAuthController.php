@@ -21,10 +21,7 @@ class TelegramAuthController extends Controller{
         }
         $user = $this->getUserByTelegramId($auth_data['id']);
         if(empty($user)){
-            $first_name = $auth_data['first_name'] ?? null;
-            $last_name = $auth_data['last_name'] ?? null;
-            $username = $auth_data['username'] ?? null;
-            $this->confirmRegistration($auth_data['id'], $first_name, $last_name, $username);
+            $this->confirmRegistration($auth_data);
             return response()->json(['message' => 'User has been registered'], 200);
         }
         else{
@@ -34,10 +31,13 @@ class TelegramAuthController extends Controller{
     }   
 
     // [GENA-9]
-    private function confirmRegistration($telegram_id, $first_name, $last_name, $username){
+    private function confirmRegistration($auth_data){
+        $first_name = $auth_data['first_name'] ?? null;
+        $last_name = $auth_data['last_name'] ?? null;
+        $username = $auth_data['username'] ?? null;
         app('db')->insert("INSERT INTO users(telegram_id, first_name, last_name, username, auth_type)
                             VALUES(?,?,?,?,?)",
-                            [$telegram_id, $first_name, $last_name, $username, 'TG']);
+                            [$auth_data['id'], $first_name, $last_name, $username, 'TG']);
     }
 
     // [GENA-9]

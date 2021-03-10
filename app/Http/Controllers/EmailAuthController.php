@@ -18,16 +18,11 @@ class EmailAuthController extends Controller{
             return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
         }
         $user = $this->getUserByEmail($email);
-        if(empty($user)){
+        if(empty($user) || is_null($user->registered_at)){
             $send = $this->addUser($email);
             Mail::to($email)->send(new WelcomeMail($send));
             return response()->json(['message' => 'Email sent'], 200);
         }
-        if(is_null($user->registered_at)){
-            $send = $this->generateRegistrationKey($email);
-            Mail::to($email)->send(new WelcomeMail($send));
-            return response()->json(['message' => 'Email sent'], 200);
-        } 
         else {
             $send = $this->generateLoginKey($email);
             Mail::to($email)->send(new WelcomeMail($send));
@@ -66,21 +61,13 @@ class EmailAuthController extends Controller{
     }
 
     // [GENA-7]
-    private function generateRegistrationKey($email){
-        $secretKey = uniqid();
-        app('db')->update("UPDATE users
-                        SET secretkey = :secretKey , key_until = NOW() + INTERVAL 24 HOUR
-                        WHERE email = :email",
-                        ['email'=>$email, 'secretKey'=>$secretKey]);
-        return ['key'=>$secretKey];
-    }
-
-    // [GENA-7]
     private function addUser($email){
         $secretKey = uniqid();
         app('db')->insert("INSERT INTO users(email, secretkey, key_until)
-                            VALUES(?, ?, NOW() + INTERVAL 24 HOUR)",
-                            [$email, $secretKey]);
+                            VALUES(?, ?, NOW() + INTERVAL 24 HOUR)
+                            ON DUPLICATE KEY UPDATE
+                            secretkey = ?, key_until = NOW() + INTERVAL 24 HOUR",
+                            [$email, $secretKey, $secretKey]);
         return ['key'=>$secretKey];                                    
     }
 

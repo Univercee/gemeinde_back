@@ -23,7 +23,7 @@ class WelcomeMail extends Mailable
     {
         $path = getenv('APP_ROOT');
         $this->subject = 'Confirm signup';
-        $this->key = $path.'/signup/'.$sbj['key'];
+        $this->key = $path.'/signup#'.$sbj['key'];
     }
 
     /**

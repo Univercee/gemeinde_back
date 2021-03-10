@@ -78,7 +78,6 @@
       <div id="sso">
         <tg-login></tg-login>
       </div>
-      <verify-component></verify-component>
     </main>
 	</div>
 
@@ -117,7 +116,6 @@
     components: {
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
       'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
-      'verify-component': Vue.defineAsyncComponent(() => loadModule('../../resources/components/verify.vue',options))
     }
   });
   va.directive('visible', function(el, binding) {

@@ -1,7 +1,6 @@
 <template id="verify-component">
-
+    <template v-if="resp != null">
     <div id="verify-container">
-        <h1>Verify Page</h1>
         <div id="loader" class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -9,7 +8,7 @@
             {{message}}
         </div>
     </div>
-
+    </template>
 </template>
 <script>
 
@@ -22,24 +21,11 @@
         },    state:{
             user:null
         },
-        getters:{
-            getUser(state){
-                return state.user
-            },
-            getSessionKey(){
-                return sessionStorage.getItem('sessionKey') ?? null
-            }
-        },
-        mutations:{
-            setUser(state, user){
-                state.user = user
-            }
-        },
         methods: {
             async verify(){
                 const key =	window.location.pathname.split("/").pop()
 
-                await axios.get("/api/auth/email/verify/"+key).then((response) => {
+                await axios.get("/auth/email/verify/"+key).then((response) => {
                     this.messages.push('Please wait we try to verify you')
                     this.resp = response.data.sessionkey
                     this.login(this.resp)
@@ -51,6 +37,7 @@
 
             async sendHeader(){
                 await axios({
+                    baseURL: 'http://127.0.0.1/',
                     method: 'post',
                     url: '/profile',
                     data: null,
@@ -68,11 +55,15 @@
             }
 
         },
-        mounted:async function(){
-            await this.verify();
-            await this.sendHeader();
-           }
-
+        mounted:async function() {
+          if (window.location.href.indexOf("signup/") > -1) {
+            let urlLength = (window.location.pathname.split("/signup/")[1]).length
+            if ((window.location.pathname.split("/").length - 1 == 2) && urlLength == 13) {
+              await this.verify();
+              await this.sendHeader();
+            }
+          }
+        }
     }
 
 </script>

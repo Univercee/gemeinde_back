@@ -1,17 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Gemeinde Online | Sign-up</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-	<link href="../../../resources/assets/css/style.css" rel="stylesheet">
+
+  <title>Gemeinde Online | Sign-up</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <link href="../../../resources/assets/css/style.css" rel="stylesheet">
+  <style>
+    html {
+      height: 100%;
+      min-height: 100%;
+      background: url(../../../resources/assets/images/signinup.jpg) no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+
+    body {
+      background-color: transparent;
+      height: 100%;
+      min-height: 100%;
+      overflow: auto;
+    }
+
+    #vueapp {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      position: relative;
+      border-radius: 5px;
+      width: 240px;
+      top: 200px;
+      left: 200px;
+      padding: 20px;
+    }
+
+    .divider {
+      margin-top: 2em;
+      width: 100%;
+      text-align: center;
+    }
+
+    .divider span {
+      padding: 0 20px;
+      font-size: 16px;
+      position: relative;
+      top: -0.6em;
+    }
+
+    .divider hr {
+      display: inline-block;
+      width: 33%;
+    }
+
+    #sso {
+      text-align: center;
+    }
+  </style>
+
 </head>
 <body>
-	<div id="vueapp" class="container">
-		<email-login></email-login>
-		<tg-login></tg-login>
+	<div id="vueapp">
+    <header>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+        <path d="m0 0h32v32h-32z" fill="#da291c"/>
+        <path d="m13 6h6v7h7v6h-7v7h-6v-7h-7v-6h7z" fill="#fff"/>
+      </svg>
+      <span class="h5 ms-2">Gemeinde Online</span>
+    </header>
+    <main>
+      <email-login></email-login>
+      <div class="divider">
+        <hr/><span>OR</span><hr />
+      </div>
+      <div id="sso">
+        <tg-login></tg-login>
+      </div>
+      <verify-component></verify-component>
+    </main>
 	</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
@@ -48,8 +116,12 @@
   const va = Vue.createApp({
     components: {
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
-      'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options))
+      'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
+      'verify-component': Vue.defineAsyncComponent(() => loadModule('../../resources/components/verify.vue',options))
     }
+  });
+  va.directive('visible', function(el, binding) {
+    el.style.visibility = !!binding.value ? 'visible' : 'hidden';
   });
   va.mount('#vueapp');
 </script>

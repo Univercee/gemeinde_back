@@ -22,7 +22,7 @@ class WelcomeMail extends Mailable
     public function __construct($sbj)
     {
         $path = getenv('APP_ROOT');
-        $this->subject = 'Confirm signup';
+        $this->subject = 'Confirm login';
         $this->key = $path.'/signup/'.$sbj['key'];
     }
 

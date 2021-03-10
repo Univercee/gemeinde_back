@@ -23,7 +23,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->post('/profile','ProfileController@userInfo');
 });
 
-$router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/signup[/{session}]', function(){return view('portal.signinup');});
 $router->get('/store', function(){return view('portal.store');});
 $router->group(['prefix' => 'api'], function ($router) {
 

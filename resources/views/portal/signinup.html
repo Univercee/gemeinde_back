@@ -11,7 +11,7 @@
     html {
       height: 100%;
       min-height: 100%;
-      background: url(../../../resources/assets/images/signinup.jpg) no-repeat center center fixed; 
+      background: url(../../../resources/assets/images/signinup.jpg) no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
       -o-background-size: cover;
@@ -69,7 +69,7 @@
       <span class="h5 ms-2">Gemeinde Online</span>
     </header>
     <main>
-      <email-login></email-login>
+    <email-login></email-login><!-- TODO merge with verify -->
       <div class="divider">
         <hr/><span>OR</span><hr />
       </div>
@@ -113,7 +113,7 @@
   const va = Vue.createApp({
     components: {
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
-      'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options))
+      'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
     }
   });
   va.directive('visible', function(el, binding) {

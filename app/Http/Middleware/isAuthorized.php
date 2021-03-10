@@ -17,16 +17,13 @@ class isAuthorized
     {
 
         if($request->hasHeader('Authorization')){
-           $sessionKey = $request->header('Authorization');
-
-           $keyExists = app('db')
-               ->select("SELECT userid, sessionstring FROM sessions WHERE sessionstring = :skey",
-               ['skey'=> $sessionKey]);
-           if($keyExists){
+            $sessionKey = explode(" ", $request->header('Authorization'))[1];
+            $keyExists = app('db')->select("SELECT user_id, session_key FROM sessions WHERE session_key = :skey",['skey'=> $sessionKey]);
+            if($keyExists){
                return $next($request);
-           }
+            }
         }
 
-        return response()->json(['Error'=>'Authorize error']);
+        return response()->json(['Error'=>$request->header('Authorization')]);
     }
 }

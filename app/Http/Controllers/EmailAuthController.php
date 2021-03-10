@@ -3,8 +3,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
+use App\Mail\LoginEmail;
 use Illuminate\Support\Facades\Mail;
-
+use App\Services\SessionsService;
 class EmailAuthController extends Controller{
 
     // [GENA-7]
@@ -25,7 +26,7 @@ class EmailAuthController extends Controller{
         }
         else {
             $send = $this->generateLoginKey($email);
-            Mail::to($email)->send(new WelcomeMail($send));
+            Mail::to($email)->send(new LoginEmail($send));
             return response()->json(['message' => 'Email sent'], 200);
         }
     }
@@ -41,18 +42,12 @@ class EmailAuthController extends Controller{
             return response()->json(['error' => 'Key has expired'], 403);
         }
         if(is_null($user->registered_at)){
-            $this->confirmRegistration($user->id);
-            $sessionKey = uniqid();
-            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
-                            VALUES(?, '$sessionKey')", [$user->id]);
+            $sessionKey = $this->confirmRegistration($user->id);
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
         else{
-            $this->confirmLogin($user->id);
-            $sessionKey = uniqid();
-            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
-                            VALUES(?, '$sessionKey')", [$user->id]);
-            return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey]);
+            $sessionKey = $this->confirmLogin($user->id);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
     }
 
@@ -85,6 +80,7 @@ class EmailAuthController extends Controller{
                             users.secretkey = null,
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$id]);
+        return SessionsService::generateSessionKey($id);
     }
 
     // [GENA-7]
@@ -94,6 +90,7 @@ class EmailAuthController extends Controller{
                             users.secretkey = null,
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$id]);
+        return SessionsService::generateSessionKey($id);
     }
 
     // [GENA-7]

@@ -42,12 +42,18 @@ class EmailAuthController extends Controller{
         }
         if(is_null($user->registered_at)){
             $this->confirmRegistration($user->id);
-            return response()->json(['message' => 'User has been registered'], 200);
+            $sessionKey = uniqid();
+            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
+                            VALUES(?, '$sessionKey')", [$user->id]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
         else{
             $this->confirmLogin($user->id);
-            return response()->json(['message' => 'User authorized'], 200);
-        }  
+            $sessionKey = uniqid();
+            app('db')->insert("INSERT INTO sessions(userid, sessionstring)
+                            VALUES(?, '$sessionKey')", [$user->id]);
+            return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey]);
+        }
     }
 
     // [GENA-7]
@@ -57,7 +63,7 @@ class EmailAuthController extends Controller{
                         SET secretkey = :secretKey , key_until = NOW() + INTERVAL 5 MINUTE
                         WHERE email = :email",
                         ['email'=>$email, 'secretKey'=>$secretKey]);
-        return ['key'=>$secretKey];  
+        return ['key'=>$secretKey];
     }
 
     // [GENA-7]

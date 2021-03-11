@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\SessionsService;
 define('BOT_TOKEN', env('BOT_TOKEN'));
 
 class TelegramAuthController extends Controller{
@@ -21,12 +22,12 @@ class TelegramAuthController extends Controller{
         }
         $user = $this->getUserByTelegramId($auth_data['id']);
         if(empty($user)){
-            $this->confirmRegistration($auth_data);
-            return response()->json(['message' => 'User has been registered'], 200);
+            $sessionKey = $this->confirmRegistration($auth_data);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
         else{
-            $this->confirmLogin($auth_data['id']);
-            return response()->json(['message' => 'User authorized'], 200);
+            $sessionKey = $this->confirmLogin($auth_data['id'], $user->id);
+            return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey], 200);
         }
     }   
 
@@ -36,16 +37,21 @@ class TelegramAuthController extends Controller{
         $last_name = $auth_data['last_name'] ?? null;
         $username = $auth_data['username'] ?? null;
         app('db')->insert("INSERT INTO users(telegram_id, first_name, last_name, username, auth_type)
-                            VALUES(?,?,?,?,?)",
-                            [$auth_data['id'], $first_name, $last_name, $username, 'TG']);
+                                VALUES(?,?,?,?,?)",
+                                [$auth_data['id'], $first_name, $last_name, $username, 'TG']);
+        $user = app('db')->select("SELECT id FROM users
+                                WHERE users.telegram_id = :telegram_id",
+                                ['telegram_id'=>$auth_data['id']]);
+        return SessionsService::generateSessionKey($user[0]->id);
     }
 
     // [GENA-9]
-    private function confirmLogin($telegram_id){
+    private function confirmLogin($telegram_id, $user_id){
         app('db')->update("UPDATE users
                             SET users.auth_type = 'TG'
                             WHERE users.telegram_id = :telegram_id",
-                            ['telegram_id'=>$telegram_id]);
+                            ['telegram_id'=>$telegram_id]);       
+        return SessionsService::generateSessionKey($user_id);
     }
 
     // [GENA-9]
@@ -63,7 +69,7 @@ class TelegramAuthController extends Controller{
 
     // [GENA-9]
     private function getUserByTelegramId($telegram_id){
-        $user = app('db')->select("SELECT telegram_id
+        $user = app('db')->select("SELECT id,telegram_id
                                     FROM users
                                     WHERE telegram_id=:telegram_id",['telegram_id'=>$telegram_id]);
         return empty($user) ? $user : $user[0];

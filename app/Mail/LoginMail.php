@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeMail extends Mailable
+class LoginEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -22,8 +22,8 @@ class WelcomeMail extends Mailable
     public function __construct($sbj)
     {
         $path = getenv('APP_ROOT');
-        $this->subject = 'Confirm signup';
-        $this->key = $path.'/signup#'.$sbj['key'];
+        $this->subject = 'Confirm login';
+        $this->key = $path.'/signup/'.$sbj['key'];
     }
 
     /**

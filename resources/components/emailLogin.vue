@@ -4,7 +4,7 @@
 			<div class="mb-3">
 				<div id="loader" class="" role="status">
 					<span class="visually-hidden">Loading...</span>
-					<span id="wait_span">Please wait</span>
+					<span class="d-none" id="wait_span">Please wait</span>
 				</div>
 				<div v-if="session != null">
 					<h1>You are verified proceed to profile</h1>
@@ -88,6 +88,7 @@
 			document.body.insertBefore(script,document.getElementById('vuescript'));
       if (window.location.hash) {
         document.getElementById("loader").setAttribute("class", "spinner-border")
+        document.getElementById("wait_span").setAttribute("class", "")
         let secretKey = window.location.hash.split("#")[1];
         if (secretKey) {
           await this.verify(secretKey);

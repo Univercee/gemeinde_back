@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
-use App\Mail\LoginEmail;
+use App\Mail\LoginMail;
 use Illuminate\Support\Facades\Mail;
 use App\Services\SessionsService;
 class EmailAuthController extends Controller{
@@ -26,7 +26,7 @@ class EmailAuthController extends Controller{
         }
         else {
             $send = $this->generateLoginKey($email);
-            Mail::to($email)->send(new LoginEmail($send));
+            Mail::to($email)->send(new LoginMail($send));
             return response()->json(['message' => 'Email sent'], 200);
         }
     }
@@ -69,7 +69,7 @@ class EmailAuthController extends Controller{
                             ON DUPLICATE KEY UPDATE
                             secretkey = ?, key_until = NOW() + INTERVAL 24 HOUR",
                             [$email, $secretKey, $secretKey]);
-        return ['key'=>$secretKey];                                    
+        return ['key'=>$secretKey];
     }
 
     // [GENA-7]

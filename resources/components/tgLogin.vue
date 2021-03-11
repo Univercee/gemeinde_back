@@ -9,12 +9,14 @@
         }
     },
     methods: {
-        onTelegramAuth(user) {
-            axios.post('/auth/tg/verify',{auth_data: user})
+        async onTelegramAuth(user) {
+            await axios.post('/auth/tg/verify',{auth_data: user}).then((response) =>{
+              sessionStorage.setItem('sessionKey', response.data.sessionkey)
+            })
         },
     async getKeys(){
-      await axios.post("/keys").then(responce => (
-        this.tgBotName = responce.data.tgBotName
+      await axios.post("/keys").then(response => (
+        this.tgBotName = response.data.tgBotName
       ));
     },
       async tgInit(){

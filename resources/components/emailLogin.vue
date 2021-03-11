@@ -7,7 +7,7 @@
 					<span id="wait_span">Please wait</span>
 				</div>
 				<div v-if="session != null">
-					<h1>You are verified proceed to profile</h1>
+					<h3>You are verified proceed to profile</h3>
 					<div class="alert alert-primary" role="alert" v-for="message in verifyMessage">
 						{{message}}
 					</div>

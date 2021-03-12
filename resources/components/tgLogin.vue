@@ -26,6 +26,7 @@
           script.setAttribute('data-telegram-login',this.tgBotName)
           script.setAttribute('data-size','medium')
           script.setAttribute('data-radius','5')
+          script.setAttribute('async',true)
           script.setAttribute('data-onauth','onTelegramAuth(user)')
           script.setAttribute('data-request-access','write')
           this.$refs.tgLogin.appendChild(script)

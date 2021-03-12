@@ -3,7 +3,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\SessionsService;
-define('BOT_TOKEN', env('BOT_TOKEN'));
+use Illuminate\Support\Facades\DB;
+define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 
 class TelegramAuthController extends Controller{
     
@@ -36,13 +37,14 @@ class TelegramAuthController extends Controller{
         $first_name = $auth_data['first_name'] ?? null;
         $last_name = $auth_data['last_name'] ?? null;
         $username = $auth_data['username'] ?? null;
-        app('db')->insert("INSERT INTO users(telegram_id, first_name, last_name, username, auth_type)
-                                VALUES(?,?,?,?,?)",
-                                [$auth_data['id'], $first_name, $last_name, $username, 'TG']);
-        $user = app('db')->select("SELECT id FROM users
-                                WHERE users.telegram_id = :telegram_id",
-                                ['telegram_id'=>$auth_data['id']]);
-        return SessionsService::generateSessionKey($user[0]->id);
+        $id = DB::table('users')->insertGetId(
+            ['telegram_id' => $auth_data['id'],
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'username' => $username,
+            'auth_type' => 'TG']
+        );
+        return SessionsService::generateSessionKey($id);
     }
 
     // [GENA-9]

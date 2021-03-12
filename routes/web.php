@@ -24,6 +24,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 });
 
 $router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/profile',function(){return view('portal.profile');});
 $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/', function () use ($router) {return view('api.index');});

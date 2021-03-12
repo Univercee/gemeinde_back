@@ -2,15 +2,13 @@
 	<div id="email-container">
 		<form @submit.prevent="submit" method="post" class="needs-validation" novalidate>
 			<div class="mb-3">
-				<div id="loader" class="" role="status">
+				<div ref="loader" id="loader" class="" role="status" >
 					<span class="visually-hidden">Loading...</span>
-					<span class="d-none" id="wait_span">Please wait</span>
+					<span ref="wait_span" class="d-none" id="wait_span">Please wait</span>
 				</div>
 				<div v-if="session != null">
-					<h1>You are verified proceed to profile</h1>
-					<div class="alert alert-primary" role="alert" v-for="message in verifyMessage">
-						{{message}}
-					</div>
+					<h1>{{ verifyMessage }}</h1>
+
 				</div>
 				<div v-if="session == null">
 					<label for="email" v-visible="email" class="form-label form-label-sm"><small>E-mail address</small></label>
@@ -40,7 +38,7 @@
 		data() {
 			return {
 				errors: [],
-				verifyMessage: null,
+				verifyMessage: '',
 				session: null,
 				token: null,
 				googleRecaptchaSiteKey: null,
@@ -70,32 +68,44 @@
 				));
 			},
       async verify(secretKey){
+			  this.verifyMessage = ''
         await axios.get("/auth/email/verify/"+secretKey).then((response) => {
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
-          this.verifyMessage.push('You are verified')
+          this.verifyMessage = 'You are verified'
+          alert('success')
         }).catch((err) => {
-          console.warn(err.data)
-        })
+          if(err.response){
+            if(err.response.status === 404) {
+              this.verifyMessage = 'Verification key is not found, please try again'
+              console.warn('Verification key is not found, please try again')
+            }else if (err.response.status === 403){
+              this.verifyMessage = 'Verification key is expired, please try again'
+            }
+          }
+        });
         await new Promise(resolve => setTimeout(resolve, 2000));
         console.log(this.resp)
       }
 		},
 		mounted: async function(){
 
+
 			await this.getKeys();
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
+			if (sessionStorage.getItem("sessionKey")){
+        window.location.href = "/profile";
+      }
       if (window.location.hash) {
-        document.getElementById("loader").setAttribute("class", "spinner-border")
-        document.getElementById("wait_span").setAttribute("class", "")
+        this.$refs['loader'].setAttribute("class", "spinner-border")
+        this.$refs['wait_span'].setAttribute("class", "")
         let secretKey = window.location.hash.split("#")[1];
         if (secretKey) {
           await this.verify(secretKey);
-
           this.session = sessionStorage.getItem("sessionKey")
-          document.getElementById("loader").setAttribute("class", "dont-spin")
-          document.getElementById("wait_span").setAttribute("class", "d-none")
+          this.$refs['loader'].setAttribute("class", "dont-spin")
+          this.$refs['wait_span'].setAttribute("class", "d-none")
         }
       }
 		},

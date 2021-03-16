@@ -24,11 +24,8 @@
         <strong>Email is sent!</strong> Please check your email.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
-			<div v-if="session != null">
-				<a href="/profile" role="button" class="btn form-control btn-success btn-sm">Continue</a>
-			</div>
-
-			<div ref="emailComponents" class="" v-else>
+				<a ref="sessionComponents" href="/profile" role="button" class="btn form-control btn-success btn-sm d-none">Continue</a>
+			<div ref="emailComponents" class="">
 				<button role="button" class="btn btn-primary btn-sm">Continue</button>
 			</div>
 			<div ref='recaptcha'></div>
@@ -79,6 +76,8 @@
         await axios.get("/auth/email/verify/"+secretKey).then((response) => {
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
           this.verifyMessage = 'You are verified'
+          this.$refs['emailComponents'].setAttribute("class","d-none")
+          this.$refs['sessionComponents'].classList.remove("d-none")
         }).catch((err) => {
           if(err.response){
             if(err.response.status === 404) {
@@ -101,9 +100,9 @@
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
-			// if (sessionStorage.getItem("sessionKey")){
-      //   window.location.href = "/profile";
-      // }
+			if (sessionStorage.getItem("sessionKey")){
+        window.location.href = "/profile";
+      }
       if (window.location.hash) {
         this.$refs['wait_span'].classList.remove("d-none")
         this.$refs['emailComponents'].setAttribute("class","d-none")

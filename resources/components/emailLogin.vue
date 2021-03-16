@@ -100,9 +100,9 @@
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
-			if (sessionStorage.getItem("sessionKey")){
-        window.location.href = "/profile";
-      }
+			// if (sessionStorage.getItem("sessionKey")){
+      //   window.location.href = "/profile";
+      // }
       if (window.location.hash) {
         this.$refs['wait_span'].classList.remove("d-none")
         this.$refs['emailComponents'].setAttribute("class","d-none")

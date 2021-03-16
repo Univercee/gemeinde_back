@@ -28,7 +28,7 @@ class ProfileController extends Controller
     }
 
     public function getter($avatar){
-      $data = Storage::disk('local')->get('avatars/'.$avatar.'.jpg');
-      var_dump($data);
+      $url = Storage::disk('local')->url('app/avatars/'.$avatar.'.jpg');
+      return response()->json(['url' => $url]);
     }
 }

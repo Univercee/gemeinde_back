@@ -9,12 +9,14 @@
         }
     },
     methods: {
-        onTelegramAuth(user) {
-            axios.post('/auth/tg/verify',{auth_data: user})
+        async onTelegramAuth(user) {
+            await axios.post('/auth/tg/verify',{auth_data: user}).then((response) =>{
+              sessionStorage.setItem('sessionKey', response.data.sessionkey)
+            })
         },
     async getKeys(){
-      await axios.post("/keys").then(responce => (
-        this.tgBotName = responce.data.tgBotName
+      await axios.post("/keys").then(response => (
+        this.tgBotName = response.data.tgBotName
       ));
     },
       async tgInit(){
@@ -24,6 +26,7 @@
           script.setAttribute('data-telegram-login',this.tgBotName)
           script.setAttribute('data-size','medium')
           script.setAttribute('data-radius','5')
+          script.setAttribute('async',true)
           script.setAttribute('data-onauth','onTelegramAuth(user)')
           script.setAttribute('data-request-access','write')
           this.$refs.tgLogin.appendChild(script)

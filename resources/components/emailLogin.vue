@@ -2,15 +2,13 @@
 	<div id="email-container">
 		<form @submit.prevent="submit" method="post" class="needs-validation" novalidate>
 			<div class="mb-3">
-				<div ref="loader" id="loader" class="" role="status" >
-					<span class="visually-hidden">Loading...</span>
-					<span ref="wait_span" class="d-none" id="wait_span">Please wait</span>
-				</div>
-				<div v-if="session != null">
+        <div class="d-flex justify-content-center">
+          <div ref="wait_span" class="align-items-center lds-facebook d-none "><div></div><div></div><div></div></div>
+        </div>
+				<div >
 					<h1>{{ verifyMessage }}</h1>
-
 				</div>
-				<div v-if="session == null">
+				<div ref="emailComponents" class="">
 					<label for="email" v-visible="email" class="form-label form-label-sm"><small>E-mail address</small></label>
 					<input type="email" class="form-control form-control-sm" placeholder="E-mail address" name="email" id="email" aria-describedby="emailHelp" v-model="email" required>
 				</div>
@@ -22,10 +20,15 @@
 					</p>
 				</div>
 			</div>
+      <div ref="emailAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+        <strong>Email is sent!</strong> Please check your email.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
 			<div v-if="session != null">
 				<a href="/profile" role="button" class="btn form-control btn-success btn-sm">Continue</a>
 			</div>
-			<div v-else>
+
+			<div ref="emailComponents" class="" v-else>
 				<button role="button" class="btn btn-primary btn-sm">Continue</button>
 			</div>
 			<div ref='recaptcha'></div>
@@ -56,9 +59,13 @@
 					return false; //otherwise execution goes on to axios
 				}
 				await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(token => (
-					axios.post("/auth/email",{email: this.email, token: token})
+					axios.post("/auth/email",{email: this.email, token: token}).then((response) =>{
+              console.warn(response.data)
+              this.$refs['emailAlert'].classList.remove("d-none")
+            }
+          )
 					.catch((err) => {
-						console.warn(err.response.data)
+						//console.warn(err.response.data)
 					})
 				));
 			},
@@ -72,39 +79,38 @@
         await axios.get("/auth/email/verify/"+secretKey).then((response) => {
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
           this.verifyMessage = 'You are verified'
-          alert('success')
         }).catch((err) => {
           if(err.response){
             if(err.response.status === 404) {
-              this.verifyMessage = 'Verification key is not found, please try again'
-              console.warn('Verification key is not found, please try again')
+                this.verifyMessage = 'Verification key is not found, please try again'
+                this.$refs['emailComponents'].classList.remove("d-none")
             }else if (err.response.status === 403){
               this.verifyMessage = 'Verification key is expired, please try again'
+              this.$refs['emailComponents'].classList.remove("d-none")
             }
           }
         });
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        //await new Promise(resolve => setTimeout(resolve, 2000));
         console.log(this.resp)
       }
 		},
 		mounted: async function(){
 
-
+      this.verifyMessage = ''
 			await this.getKeys();
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
-			if (sessionStorage.getItem("sessionKey")){
-        window.location.href = "/profile";
-      }
+			// if (sessionStorage.getItem("sessionKey")){
+      //   window.location.href = "/profile";
+      // }
       if (window.location.hash) {
-        this.$refs['loader'].setAttribute("class", "spinner-border")
-        this.$refs['wait_span'].setAttribute("class", "")
+        this.$refs['wait_span'].classList.remove("d-none")
+        this.$refs['emailComponents'].setAttribute("class","d-none")
         let secretKey = window.location.hash.split("#")[1];
         if (secretKey) {
           await this.verify(secretKey);
           this.session = sessionStorage.getItem("sessionKey")
-          this.$refs['loader'].setAttribute("class", "dont-spin")
           this.$refs['wait_span'].setAttribute("class", "d-none")
         }
       }
@@ -123,4 +129,41 @@
 	button {
 		width: 100%;
 	}
+  .lds-facebook {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-facebook div {
+    display: inline-block;
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    background: #fff;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+  }
+  .lds-facebook div:nth-child(1) {
+    left: 8px;
+    animation-delay: -0.24s;
+  }
+  .lds-facebook div:nth-child(2) {
+    left: 32px;
+    animation-delay: -0.12s;
+  }
+  .lds-facebook div:nth-child(3) {
+    left: 56px;
+    animation-delay: 0;
+  }
+  @keyframes lds-facebook {
+    0% {
+      top: 8px;
+      height: 64px;
+    }
+    50%, 100% {
+      top: 24px;
+      height: 32px;
+    }
+  }
+
 </style>

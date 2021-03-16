@@ -27,6 +27,9 @@ $app = new Laravel\Lumen\Application(
 
  $app->withEloquent();
 
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -98,13 +101,14 @@ $app->configure('app');
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
-
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 
 $app->configure('mail');
+$app->configure("filesystems");
 
 $app->alias('mail.manager', Illuminate\Mail\MailManager::class);
 $app->alias('mail.manager', Illuminate\Contracts\Mail\Factory::class);
-
+$app->alias("Storage",Illuminate\Support\Facades\Storage::class);
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);

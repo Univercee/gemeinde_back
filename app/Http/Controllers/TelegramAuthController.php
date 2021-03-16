@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\SessionsService;
+use App\Services\SessionsManager;
 use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 
@@ -44,7 +44,7 @@ class TelegramAuthController extends Controller{
             'username' => $username,
             'auth_type' => 'TG']
         );
-        return SessionsService::generateSessionKey($id);
+        return SessionsManager::generateSessionKey($id);
     }
 
     // [GENA-9]
@@ -53,7 +53,7 @@ class TelegramAuthController extends Controller{
                             SET users.auth_type = 'TG'
                             WHERE users.telegram_id = :telegram_id",
                             ['telegram_id'=>$telegram_id]);       
-        return SessionsService::generateSessionKey($user_id);
+        return SessionsManager::generateSessionKey($user_id);
     }
 
     // [GENA-9]

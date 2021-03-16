@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use App\Mail\LoginMail;
 use Illuminate\Support\Facades\Mail;
-use App\Services\SessionsService;
+use App\Services\SessionsManager;
 class EmailAuthController extends Controller{
 
     // [GENA-7]
@@ -80,7 +80,7 @@ class EmailAuthController extends Controller{
                             users.secretkey = null,
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$id]);
-        return SessionsService::generateSessionKey($id);
+        return SessionsManager::generateSessionKey($id);
     }
 
     // [GENA-7]
@@ -90,7 +90,7 @@ class EmailAuthController extends Controller{
                             users.secretkey = null,
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$id]);
-        return SessionsService::generateSessionKey($id);
+        return SessionsManager::generateSessionKey($id);
     }
 
     // [GENA-7]

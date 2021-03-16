@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use App\Mail\LoginMail;
 use Illuminate\Support\Facades\Mail;
-use App\Services\SessionsManager;
+use App\Managers\SessionsManager;
 class EmailAuthController extends Controller{
 
     // [GENA-7]

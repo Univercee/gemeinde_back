@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\SessionsManager;
+use App\Managers\SessionsManager;
 use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 

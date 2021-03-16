@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\SessionsService;
+use App\Managers\SessionsManager;
 use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 
@@ -11,9 +11,9 @@ class TelegramAuthController extends Controller{
     // [GENA-9]
     // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
     public function authentication(Request $request) {
-        $auth_data = $request['auth_data'];
-        $check_hash = $auth_data['hash'];
-        unset($auth_data['hash']);
+      $auth_data = $request['auth_data'];
+      $check_hash = $auth_data['hash'];
+      unset($auth_data['hash']);
         $hash = $this->getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {
             return response()->json(['error' => 'Data is NOT from Telegram'], 400);
@@ -44,7 +44,7 @@ class TelegramAuthController extends Controller{
             'username' => $username,
             'auth_type' => 'TG']
         );
-        return SessionsService::generateSessionKey($id);
+        return SessionsManager::generateSessionKey($id);
     }
 
     // [GENA-9]
@@ -53,7 +53,7 @@ class TelegramAuthController extends Controller{
                             SET users.auth_type = 'TG'
                             WHERE users.telegram_id = :telegram_id",
                             ['telegram_id'=>$telegram_id]);
-        return SessionsService::generateSessionKey($user_id);
+        return SessionsManager::generateSessionKey($user_id);
     }
 
     // [GENA-9]
@@ -77,3 +77,5 @@ class TelegramAuthController extends Controller{
         return empty($user) ? $user : $user[0];
     }
 }
+
+?>

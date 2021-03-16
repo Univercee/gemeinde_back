@@ -1,15 +1,21 @@
 <?php
-
-
 namespace App\Managers;
+use Illuminate\Http\Request;
+class AvatarsManager{
+    public static function getAvatar($user_id){
+        $avatar = app('db')->select("SELECT avatar FROM users
+                                        WHERE id = :user_id",
+                                        ['user_id' => $user_id]);
+        $avatar = empty($avatar) ? null : $avatar[0]->avatar;
+        return $avatar;
+    }
 
-
-class AvatarsManager
-{
-  public function setter($key){
-    $user = app('db')->select("SELECT user_id FROM sessions WHERE session_key = :key", ["key"=> $key]);
-    return $user[0]->user_id;
-  }
-
-
+    public static function setAvatar($user_id, $avatar){
+        app('db')->update("UPDATE users 
+                        SET avatar = :avatar
+                        WHERE id = :user_id",
+                        ['user_id' => $user_id, 'avatar' => $avatar]);
+    }
 }
+
+?>

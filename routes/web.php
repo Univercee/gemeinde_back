@@ -25,10 +25,12 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
 $router->get('/signup', function(){return view('portal.signinup');});
 $router->get('/profile',function(){return view('portal.profile');});
+//to test getter and setter
 $router->get('/file',function(){return view('portal.file');});
 $router->get('/readfile/{avatar}', 'ProfileController@getter');
-$router->group(['prefix' => 'api'], function ($router) {
 
+$router->group(['prefix' => 'api'], function ($router) {
+    //setter
     $router->post("/file",[
       'as'=>'file', 'uses'=> 'ProfileController@setter'
     ]);

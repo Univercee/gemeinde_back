@@ -55,16 +55,19 @@
 					document.getElementById("email").classList.add("is-invalid")
 					return false; //otherwise execution goes on to axios
 				}
+        sessionStorage.setItem('email', this.email)
 				await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(token => (
 					axios.post("/auth/email",{email: this.email, token: token}).then((response) =>{
               console.warn(response.data)
               this.$refs['emailAlert'].classList.remove("d-none")
+
             }
           )
 					.catch((err) => {
 						//console.warn(err.response.data)
 					})
 				));
+
 			},
 			async getKeys(){
 				await axios.post("/keys").then(responce => (
@@ -74,7 +77,9 @@
       async verify(secretKey){
 			  this.verifyMessage = ''
         await axios.get("/auth/email/verify/"+secretKey).then((response) => {
+          sessionStorage.setItem('email',response.data.useremail)
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
+
           this.verifyMessage = 'You are verified'
           this.$refs['emailComponents'].setAttribute("class","d-none")
           this.$refs['sessionComponents'].classList.remove("d-none")
@@ -87,11 +92,28 @@
               this.verifyMessage = 'Verification key is expired, please try again'
               this.$refs['emailComponents'].classList.remove("d-none")
             }
+            console.log(err.response)
           }
         });
+
         //await new Promise(resolve => setTimeout(resolve, 2000));
         console.log(this.resp)
-      }
+      },
+      async gravatar(){
+        await axios({
+          baseURL: 'http://127.0.0.1/', // optional
+          method: 'post',
+          url: '/api/gravatar',
+          data: {email: sessionStorage.getItem('email')},
+          headers: {
+            Authorization: 'Bearer ' + this.session
+          }
+        }).then((response) => {
+          console.warn(response)
+        }).catch((err) =>{
+          console.warn(err)
+        })
+      },
 		},
 		mounted: async function(){
 
@@ -110,6 +132,7 @@
         if (secretKey) {
           await this.verify(secretKey);
           this.session = sessionStorage.getItem("sessionKey")
+          await this.gravatar();
           this.$refs['wait_span'].setAttribute("class", "d-none")
         }
       }

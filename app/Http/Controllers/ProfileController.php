@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Managers\AvatarsManager;
+use App\Managers\SessionsManager;
 class ProfileController extends Controller
 {
   public function userId($key){
@@ -19,16 +20,21 @@ class ProfileController extends Controller
     public function setter(Request $request){
       if ($request->hasFile('file')) {
         $key = explode(" ", $request->header('Authorization'))[1];
-        //$userId = AvatarsManager::setter($key); TODO <---
-        Storage::disk('local')->putFileAs('avatars',request()->file('file'), $this->userId($key).'.jpg');
+        $userId = SessionsManager::getUserIdBySessionKey($key);
+        $url = Storage::disk('local')->url('app/avatars/'.$this->userId($key).'.jpg');
+        Storage::disk('local')->putFileAs('avatars',request()->file('file'), $userId.'.jpg');
+        AvatarsManager::setAvatar($userId, $url);
+
         return response()->json(['auth'=>$request->header('Authorization')]);
     }
       return response()->json(['Error' => 'Image not found'],404);
 
     }
 
-    public function getter($avatar){
+    public function getter(Request $request, $avatar){
+      $key = '26f26a10d759475837bfb3cfb9467ec611725b8001f96778904a597c038f07b4';
+      $userId = SessionsManager::getUserIdBySessionKey($key);
       $url = Storage::disk('local')->url('app/avatars/'.$avatar.'.jpg');
-      return response()->json(['url' => $url]);
+      return response()->json(['formdisk' => $url, 'fromdb'=> AvatarsManager::getAvatar($userId)]);
     }
 }

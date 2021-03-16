@@ -30,6 +30,7 @@ $router->get('/file',function(){return view('portal.file');});
 $router->get('/readfile/{avatar}', 'ProfileController@getter');
 
 $router->group(['prefix' => 'api'], function ($router) {
+  $router->post('/gravatar', 'EmailAuthController@gravatar');
     //setter
     $router->post("/file",[
       'as'=>'file', 'uses'=> 'ProfileController@setter'

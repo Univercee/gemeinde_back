@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 
 class TelegramAuthController extends Controller{
-    
+
     // [GENA-9]
     // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
-    public function authentication(Request $request) {  
-        $auth_data = $request['auth_data'];
-        $check_hash = $auth_data['hash'];
-        unset($auth_data['hash']);
+    public function authentication(Request $request) {
+      $auth_data = $request['auth_data'];
+      $check_hash = $auth_data['hash'];
+      unset($auth_data['hash']);
         $hash = $this->getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {
             return response()->json(['error' => 'Data is NOT from Telegram'], 400);
@@ -30,7 +30,7 @@ class TelegramAuthController extends Controller{
             $sessionKey = $this->confirmLogin($auth_data['id'], $user->id);
             return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey], 200);
         }
-    }   
+    }
 
     // [GENA-9]
     private function confirmRegistration($auth_data){
@@ -52,7 +52,7 @@ class TelegramAuthController extends Controller{
         app('db')->update("UPDATE users
                             SET users.auth_type = 'TG'
                             WHERE users.telegram_id = :telegram_id",
-                            ['telegram_id'=>$telegram_id]);       
+                            ['telegram_id'=>$telegram_id]);
         return SessionsManager::generateSessionKey($user_id);
     }
 

@@ -23,7 +23,7 @@ export default {
         method: 'post',
         url: '/api/getavatar',
         headers: {
-          'Authorization': 'Bearer 26f26a10d759475837bfb3cfb9467ec611725b8001f96778904a597c038f07b4'
+          'Authorization': 'Bearer a0158303104b3ddf43b7a20cd26e3a83f6148d603854d238f9aeb412216635b2'
         }
       }).then((response) => {
         document.getElementById("image").setAttribute("src", response.data.fromdb)

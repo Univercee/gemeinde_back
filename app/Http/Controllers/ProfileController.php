@@ -35,8 +35,6 @@ class ProfileController extends Controller
     public function getAvatar(Request $request){
       $key = explode(" ", $request->header('Authorization'))[1];
       $userId = SessionsManager::getUserIdBySessionKey($key);
-      $userAvatar = UsersManager::getUserInfo($userId);
-      $url = Storage::disk('local')->url('app/avatars/'.$userAvatar->avatar.'.jpg');
-      return response()->json(['formdisk' => $url, 'fromdb'=> AvatarsManager::getAvatar($userId)]);
+      return response()->json(['image'=> AvatarsManager::getAvatar($userId)]);
     }
 }

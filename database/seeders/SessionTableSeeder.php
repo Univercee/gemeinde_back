@@ -14,7 +14,7 @@ class SessionTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('users')->insert([
+        DB::table('sessions')->insert([
             [
                 'id' => 1,
                 'user_id' => "1",

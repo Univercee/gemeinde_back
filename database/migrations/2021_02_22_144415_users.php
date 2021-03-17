@@ -20,6 +20,7 @@ class Users extends Migration
             $table->string('telegram_id',255)->nullable()->unique()->index();
             $table->string('first_name',255)->nullable();
             $table->string('last_name',255)->nullable();
+            $table->string('language',255)->default('EN');
             $table->string('username',255)->nullable();
             $table->string('avatar',255)->nullable();
             $table->timestamp('registered_at')->nullable();

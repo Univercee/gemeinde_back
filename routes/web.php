@@ -13,39 +13,48 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return view('portal.index');
-});
-$router->get('/email/verify/{key}', function () use ($router){
-   return view('portal.verifypage');
-});
+//------------------------ PAGES ------------------------
+$router->get('/', function () use ($router) {return view('portal.index');});
+$router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/profile',function(){return view('portal.profile');});
+$router->get('/file',function(){return view('portal.file');});			//to test getter and setter
+
+
+
+//------------------------ MIDDLEWARE ------------------------
 $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->post('/profile','ProfileController@userInfo');
 });
 
-$router->get('/signup', function(){return view('portal.signinup');});
-$router->get('/profile',function(){return view('portal.profile');});
-//to test getter and setter
-$router->get('/file',function(){return view('portal.file');});
 
+
+//------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
-  $router->post('/getavatar/', 'ProfileController@getAvatar');
-  $router->post('/gravatar', 'EmailAuthController@gravatar');
-    //setter
-    $router->post("/file",[
-      'as'=>'file', 'uses'=> 'ProfileController@setAvatar'
-    ]);
-    $router->get('/', function () use ($router) {return view('api.index');});
-    $router->post('/keys', 'ConfigController@getKeys');
+	$router->get('/', function () use ($router) {return view('api.index');});
+	$router->post('/keys', 'ConfigController@getKeys');
+	$router->post('/getavatar/', 'ProfileController@getAvatar');
+	$router->post('/gravatar', 'EmailAuthController@gravatar');
+	//setter
+	$router->post("/file",['as'=>'file', 'uses'=> 'ProfileController@setAvatar']);
+	
 
-    $router->get('/locations/{zipcode}/services',"LocationController@getServicesByZipCode");
-    $router->get('/locations', 'LocationController@getLocationsHaveServices');
+	$router->group(['prefix' => 'locations'], function ($router) {
+		$router->get('/{zipcode}/services',"LocationController@getServicesByZipCode");
+		$router->get('/', 'LocationController@getLocationsHaveServices');
+	});
+	
 
-    $router->group(['prefix' => 'auth'], function ($router) {
-        //email
-        $router->post('/email', 'EmailAuthController@identification');
-        $router->get('/email/verify/{key}', 'EmailAuthController@authentication');
-        //telegram
-        $router->post('/tg/verify', 'TelegramAuthController@authentication');
-    });
+	$router->group(['prefix' => 'auth'], function ($router) {
+		//email
+		$router->post('/email', 'EmailAuthController@identification');
+		$router->get('/email/verify/{key}', 'EmailAuthController@authentication');
+		//telegram
+		$router->post('/tg/verify', 'TelegramAuthController@authentication');
+	});
+
+
+	$router->group(['prefix' => 'profile'], function ($router) {
+		$router->get('/profileHead', 'ProfileController@getProfileHead');
+		$router->post('/profileHead', 'ProfileController@setProfileHead');
+	});
 });

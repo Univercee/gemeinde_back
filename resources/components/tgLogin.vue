@@ -12,6 +12,7 @@
         async onTelegramAuth(user) {
             await axios.post('/auth/tg/verify',{auth_data: user}).then((response) =>{
               sessionStorage.setItem('sessionKey', response.data.sessionkey)
+              console.warn(response.data)
             })
         },
     async getKeys(){

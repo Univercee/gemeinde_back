@@ -6,4 +6,3 @@ Homestead.yaml
 .phpunit.result.cache
 /.vscode
 .log
-/resources/avatars

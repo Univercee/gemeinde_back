@@ -21,6 +21,7 @@ class Users extends Migration
             $table->string('first_name',255)->nullable();
             $table->string('last_name',255)->nullable();
             $table->string('username',255)->nullable();
+            $table->string('avatar',255)->nullable();
             $table->timestamp('registered_at')->nullable();
             $table->string('secretkey', 255)->nullable();
             $table->timestamp('key_until')->nullable();

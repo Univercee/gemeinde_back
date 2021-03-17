@@ -6,7 +6,22 @@ use App\Mail\WelcomeMail;
 use App\Mail\LoginMail;
 use Illuminate\Support\Facades\Mail;
 use App\Managers\SessionsManager;
+use App\Managers\AvatarsManager;
+use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
+
+    public function gravatar(Request $request){
+      $email = $request->input('email');
+      $hash = md5(strtolower(trim($email)));
+      $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404';
+      $headers = @get_headers($uri);
+      if (preg_match("|200|", $headers[0])) {
+        $userId = SessionsManager::getUserIdBySessionKey(explode(" ", $request->header('Authorization'))[1]);
+        AvatarsManager::setAvatar($userId,$uri);
+        return response()->json(['msg'=>'Gravatar is set']);
+      }
+      return response()->json(['msg'=>'No gravatar']);
+    }
 
     // [GENA-7]
     public function identification(Request $request){
@@ -43,11 +58,12 @@ class EmailAuthController extends Controller{
         }
         if(is_null($user->registered_at)){
             $sessionKey = $this->confirmRegistration($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserInfo($user->id)->email]);
         }
         else{
             $sessionKey = $this->confirmLogin($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserInfo($user->id)->email]);
         }
     }
 

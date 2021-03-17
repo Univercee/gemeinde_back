@@ -37,11 +37,13 @@ class TelegramAuthController extends Controller{
         $first_name = $auth_data['first_name'] ?? null;
         $last_name = $auth_data['last_name'] ?? null;
         $username = $auth_data['username'] ?? null;
+        $avatar = $auth_data['photo_url'] ?? null;
         $id = DB::table('users')->insertGetId(
             ['telegram_id' => $auth_data['id'],
             'first_name' => $first_name,
             'last_name' => $last_name,
             'username' => $username,
+            'avatar' => $avatar,
             'auth_type' => 'TG']
         );
         return SessionsManager::generateSessionKey($id);

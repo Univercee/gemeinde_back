@@ -28,7 +28,7 @@ class ProfileController extends Controller
     public function getAvatar(Request $request){
       $key = explode(" ", $request->header('Authorization'))[1];
       $userId = SessionsManager::getUserIdBySessionKey($key);
-      return response()->json(['image'=> AvatarsManager::getAvatar($userId)]);
+      return response()->json(['image' => AvatarsManager::getAvatar($userId)]);
     }
 
     public function setProfileHead(Request $request)
@@ -47,7 +47,7 @@ class ProfileController extends Controller
         app('db')->update("UPDATE users 
                         SET first_name = :firstname, last_name = :lastname, language = :language
                         WHERE id = :user_id",
-                        ['firstname'=>$firstname, 'lastname'=>$lastname, 'language'=>$language, 'user_id'=>$user_id]);
+                        ['firstname' => $firstname, 'lastname' => $lastname, 'language' => $language, 'user_id' => $user_id]);
         return response()->json(['message' => 'Firstname has updated'], 200);
     }
 

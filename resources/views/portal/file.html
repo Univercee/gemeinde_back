@@ -75,6 +75,7 @@
   </header>
   <main>
     <file-upload></file-upload>
+    <file-get></file-get>
 
   </main>
 </div>
@@ -113,6 +114,7 @@
   const va = Vue.createApp({
     components: {
       'file-upload': Vue.defineAsyncComponent(() => loadModule('../../resources/components/images.vue', options)),
+      'file-get': Vue.defineAsyncComponent(() => loadModule('../../resources/components/getAvatar.vue', options)),
     }
   });
   va.directive('visible', function(el, binding) {

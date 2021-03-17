@@ -27,13 +27,13 @@ $router->get('/signup', function(){return view('portal.signinup');});
 $router->get('/profile',function(){return view('portal.profile');});
 //to test getter and setter
 $router->get('/file',function(){return view('portal.file');});
-$router->get('/readfile/{avatar}', 'ProfileController@getter');
 
 $router->group(['prefix' => 'api'], function ($router) {
+  $router->post('/getavatar/', 'ProfileController@getAvatar');
   $router->post('/gravatar', 'EmailAuthController@gravatar');
     //setter
     $router->post("/file",[
-      'as'=>'file', 'uses'=> 'ProfileController@setter'
+      'as'=>'file', 'uses'=> 'ProfileController@setAvatar'
     ]);
     $router->get('/', function () use ($router) {return view('api.index');});
     $router->post('/keys', 'ConfigController@getKeys');

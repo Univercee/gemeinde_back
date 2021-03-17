@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Managers\AvatarsManager;
 use App\Managers\SessionsManager;
+use App\Managers\UsersManager;
 class ProfileController extends Controller
 {
   public function userId($key){
@@ -17,7 +18,7 @@ class ProfileController extends Controller
  public function userInfo(Request $request){
         return response()->json(['Message'=>'Go to profile']);
     }
-    public function setter(Request $request){
+    public function setAvatar(Request $request){
       if ($request->hasFile('file')) {
         $key = explode(" ", $request->header('Authorization'))[1];
         $userId = SessionsManager::getUserIdBySessionKey($key);
@@ -31,10 +32,11 @@ class ProfileController extends Controller
 
     }
 
-    public function getter(Request $request, $avatar){
-      $key = '26f26a10d759475837bfb3cfb9467ec611725b8001f96778904a597c038f07b4';
+    public function getAvatar(Request $request){
+      $key = explode(" ", $request->header('Authorization'))[1];
       $userId = SessionsManager::getUserIdBySessionKey($key);
-      $url = Storage::disk('local')->url('app/avatars/'.$avatar.'.jpg');
+      $userAvatar = UsersManager::getUserInfo($userId);
+      $url = Storage::disk('local')->url('app/avatars/'.$userAvatar->avatar.'.jpg');
       return response()->json(['formdisk' => $url, 'fromdb'=> AvatarsManager::getAvatar($userId)]);
     }
 }

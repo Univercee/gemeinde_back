@@ -59,11 +59,11 @@ class EmailAuthController extends Controller{
         if(is_null($user->registered_at)){
             $sessionKey = $this->confirmRegistration($user->id);
 
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserEmail($user->id)]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserInfo($user->id)->email]);
         }
         else{
             $sessionKey = $this->confirmLogin($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserEmail($user->id)]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserInfo($user->id)->email]);
         }
     }
 

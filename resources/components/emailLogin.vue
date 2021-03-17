@@ -25,7 +25,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
 				<a ref="sessionComponents" href="/profile" role="button" class="btn form-control btn-success btn-sm d-none">Continue</a>
-			<div ref="emailComponents" class="">
+			<div ref="emailComponentButton" class="">
 				<button role="button" class="btn btn-primary btn-sm">Continue</button>
 			</div>
 			<div ref='recaptcha'></div>
@@ -47,6 +47,7 @@
 		},
 		methods: {
 			async submit() {
+
 				document.getElementById("email").classList.remove("is-invalid")
 				this.errors = [] //added to clean array each time btn is pressed to flush old errs
 				var regex = new RegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])');
@@ -55,11 +56,12 @@
 					document.getElementById("email").classList.add("is-invalid")
 					return false; //otherwise execution goes on to axios
 				}
+        this.$refs['emailAlert'].classList.remove("d-none")
         sessionStorage.setItem('email', this.email)
 				await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(token => (
 					axios.post("/auth/email",{email: this.email, token: token}).then((response) =>{
               console.warn(response.data)
-              this.$refs['emailAlert'].classList.remove("d-none")
+
 
             }
           )
@@ -82,15 +84,18 @@
 
           this.verifyMessage = 'You are verified'
           this.$refs['emailComponents'].setAttribute("class","d-none")
+          this.$refs['emailComponentButton'].setAttribute("class","d-none")
           this.$refs['sessionComponents'].classList.remove("d-none")
         }).catch((err) => {
           if(err.response){
             if(err.response.status === 404) {
                 this.verifyMessage = 'Verification key is not found, please try again'
                 this.$refs['emailComponents'].classList.remove("d-none")
+                this.$refs['emailComponentButton'].classList.remove("d-none")
             }else if (err.response.status === 403){
               this.verifyMessage = 'Verification key is expired, please try again'
               this.$refs['emailComponents'].classList.remove("d-none")
+              this.$refs['emailComponentButton'].classList.remove("d-none")
             }
             console.log(err.response)
           }
@@ -122,12 +127,13 @@
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
-			// if (sessionStorage.getItem("sessionKey")){
-      //   window.location.href = "/profile";
-      // }
+			if (sessionStorage.getItem("sessionKey")){
+        window.location.href = "/profile";
+      }
       if (window.location.hash) {
         this.$refs['wait_span'].classList.remove("d-none")
         this.$refs['emailComponents'].setAttribute("class","d-none")
+        this.$refs['emailComponentButton'].setAttribute("class","d-none")
         let secretKey = window.location.hash.split("#")[1];
         if (secretKey) {
           await this.verify(secretKey);

@@ -10,10 +10,6 @@ use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
 
-    public function gravatar(Request $request){
-      
-    }
-
     // [GENA-7]
     public function identification(Request $request){
         $email = $request->input('email');

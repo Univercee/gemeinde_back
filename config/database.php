@@ -51,8 +51,8 @@ return [
             'strict' => true,
             'engine' => null,
             'sslmode' => env('DB_SSLMODE', 'prefer'),
-            'options' => (env('DB_SSLCA') && extension_loaded('pdo_mysql')) ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('DB_SSLCA'),
+            'options' => (env('DB_SSLKEY') && extension_loaded('pdo_mysql')) ? array_filter([
+                PDO::MYSQL_ATTR_SSL_KEY => env('DB_SSLKEY'),
             ]) : []
         ]
     ],

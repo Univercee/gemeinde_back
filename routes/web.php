@@ -32,8 +32,6 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 $router->group(['prefix' => 'api'], function ($router) {
 	$router->get('/', function () use ($router) {return view('api.index');});
 	$router->post('/keys', 'ConfigController@getKeys');
-	$router->post('/getavatar/', 'ProfileController@getAvatar');
-	$router->post('/gravatar', 'EmailAuthController@gravatar');
 	//setter
 	$router->post("/file",['as'=>'file', 'uses'=> 'ProfileController@setAvatar']);
 	
@@ -54,7 +52,13 @@ $router->group(['prefix' => 'api'], function ($router) {
 
 
 	$router->group(['prefix' => 'profile'], function ($router) {
+		//lastname/firstname/language
 		$router->get('/profileHead', 'ProfileController@getProfileHead');
 		$router->post('/profileHead', 'ProfileController@setProfileHead');
+		//avatar
+		$router->get('/avatar', 'ProfileController@getAvatar');
+		$router->post('/avatar', 'ProfileController@setAvatar');
+		$router->post('/deleteAvatar', 'ProfileController@deleteAvatar');
+		
 	});
 });

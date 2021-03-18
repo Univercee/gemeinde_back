@@ -11,16 +11,7 @@ use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
 
     public function gravatar(Request $request){
-      $email = $request->input('email');
-      $hash = md5(strtolower(trim($email)));
-      $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404';
-      $headers = @get_headers($uri);
-      if (preg_match("|200|", $headers[0])) {
-        $userId = SessionsManager::getUserIdBySessionKey(explode(" ", $request->header('Authorization'))[1]);
-        AvatarsManager::setAvatar($userId,$uri);
-        return response()->json(['msg'=>'Gravatar is set']);
-      }
-      return response()->json(['msg'=>'No gravatar']);
+      
     }
 
     // [GENA-7]
@@ -57,7 +48,7 @@ class EmailAuthController extends Controller{
             return response()->json(['error' => 'Key has expired'], 403);
         }
         if(is_null($user->registered_at)){
-            $sessionKey = $this->confirmRegistration($user->id);
+            $sessionKey = $this->confirmRegistration($user->id, $user->email);
 
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey,'useremail' => UsersManager::getUserInfo($user->id)->email]);
         }
@@ -89,13 +80,16 @@ class EmailAuthController extends Controller{
     }
 
     // [GENA-7]
-    private function confirmRegistration($id){
+    private function confirmRegistration($id, $email){
+        $hash = md5(strtolower(trim($email)));
+        $uri = 'http://www.gravatar.com/avatar/' . $hash;
         app('db')->update("UPDATE users
                         SET registered_at = NOW(),
                             users.key_until = null,
                             users.secretkey = null,
-                            users.auth_type = 'E'
-                        WHERE users.id = :id",['id'=>$id]);
+                            users.auth_type = 'E',
+                            users.avatar = :avatar
+                        WHERE users.id = :id",['id'=>$id, 'avatar'=>$uri]);
         return SessionsManager::generateSessionKey($id);
     }
 

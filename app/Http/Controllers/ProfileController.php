@@ -22,7 +22,6 @@ class ProfileController extends Controller
         return response()->json(['auth'=>$request->header('Authorization')]);
     }
       return response()->json(['Error' => 'Image not found'],404);
-
     }
 
     public function getAvatar(Request $request){
@@ -31,13 +30,20 @@ class ProfileController extends Controller
       return response()->json(['image' => AvatarsManager::getAvatar($userId)]);
     }
 
+    public function deleteAvatar(Request $request){
+      $key = explode(" ", $request->header('Authorization'))[1];
+      $userId = SessionsManager::getUserIdBySessionKey($key);
+      Storage::disk('local')->delete('app/avatars/'.$userId.'.jpg');
+      app('db')->update('UPDATE users
+                        SET avatar = NULL
+                        WHERE id = :user_id',
+                        ['user_id' => $userId]);
+    }
+
     public function setProfileHead(Request $request)
     {
-        $session_key = getallheaders()['Authorization'] ?? null;
+        $session_key = explode(" ", $request->header('Authorization'))[1];
         $user_id = SessionsManager::getUserIdBySessionKey($session_key);
-        if(is_null($user_id)){
-            return response()->json(['error' => 'Not allowed'], 401);
-        }
         $firstname = str_replace(" ", "", trim($request->input('firstname')));
         $lastname = str_replace(" ", "", trim($request->input('lastname')));
         $language = str_replace(" ", "", trim($request->input('language')));
@@ -51,13 +57,10 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Firstname has updated'], 200);
     }
 
-    public function getProfileHead()
+    public function getProfileHead(Request $request)
     {
-        $session_key = getallheaders()['Authorization'] ?? null;
+        $session_key = explode(" ", $request->header('Authorization'))[1];
         $user_id = SessionsManager::getUserIdBySessionKey($session_key);
-        if(is_null($user_id)){
-            return response()->json(['error' => 'Not allowed'], 401);
-        } 
         $user_data = app('db')->select("SELECT first_name, last_name, language FROM users
                                         WHERE id = :user_id",
                                         ['user_id' => $user_id]);

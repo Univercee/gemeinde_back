@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form class="container" @submit.prevent="updateProfileHead()" action="POST">
+        <form @submit.prevent="updateProfileHead()" action="POST">
             <div class="form-group">
                 <input type="text" v-model="firstname" ref="firstname">
             </div>
@@ -40,7 +40,7 @@ export default {
                     language:this.language
                 },
                 headers:{
-                    Authorization: sessionStorage.getItem('sessionKey'),
+                    Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey'),
                 }
             }).then(()=>{
                 this.fetchProfileHead()
@@ -55,7 +55,7 @@ export default {
                 method: 'get',
                 url: '/profile/profileHead',
                 headers:{
-                    Authorization: sessionStorage.getItem('sessionKey'),
+                    Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey'),
                 }
             }).then((response)=>{
                 this.firstname = response.data.firstname,

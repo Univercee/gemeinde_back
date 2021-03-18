@@ -79,7 +79,6 @@
       async verify(secretKey){
 			  this.verifyMessage = ''
         await axios.get("/auth/email/verify/"+secretKey).then((response) => {
-          sessionStorage.setItem('email',response.data.useremail)
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
 
           this.verifyMessage = 'You are verified'
@@ -104,21 +103,6 @@
         //await new Promise(resolve => setTimeout(resolve, 2000));
         console.log(this.resp)
       },
-      async gravatar(){
-        await axios({
-          baseURL: 'http://127.0.0.1/', // optional
-          method: 'post',
-          url: '/api/gravatar',
-          data: {email: sessionStorage.getItem('email')},
-          headers: {
-            Authorization: 'Bearer ' + this.session
-          }
-        }).then((response) => {
-          console.warn(response)
-        }).catch((err) =>{
-          console.warn(err)
-        })
-      },
 		},
 		mounted: async function(){
 
@@ -138,7 +122,6 @@
         if (secretKey) {
           await this.verify(secretKey);
           this.session = sessionStorage.getItem("sessionKey")
-          await this.gravatar();
           this.$refs['wait_span'].setAttribute("class", "d-none")
         }
       }

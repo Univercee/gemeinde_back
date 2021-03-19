@@ -57,7 +57,6 @@
 					return false; //otherwise execution goes on to axios
 				}
         this.$refs['emailAlert'].classList.remove("d-none")
-        sessionStorage.setItem('email', this.email)
 				await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then(token => (
 					axios.post("/auth/email",{email: this.email, token: token}).then((response) =>{
               console.warn(response.data)

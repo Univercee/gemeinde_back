@@ -17,7 +17,6 @@
 $router->get('/', function () use ($router) {return view('portal.index');});
 $router->get('/signup', function(){return view('portal.signinup');});
 $router->get('/profile',function(){return view('portal.profile');});
-$router->get('/file',function(){return view('portal.file');});			//to test getter and setter
 
 
 
@@ -32,15 +31,11 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 $router->group(['prefix' => 'api'], function ($router) {
 	$router->get('/', function () use ($router) {return view('api.index');});
 	$router->post('/keys', 'ConfigController@getKeys');
-	//setter
-	$router->post("/file",['as'=>'file', 'uses'=> 'ProfileController@setAvatar']);
-	
 
 	$router->group(['prefix' => 'locations'], function ($router) {
 		$router->get('/{zipcode}/services',"LocationController@getServicesByZipCode");
 		$router->get('/', 'LocationController@getLocationsHaveServices');
-	});
-	
+	});	
 
 	$router->group(['prefix' => 'auth'], function ($router) {
 		//email
@@ -50,15 +45,14 @@ $router->group(['prefix' => 'api'], function ($router) {
 		$router->post('/tg/verify', 'TelegramAuthController@authentication');
 	});
 
-
 	$router->group(['prefix' => 'profile'], function ($router) {
 		//lastname/firstname/language
-		$router->get('/profileHead', 'ProfileController@getProfileHead');
-		$router->post('/profileHead', 'ProfileController@setProfileHead');
+		$router->get('/personalDetails', 'ProfileController@getPersonalDetails');
+		$router->post('/personalDetails', 'ProfileController@setPersonalDetails');
 		//avatar
 		$router->get('/avatar', 'ProfileController@getAvatar');
 		$router->post('/avatar', 'ProfileController@setAvatar');
-		$router->post('/deleteAvatar', 'ProfileController@deleteAvatar');
+		$router->delete('/avatar', 'ProfileController@deleteAvatar');
 		
 	});
 });

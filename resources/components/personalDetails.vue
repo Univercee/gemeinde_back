@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form @submit.prevent="updateProfileHead()" action="POST">
+        <form @submit.prevent="updatePersonalDetails()" action="POST">
             <div class="form-group">
                 <input type="text" v-model="firstname" ref="firstname">
             </div>
@@ -9,8 +9,8 @@
             </div>
             <div class="form-group">
                 <select v-model="language" ref="language">
-                    <option value="EN">English</option>
-                    <option value="DE">Deutsch</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
                 </select>
             </div>
             <input type="submit" class="btn btn-primary">  
@@ -27,36 +27,30 @@ export default {
         }
     },
     methods: {
-        async updateProfileHead(){
+        async updatePersonalDetails(){
             let old_firstname = this.firstname
             let old_lastname = this.lastname
             let old_language = this.language
             await axios({
                 method: 'post',
-                url: '/profile/profileHead',
+                url: '/profile/personalDetails',
                 data:{
                     firstname:this.firstname,
                     lastname:this.lastname,
                     language:this.language
-                },
-                headers:{
-                    Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey'),
                 }
             }).then(()=>{
-                this.fetchProfileHead()
+                this.fetchPersonalDetails()
             }).catch(()=>{
                 this.firstname = old_firstname
                 this.lastname = old_lastname
                 this.language = old_language
             })
         },
-        fetchProfileHead(){
+        fetchPersonalDetails(){
             axios({
                 method: 'get',
-                url: '/profile/profileHead',
-                headers:{
-                    Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey'),
-                }
+                url: '/profile/personalDetails'
             }).then((response)=>{
                 this.firstname = response.data.firstname,
                 this.lastname = response.data.lastname,
@@ -65,7 +59,7 @@ export default {
         }
     },
     async mounted() {
-        this.fetchProfileHead()
+        this.fetchPersonalDetails()
     },
 }
 </script>

@@ -40,24 +40,26 @@ class ProfileController extends Controller
                         ['user_id' => $userId]);
     }
 
-    public function setProfileHead(Request $request)
+    public function setPersonalDetails(Request $request)
     {
         $session_key = explode(" ", $request->header('Authorization'))[1];
         $user_id = SessionsManager::getUserIdBySessionKey($session_key);
-        $firstname = str_replace(" ", "", trim($request->input('firstname')));
-        $lastname = str_replace(" ", "", trim($request->input('lastname')));
-        $language = str_replace(" ", "", trim($request->input('language')));
+        
+        $firstname = trim($request->input('firstname'));
+        $lastname = trim($request->input('lastname'));
+        $language = $request->input('language');
+
         $firstname = ($firstname == "") ? null : $firstname;
         $lastname = ($lastname == "") ? null : $lastname;
-        $language = ($language == 'EN' || $language == 'DE') ? $language : 'EN';
+        $language = ($language == 'en' || $language == 'de') ? $language : 'en';
         app('db')->update("UPDATE users 
                         SET first_name = :firstname, last_name = :lastname, language = :language
                         WHERE id = :user_id",
                         ['firstname' => $firstname, 'lastname' => $lastname, 'language' => $language, 'user_id' => $user_id]);
-        return response()->json(['message' => 'Firstname has updated'], 200);
+        return response()->json(['message' => 'Personal details has updated'], 200);
     }
 
-    public function getProfileHead(Request $request)
+    public function getPersonalDetails(Request $request)
     {
         $session_key = explode(" ", $request->header('Authorization'))[1];
         $user_id = SessionsManager::getUserIdBySessionKey($session_key);

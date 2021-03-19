@@ -12,7 +12,7 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-body">
-                        <form @submit.prevent="setAvatar()" enctype="multipart/form-data" action="POST">
+                        <form @submit.prevent="updateAvatar()" enctype="multipart/form-data" action="POST">
                             <div class="form-group">
                                 <input type="file" ref="avatar" required>
                             </div>
@@ -39,19 +39,16 @@ export default {
         }
     },
     methods: {
-        async getAvatar(){
+        async fetchAvatar(){
             await axios({
                 method: 'get',
                 url: '/profile/avatar',
-                headers:{
-                    Authorization: 'Bearer '+sessionStorage.getItem('sessionKey'),
-                }
             }).then((response)=>{
                 this.avatar = response.data.image
                 this.avatar_src = response.data.image + '?' + new Date().getTime()
             })
         },
-        setAvatar(){
+        updateAvatar(){
            document.getElementById('modal').classList = "modal modal-close-animation"
             let formData = new FormData()
             formData.append('file',this.$refs.avatar.files[0])                   
@@ -60,26 +57,22 @@ export default {
                 url: '/profile/avatar',
                 data:formData,
                 headers:{
-                    Authorization: 'Bearer '+sessionStorage.getItem('sessionKey'),
                     'content-type': 'multipart/form-data'
                 }
             }).then(async (response)=>{
                 this.message = response.data.message
-                await this.getAvatar()
+                await this.fetchAvatar()
             }).catch((err)=>{
                 this.message = err.response.data.error
             })
         },
         deleteAvatar(){               
             axios({
-                method: 'post',
-                url: '/profile/deleteAvatar',
-                headers:{
-                    Authorization: 'Bearer '+sessionStorage.getItem('sessionKey'),
-                }
+                method: 'delete',
+                url: '/profile/avatar'
             }).then(async (response)=>{
                 this.message = response.data.message
-                await this.getAvatar()
+                await this.fetchAvatar()
             }).catch((err)=>{
                 this.message = err.response.data.error
             })
@@ -111,8 +104,8 @@ export default {
         }
     },
     async created() {
-        await this.getAvatar()
         this.initModal()
+        await this.fetchAvatar()
     }
 }
 </script>

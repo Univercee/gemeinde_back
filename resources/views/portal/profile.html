@@ -12,7 +12,7 @@
 
 <body>
 	<div id="vueapp" class="container d-flex">
-      <profile-avatar></profile-avatar>
+      <profile-details></profile-details>
       <profile-head></profile-head>
 	</div> <!-- end of vuejs app -->
 
@@ -47,12 +47,14 @@
   const { loadModule, version } = window["vue3-sfc-loader"];
   /* end of boilerplate for vue3-sfc-loader */
 
+
   axios.defaults.baseURL = '/api';
+  axios.defaults.headers.common.Authorization = 'Bearer '+sessionStorage.getItem('sessionKey')
 
   const va = Vue.createApp({
     components: {
-      'profile-head': Vue.defineAsyncComponent(() => loadModule('../resources/components/profile_head.vue', options)),
-      'profile-avatar': Vue.defineAsyncComponent(() => loadModule('../resources/components/profile_avatar.vue', options))
+      'profile-details': Vue.defineAsyncComponent(() => loadModule('../resources/components/personalDetails.vue', options)),
+      'profile-avatar': Vue.defineAsyncComponent(() => loadModule('../resources/components/avatar.vue', options))
     }
   });
   va.mount('#vueapp');

@@ -12,6 +12,7 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$router->get('/phpinfo', 'ConfigController@phpinfo');
 
 //------------------------ PAGES ------------------------
 $router->get('/', function () use ($router) {return view('portal.index');});

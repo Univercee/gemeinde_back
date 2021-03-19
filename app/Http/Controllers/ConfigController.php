@@ -14,4 +14,8 @@ class ConfigController extends Controller
                 "appRoot" => getenv('APP_ROOT')];
         return response()->json($keys);
     }
+
+    public function phpinfo() {
+        echo phpinfo();
+    }
 }

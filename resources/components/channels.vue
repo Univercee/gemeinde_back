@@ -6,14 +6,29 @@
         <div class="accordion-item">
           <h2 class="accordion-header" v-bind:id="'flush-heading'+index">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#flush-collapse'+index" aria-expanded="false" v-bind:aria-controls="'#flush-collapse'+index">
-              <p style="color: white">{{name}} : {{value}}</p>
+                <div v-if="name == 'email'">
+                  <div v-if="value == null">
+                    <p>{{name}} Not connected </p>
+                  </div>
+                  <div v-else>
+                    <p>Email :{{value}}</p>
+                  </div>
+                </div>
+                <div v-if="name == 'telegram'">
+                  <div v-if="value != null">
+                    <p>Telegram: {{value}}</p>
+                  </div>
+                  <div v-else>
+                    <p>{{name}} Not connected </p>
+                  </div>
+                </div>
+              </div>
             </button>
           </h2>
           <div v-bind:id="'flush-collapse'+index" class="accordion-collapse collapse" v-bind:aria-labelledby="'flush-heading'+index" v-bind:data-bs-parent="'#accordionFlushExample'+index">
             <div class="accordion-body">
             <div v-if="name == 'email'">
           <div v-if="value == null">
-            <p>Email is not connected you can connect it! </p>
 
             <div id="email-channel">
               <form @submit.prevent="submit" method="post" class="needs-validation" novalidate>
@@ -22,7 +37,7 @@
                     <div ref="wait_span" class="align-items-center lds-facebook d-none "><div></div><div></div><div></div></div>
                   </div>
                   <div >
-                    <h1>{{ verifyMessage }}</h1>
+                    <h1>{{ notify }}</h1>
                   </div>
                   <div ref="emailComponents" class="">
                     <label for="email" v-visible="email" class="form-label form-label-sm"><small>E-mail address</small></label>
@@ -145,10 +160,11 @@ export default {
 
         this.verifyMessage = 'You are verified'
         sessionStorage.setItem("secretKey", secretKey)
+
       }).catch((err) => {
         if(err.response){
           if(err.response.status === 404) {
-            this.verifyMessage = "Not found"
+            this.verifyMessage = "Verification key is not found, please try again"
           }else if (err.response.status === 403){
             this.verifyMessage = 'Verification key is expired, please try again'
 
@@ -190,7 +206,9 @@ export default {
       if (secretKey) {
         await this.verify(secretKey);
         this.session = sessionStorage.getItem("sessionKey")
-
+        if (sessionStorage.getItem("secretKey") != window.location.hash.split("#")[1]){
+          this.notify = this.verifyMessage
+        }
       }
     }
     await axios({
@@ -227,9 +245,7 @@ export default {
       new bootstrap.Collapse(myCollapse, {
         show: true
       })
-      if (sessionStorage.getItem("secretKey") != window.location.hash.split("#")[1]){
-        this.notify = this.verifyMessage
-      }
+
     }
   },
   components: {

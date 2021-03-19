@@ -41,6 +41,7 @@
 				verifyMessage: '',
 				session: null,
 				token: null,
+        userEmail: '',
 				googleRecaptchaSiteKey: null,
 				email: null,
 			}
@@ -76,40 +77,13 @@
 					this.googleRecaptchaSiteKey = responce.data.googleRecaptchaSiteKey
 				));
 			},
-      async verify(secretKey){
-			  this.verifyMessage = ''
-        await axios.get("/auth/email/verify/"+secretKey).then((response) => {
-          sessionStorage.setItem('email',response.data.useremail)
-          sessionStorage.setItem('sessionKey', response.data.sessionkey)
 
-          this.verifyMessage = 'You are verified'
-          this.$refs['emailComponents'].setAttribute("class","d-none")
-          this.$refs['emailComponentButton'].setAttribute("class","d-none")
-          this.$refs['sessionComponents'].classList.remove("d-none")
-        }).catch((err) => {
-          if(err.response){
-            if(err.response.status === 404) {
-                this.verifyMessage = 'Verification key is not found, please try again'
-                this.$refs['emailComponents'].classList.remove("d-none")
-                this.$refs['emailComponentButton'].classList.remove("d-none")
-            }else if (err.response.status === 403){
-              this.verifyMessage = 'Verification key is expired, please try again'
-              this.$refs['emailComponents'].classList.remove("d-none")
-              this.$refs['emailComponentButton'].classList.remove("d-none")
-            }
-            console.log(err.response)
-          }
-        });
-
-        //await new Promise(resolve => setTimeout(resolve, 2000));
-        console.log(this.resp)
-      },
       async gravatar(){
         await axios({
           baseURL: 'http://127.0.0.1/', // optional
           method: 'post',
           url: '/api/gravatar',
-          data: {email: sessionStorage.getItem('email')},
+          data: {email: this.userEmail},
           headers: {
             Authorization: 'Bearer ' + this.session
           }
@@ -127,9 +101,9 @@
 			const script = document.createElement('script');
 			script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey
 			document.body.insertBefore(script,document.getElementById('vuescript'));
-			if (sessionStorage.getItem("sessionKey")){
-        window.location.href = "/profile";
-      }
+			// if (sessionStorage.getItem("sessionKey")){
+      //   window.location.href = "/profile";
+      // }
       if (window.location.hash) {
         this.$refs['wait_span'].classList.remove("d-none")
         this.$refs['emailComponents'].setAttribute("class","d-none")

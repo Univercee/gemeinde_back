@@ -15,7 +15,8 @@ class isAuthorized
      */
     public function handle($request, Closure $next)
     {
-        if($request->hasHeader('Authorization')){
+
+      if($request->hasHeader('Authorization')){
             $sessionKey = explode(" ", $request->header('Authorization'))[1];
             $keyExists = app('db')->select("SELECT user_id, session_key FROM sessions WHERE session_key = :skey",['skey'=> $sessionKey]);
             if($keyExists){

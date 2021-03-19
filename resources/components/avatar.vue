@@ -104,8 +104,8 @@ export default {
         }
     },
     async created() {
-        this.initModal()
         await this.fetchAvatar()
+        this.initModal()
     }
 }
 </script>

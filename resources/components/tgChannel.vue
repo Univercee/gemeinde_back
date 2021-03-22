@@ -8,11 +8,14 @@ export default {
       tgBotName: null
     }
   },
+  props: {
+    backendUrl: String
+  },
   methods: {
     async onTelegramAuth(user) {
       await axios({
         method: 'post',
-        url: '/auth/tg/channel',
+        url: this.backendUrl,
         data: {auth_data: user},
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey')

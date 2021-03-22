@@ -74,7 +74,7 @@
             <p>Telegram: {{value}}</p>
           </div>
           <div v-else>
-            <telegram></telegram>
+            <tgChannel backendUrl="/auth/tg/channel"></tgChannel>
           </div>
         </div>
             </div>
@@ -84,27 +84,7 @@
   </div>
 </template>
 <script>
-const options = {
-  moduleCache: {
-    vue: Vue,
-  },
-
-  getFile(url) {
-    return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-  },
-
-  addStyle(styleStr) {
-    const style = document.createElement('style');
-    style.textContent = styleStr;
-    const ref = document.head.getElementsByTagName('style')[0] || null;
-    document.head.insertBefore(style, ref);
-  },
-
-  log(type, ...args) {
-    console.log(type, ...args);
-  }
-}
-const { loadModule, version } = window["vue3-sfc-loader"];
+import tgChannel from './tgLogin.vue'
 export default {
   names: 'location',
   data() {
@@ -219,17 +199,12 @@ export default {
         'Authorization': 'Bearer 3ec1928e9299157509445424d3884160e928d4e1697a0535b745196ba7a23441'
       }
     }).then((response) => {
-
-      console.warn("HERE: ",response.data)
-      this.email = response.data[0].email
-
-      this.telegram = response.data[0].telegram_id
       let telegramName;
       let email;
       if(response.data[0].telegram_id != null){
         telegramName = response.data[0].username
       }
-      if(response.data[0].auth_type != 'TG'){
+      if(response.data[0].email != null){
         email = response.data[0].email
       }
       let channels = {'email': email, 'telegram': telegramName}
@@ -249,7 +224,7 @@ export default {
     }
   },
   components: {
-    'telegram': Vue.defineAsyncComponent(() => loadModule('resources/components/tgChannel.vue', options)),
+    tgChannel
   }
 }
 </script>

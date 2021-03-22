@@ -16,7 +16,6 @@ class TelegramAuthController extends Controller{
 
       $check_hash = $auth_data['hash'];
       unset($auth_data['hash']);
-      return response()->json([$auth_data]);
 
       $hash = $this->getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {

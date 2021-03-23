@@ -54,6 +54,10 @@ $router->group(['prefix' => 'api'], function ($router) {
 		$router->get('/avatar', 'ProfileController@getAvatar');
 		$router->post('/avatar', 'ProfileController@setAvatar');
 		$router->delete('/avatar', 'ProfileController@deleteAvatar');
-		
+		//user locations
+		$router->get('/userLocations', 'ProfileController@getUserLocations');
+		$router->post('/userLocations', 'ProfileController@addUserLocation');
+		$router->patch('/userLocations', 'ProfileController@setUserLocation');
+		$router->delete('/userLocations', 'ProfileController@deleteUserLocation');
 	});
 });

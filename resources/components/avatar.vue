@@ -45,7 +45,11 @@ export default {
                 url: '/profile/avatar',
             }).then((response)=>{
                 this.avatar = response.data.image
-                this.avatar_src = response.data.image + '?' + new Date().getTime()
+                let delimiter = ""
+                if(this.avatar != null){
+                   delimiter = this.avatar.includes('?') ? '&' : '?'
+                }  
+                this.avatar_src = response.data.image + delimiter + new Date().getTime()
             })
         },
         updateAvatar(){

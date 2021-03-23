@@ -30,7 +30,7 @@
           }
           await axios.post('/auth/tg/verify', {auth_data: user}).then((response) => {
             sessionStorage.setItem('sessionKey', response.data.sessionkey)
-            console.warn('data',response.data)
+            window.location.href = "./profile";
           })
         },
     async getKeys(){

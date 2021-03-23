@@ -82,7 +82,7 @@ $app->configure('app');
  ]);
 
  $app->routeMiddleware([
-     'auth' => App\Http\Middleware\isAuthorized::class,
+     'a10n' => App\Http\Middleware\isAuthorized::class,
  ]);
 
 /*

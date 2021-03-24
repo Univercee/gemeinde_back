@@ -21,10 +21,7 @@ class ProfileController extends Controller
   {
     $this->middleware('enforceJson', ['except' => ['setAvatar']]);
     $this->middleware('enforceJson:true', ['only' => ['setAvatar']]);
-  }
-
-  public function userInfo(Request $request){
-    return response()->json(['Message'=>'Go to profile']);
+    $this->middleware('a10n');
   }
 
   public function setAvatar(Request $request){

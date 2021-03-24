@@ -51,6 +51,7 @@
 
   axios.defaults.baseURL = '/api';
   axios.defaults.headers.common.Authorization = 'Bearer '+sessionStorage.getItem('sessionKey')
+  axios.defaults.headers.common['Content-Type'] = 'application/json'
   
   axios.interceptors.response.use(response => {
     return response;

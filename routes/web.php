@@ -41,21 +41,18 @@ $router->group(['prefix' => 'api'], function ($router) {
 		$router->post('/tg/verify', 'TelegramAuthController@authentication');
 	});
 
-  //-- AUTHORIZATION PROTECTED API
-  $router->group(['middleware' => 'a10n'], function($router){
-    $router->group(['prefix' => 'profile'], function ($router) {
-      //lastname/firstname/language
-      $router->get('/personalDetails', 'ProfileController@getPersonalDetails');
-      $router->post('/personalDetails', 'ProfileController@setPersonalDetails');
-      //avatar
-      $router->get('/avatar', 'ProfileController@getAvatar');
-      $router->post('/avatar', 'ProfileController@setAvatar');
-      $router->delete('/avatar', 'ProfileController@deleteAvatar');
-      //user locations
-      $router->get('/userLocations', 'ProfileController@getUserLocations');
-      $router->post('/userLocations', 'ProfileController@addUserLocation');
-      $router->patch('/userLocations', 'ProfileController@setUserLocation');
-      $router->delete('/userLocations', 'ProfileController@deleteUserLocation');
-    });
+  $router->group(['prefix' => 'profile'], function ($router) {
+    //lastname/firstname/language
+    $router->get('/personalDetails', 'ProfileController@getPersonalDetails');
+    $router->post('/personalDetails', 'ProfileController@setPersonalDetails');
+    //avatar
+    $router->get('/avatar', 'ProfileController@getAvatar');
+    $router->post('/avatar', 'ProfileController@setAvatar');
+    $router->delete('/avatar', 'ProfileController@deleteAvatar');
+    //user locations
+    $router->get('/userLocations', 'ProfileController@getUserLocations');
+    $router->post('/userLocations', 'ProfileController@addUserLocation');
+    $router->patch('/userLocations', 'ProfileController@setUserLocation');
+    $router->delete('/userLocations', 'ProfileController@deleteUserLocation');
   });
 });

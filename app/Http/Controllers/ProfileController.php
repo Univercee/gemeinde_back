@@ -74,7 +74,7 @@ class ProfileController extends Controller
       $session_key = explode(" ", $request->header('Authorization'))[1];
       $user_id = SessionsManager::getUserIdBySessionKey($session_key);
   
-      $user_locations = app('db')->select("SELECT * FROM user_locations
+      $user_locations = app('db')->select("SELECT id, location_id, title, street_name, street_number FROM user_locations
                                           WHERE user_id = :user_id",
                                           ['user_id' => $user_id]);
       return response()->json($user_locations, 200);

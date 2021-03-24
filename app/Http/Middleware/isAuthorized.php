@@ -29,4 +29,5 @@ class isAuthorized
         }
         return response()->json(['Error'=>"Unauthorized"], 401);
     }
+    //create isJSON middleware https://github.com/thiagoprz/laravel-enforce-json/blob/main/src/EnforceJson.php with 415 errore code
 }

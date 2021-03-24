@@ -17,7 +17,7 @@ class UserLocations extends Migration
         Schema::create('user_locations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->integer('location_id')->unsigned()->nullable();
+            $table->integer('location_id')->unsigned();
             $table->string('title',255)->nullable();
             $table->string('street_name',255)->nullable();
             $table->string('street_number',255)->nullable();

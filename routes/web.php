@@ -2,6 +2,8 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use GuzzleHttp\Middleware;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes

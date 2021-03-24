@@ -10,6 +10,11 @@ use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
 
+    public function __construct()
+    {
+      $this->middleware('enforceJson');
+    }
+
     // [GENA-7]
     public function identification(Request $request){
         $email = $request->input('email');

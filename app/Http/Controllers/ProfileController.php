@@ -17,7 +17,11 @@ use App\Mail\ChannelMail;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 class ProfileController extends Controller
 {
-
+  public function __construct()
+  {
+    $this->middleware('enforceJson', ['except' => ['setAvatar']]);
+    $this->middleware('enforceJson:true', ['only' => ['setAvatar']]);
+  }
 
   public function userInfo(Request $request){
     return response()->json(['Message'=>'Go to profile']);

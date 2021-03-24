@@ -18,7 +18,7 @@
             </div>
             <form class="d-flex" @submit.prevent="submit">
                 <div class="input-group">
-                    <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname">
+                    <tomSelect v-if="locations" :data="locations" v-on:emitData="getTomSelectData"></tomSelect>
                     <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
                 </div>
             </form>
@@ -30,7 +30,11 @@
 </template>
 
 <script>
+import tomSelect from './tomSelect.vue'
   export default {
+    components:{
+        tomSelect
+    },
     data() {
         return {
             map: {
@@ -44,15 +48,15 @@
                 markers: [],
                 infowindow: null
             },
+            googleMapKey: null,
             locations: null,
             ts: null
         }
     },
-
     mounted: async function() {
         await this.getLocations();
+        await this.getKeys();
         this.initMap();
-        this.initTomSelect();
         window.addEventListener("scroll", _.debounce(this.dropMarkers, 150, { 'leading': true }));
     },
 
@@ -65,41 +69,26 @@
         },
 
         initMap() {
-            this.map.el = new google.maps.Map(
-                this.$refs.mapWrapper,
-                {
-                    center: this.map.center,
-                    zoom: this.map.zoom
-                }
-            );
+            var script = document.createElement('script');
+            script.onload = ()=>{
+                this.map.el = new google.maps.Map(
+                    this.$refs.mapWrapper,
+                    {
+                        center: this.map.center,
+                        zoom: this.map.zoom
+                    }
+                );
+            };
+            script.src = 'https://maps.googleapis.com/maps/api/js?key='+this.googleMapKey+'&language=de';
+            document.getElementById('vueapp').after(script);
+            
         },
 
-        initTomSelect() {
-            this.ts = new TomSelect(this.$refs.tomSelect, {
-                openOnFocus: false,
-                maxItems: 1,
-                valueField: 'id',
-                searchField: ['name','zipcode'],
-                labelField: 'name',
-                sortField: 'name',
-                closeAfterSelect: true,
-                searchConjunction: 'or',
-                options: this.locations,
-                render: {
-                    'no_results':function(data,escape){
-			            return '<div class="no-results">😞 At the moment we are not offering any services in "'+escape(data.input)+'". Please <a href="https://docs.google.com/forms/d/e/1FAIpQLScqylrgpCicOf3k3NNkKDdF7Q3MX7XBdfsFmvZbzuWItZOt1A/viewform?vc=0&c=0&w=1&flr=0&gxids=7628&entry.839337160='+escape(data.input)+'">let us know</a> you are interested to join and we will notify you once we add your location.</div>';
-		            }
-                }
-             });
-
-            this.ts.on('change', id => {
-                this.openInfoWindow(id);
-            });
-
-            this.ts.on('focus', id => {
-                this.ts.clear();
-            });
-        },
+        async getKeys(){
+			await axios.post("/keys").then(response => (
+				this.googleMapKey = response.data.googleMapKey
+			));
+		},
 
         dropMarkers() {
             if(!this.checkMapInViewport() || this.map.markersDropped) {
@@ -173,6 +162,11 @@
 
         submit() {
             this.ts.open();
+        },
+        getTomSelectData(id){
+            if(id){
+                this.openInfoWindow(id);
+            }
         }
     }
 }
@@ -182,26 +176,5 @@
   #mapWrapper {
     height: 400px;
     width: 100%;
-  }
-
-  .ts-input {
-    border: none;
-    padding: none;
-    display: inline-block;
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-    box-sizing: content-box;
-    box-shadow: none;
-    border-radius: none;
-  }
-
-  .ts-input.focus {
-    box-shadow: none;
-  }
-
-  .ts-control.single .ts-input:after {
-    content: none;
   }
 </style>

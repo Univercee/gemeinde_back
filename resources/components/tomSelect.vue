@@ -1,7 +1,5 @@
 <template>
-    <div class="input-group">
-        <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" v-on:change="emitData()">
-    </div>
+    <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" v-on:change="emitData()">
 </template>
 <script>
 export default {
@@ -35,6 +33,9 @@ export default {
 		            }
                 }
             });
+            this.ts.on('focus', () => {
+                this.ts.clear();
+            });
             if(this.$props.id != null){
                 this.ts.setValue(this.$props.id)
             }
@@ -53,8 +54,6 @@ export default {
 </script>
 <style>
   .ts-input {
-      padding: 0;
-      margin: 0;
     border: none;
     padding: none;
     display: inline-block;
@@ -66,7 +65,6 @@ export default {
     box-shadow: none;
     border-radius: none;
   }
-
 
   .ts-input.focus {
     box-shadow: none;

@@ -165,4 +165,58 @@ class ProfileController extends Controller
 
   }
 
+  //[GENA-32]
+  public function getUserLocations(Request $request){
+      $session_key = explode(" ", $request->header('Authorization'))[1];
+      $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+  
+      $user_locations = app('db')->select("SELECT * FROM user_locations
+                                          WHERE user_id = :user_id",
+                                          ['user_id' => $user_id]);
+      return response()->json($user_locations, 200);
+   }
+
+  //[GENA-32]
+  public function setUserLocation(Request $request){
+    $session_key = explode(" ", $request->header('Authorization'))[1];
+    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+
+    $id = $request->input('id');
+    $location_id = $request->input('location_id');
+    $title = trim($request->input('title'));
+    $street_name = trim($request->input('street_name'));
+    $street_number = trim($request->input('street_number'));
+
+    app('db')->update("UPDATE user_locations 
+                      SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
+                      WHERE user_id = :user_id AND id = :id",
+                      ['title' => $title, 
+                      'location_id' => $location_id, 
+                      'street_name' => $street_name, 
+                      'street_number' => $street_number,
+                      'id' => $id, 
+                      'user_id' => $user_id]);
+  }
+
+  //[GENA-32]
+  public function addUserLocation(Request $request){
+    $session_key = explode(" ", $request->header('Authorization'))[1];
+    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+
+    app('db')->insert("INSERT INTO user_locations(user_id, title)
+                      VALUES(?, 'New location')",
+                      [$user_id]);
+  }
+
+  //[GENA-32]
+  public function deleteUserLocation(Request $request){
+    $session_key = explode(" ", $request->header('Authorization'))[1];
+    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+    $id = $request->input('id');
+
+    app('db')->delete("DELETE FROM user_locations
+                      WHERE user_id = :user_id AND id = :id",
+                      ['id' => $id, 
+                      'user_id' => $user_id]);
+  }
 }

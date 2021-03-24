@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="avatar">
-            <img class="delete-img" v-on:click="deleteAvatar()" v-if="avatar != null" src="/storage/app/avatars/delete.png" alt="">
+            <img class="delete-img" v-on:click="deleteAvatar()" v-if="avatar != null" src="resources/assets/images/delete.png" alt="">
             <img class="avatar-img" :src="avatar_src" alt="User avatar">
-            <img class="edit-img modal-open" src="/storage/app/avatars/edit.png" alt="">
+            <img class="edit-img modal-open" src="resources/assets/images/edit.png" alt="">
         </div>
         
         <!-- Modal -->
@@ -45,7 +45,11 @@ export default {
                 url: '/profile/avatar',
             }).then((response)=>{
                 this.avatar = response.data.image
-                this.avatar_src = response.data.image + '?' + new Date().getTime()
+                let delimiter = ""
+                if(this.avatar != null){
+                   delimiter = this.avatar.includes('?') ? '&' : '?'
+                }  
+                this.avatar_src = response.data.image + delimiter + new Date().getTime()
             })
         },
         updateAvatar(){
@@ -129,11 +133,12 @@ export default {
         height: 20%;
         width: 20%;
         opacity: 0.9;   
+        visibility: hidden;
     }
     .delete-img{
         z-index: 10;
         top: 80%;
-        left: 0%;   
+        left: 0%;  
     }
     .edit-img{
         z-index: 10;
@@ -150,6 +155,12 @@ export default {
     .modal-close-animation{
         animation: modal_close ease-in 0.3s;
         animation-iteration-count: 1;
+    }
+    .avatar:hover .edit-img{
+        visibility: visible;
+    }
+    .avatar:hover .delete-img{
+        visibility: visible;
     }
     @keyframes modal_open {
         0% {

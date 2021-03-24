@@ -26,41 +26,40 @@ class ProfileController extends Controller
 
   public function setAvatar(Request $request){
     if ($request->hasFile('file')) {
-      $key = explode(" ", $request->header('Authorization'))[1];
-      $userId = SessionsManager::getUserIdBySessionKey($key);
-      $url = Storage::disk('local')->url('app/avatars/'.$userId.'.jpg');
-      Storage::disk('local')->putFileAs('avatars',request()->file('file'), $userId.'.jpg');
-      AvatarsManager::setAvatar($userId, $url);
-
+      $data = $request->json()->all();
+      $user_id = $data['user_id'];
+      $url = Storage::disk('local')->url('app/avatars/'.$user_id.'.jpg');
+      Storage::disk('local')->putFileAs('avatars',request()->file('file'), $user_id.'.jpg');
+      AvatarsManager::setAvatar($user_id, $url);
       return response()->json(['auth'=>$request->header('Authorization')]);
     }
     return response()->json(['Error' => 'Image not found'],404);
   }
 
   public function getAvatar(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    return response()->json(['image' => AvatarsManager::getAvatar($userId)]);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
+    return response()->json(['image' => AvatarsManager::getAvatar($user_id)]);
   }
 
   public function deleteAvatar(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    Storage::disk('local')->delete('app/avatars/'.$userId.'.jpg');
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
+    Storage::disk('local')->delete('app/avatars/'.$user_id.'.jpg');
     app('db')->update('UPDATE users
                         SET avatar = NULL
                         WHERE id = :user_id',
-      ['user_id' => $userId]);
+      ['user_id' => $user_id]);
   }
 
   public function setPersonalDetails(Request $request)
   {
-    $session_key = explode(" ", $request->header('Authorization'))[1];
-    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
 
-    $firstname = trim($request->input('firstname'));
-    $lastname = trim($request->input('lastname'));
-    $language = $request->input('language');
+    $firstname = trim($data['firstname']);
+    $lastname = trim($data['lastname']);
+    $language = $data['language'];
 
     $firstname = ($firstname == "") ? null : $firstname;
     $lastname = ($lastname == "") ? null : $lastname;
@@ -74,8 +73,8 @@ class ProfileController extends Controller
 
   public function getPersonalDetails(Request $request)
   {
-    $session_key = explode(" ", $request->header('Authorization'))[1];
-    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
     $user_data = app('db')->select("SELECT first_name, last_name, language FROM users
                                         WHERE id = :user_id",
       ['user_id' => $user_id]);
@@ -168,25 +167,25 @@ class ProfileController extends Controller
 
   //[GENA-32]
   public function getUserLocations(Request $request){
-      $session_key = explode(" ", $request->header('Authorization'))[1];
-      $user_id = SessionsManager::getUserIdBySessionKey($session_key);
-  
-      $user_locations = app('db')->select("SELECT id, location_id, title, street_name, street_number FROM user_locations
-                                          WHERE user_id = :user_id",
-                                          ['user_id' => $user_id]);
-      return response()->json($user_locations, 200);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
+
+    $user_locations = app('db')->select("SELECT id, location_id, title, street_name, street_number FROM user_locations
+                                        WHERE user_id = :user_id",
+                                        ['user_id' => $user_id]);
+    return response()->json($user_locations, 200);
    }
 
   //[GENA-32]
   public function setUserLocation(Request $request){
-    $session_key = explode(" ", $request->header('Authorization'))[1];
-    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
 
-    $id = $request->input('id');
-    $location_id = $request->input('location_id');
-    $title = trim($request->input('title'));
-    $street_name = trim($request->input('street_name'));
-    $street_number = trim($request->input('street_number'));
+    $id = $data['id'];
+    $location_id = $data['location_id'];
+    $title = trim($data['title']);
+    $street_name = trim($data['street_name']);
+    $street_number = trim($data['street_number']);
 
     app('db')->update("UPDATE user_locations 
                       SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
@@ -201,8 +200,8 @@ class ProfileController extends Controller
 
   //[GENA-32]
   public function addUserLocation(Request $request){
-    $session_key = explode(" ", $request->header('Authorization'))[1];
-    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
 
     app('db')->insert("INSERT INTO user_locations(user_id, title)
                       VALUES(?, 'New location')",
@@ -211,9 +210,9 @@ class ProfileController extends Controller
 
   //[GENA-32]
   public function deleteUserLocation(Request $request){
-    $session_key = explode(" ", $request->header('Authorization'))[1];
-    $user_id = SessionsManager::getUserIdBySessionKey($session_key);
-    $id = $request->input('id');
+    $data = $request->json()->all();
+    $user_id = $data['user_id'];
+    $id = $data['id'];
 
     app('db')->delete("DELETE FROM user_locations
                       WHERE user_id = :user_id AND id = :id",

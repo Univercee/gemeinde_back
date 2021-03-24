@@ -12,9 +12,12 @@ class TelegramAuthController extends Controller{
     // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
     public function authentication(Request $request) {
       $auth_data = $request['auth_data'];
+
+
       $check_hash = $auth_data['hash'];
       unset($auth_data['hash']);
-        $hash = $this->getAuthHash($auth_data);
+
+      $hash = $this->getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {
             return response()->json(['error' => 'Data is NOT from Telegram'], 400);
         }
@@ -22,6 +25,7 @@ class TelegramAuthController extends Controller{
             return response()->json(['error' => 'Data is outdated'], 400);
         }
         $user = $this->getUserByTelegramId($auth_data['id']);
+
         if(empty($user)){
             $sessionKey = $this->confirmRegistration($auth_data);
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
@@ -49,6 +53,7 @@ class TelegramAuthController extends Controller{
         return SessionsManager::generateSessionKey($id);
     }
 
+
     // [GENA-9]
     private function confirmLogin($telegram_id, $user_id){
         app('db')->update("UPDATE users
@@ -65,6 +70,8 @@ class TelegramAuthController extends Controller{
           $data_check_arr[] = $key . '=' . $value;
         }
         sort($data_check_arr);
+      //return response()->json([$data_check_arr]);
+
         $data_check_string = implode("\n", $data_check_arr);
         $secret_key = hash('sha256', BOT_TOKEN, true);
         $hash = hash_hmac('sha256', $data_check_string, $secret_key);

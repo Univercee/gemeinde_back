@@ -8,12 +8,30 @@
             tgBotName: null
         }
     },
+    props: {
+      backendUrl: String
+    },
     methods: {
         async onTelegramAuth(user) {
-            await axios.post('/auth/tg/verify',{auth_data: user}).then((response) =>{
-              sessionStorage.setItem('sessionKey', response.data.sessionkey)
-              console.warn(response.data)
+         if (this.backendUrl == '/auth/tg/channel'){
+            await axios({
+              method: 'post',
+              url: this.backendUrl,
+              data: {auth_data: user},
+              headers: {
+                Authorization: 'Bearer ' + sessionStorage.getItem('sessionKey')
+              }
+            }).then((response) => {
+              console.warn(response)
+            }).catch((err) => {
+              console.log("error", err)
             })
+            return true
+          }
+          await axios.post('/auth/tg/verify', {auth_data: user}).then((response) => {
+            sessionStorage.setItem('sessionKey', response.data.sessionkey)
+            console.warn('data',response.data)
+          })
         },
     async getKeys(){
       await axios.post("/keys").then(response => (

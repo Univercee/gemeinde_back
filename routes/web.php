@@ -23,12 +23,15 @@ $router->get('/profile',function(){return view('portal.profile');});
 
 //------------------------ MIDDLEWARE ------------------------
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->post('/profile','ProfileController@userInfo');
+  $router->post('/profile','ProfileController@userInfo');
 });
 
 
+$router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/profile',function(){return view('portal.profile');});
+//to test getter and setter
+$router->get('/profiletest',function(){return view('portal.file');});
 
-//------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
 	$router->get('/', function () use ($router) {return view('api.index');});
 	$router->post('/keys', 'ConfigController@getKeys');

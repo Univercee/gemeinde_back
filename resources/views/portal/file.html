@@ -44,7 +44,10 @@
       left: 200px;
       padding: 20px;
     }
-
+    .accordion-button:not(.collapsed) {
+      color: #0c63e4;
+      background-color: #41444e;
+    }
     .divider {
       margin-top: 2em;
       width: 100%;
@@ -69,28 +72,23 @@
   </style>
 </head>
 <body>
-	<div id="vueapp">
-    <header>
-      <logo-link></logo-link>
-    </header>
-    <main>
-    <email-login></email-login><!-- TODO merge with verify -->
-      <div class="divider">
-        <hr/><span>OR</span><hr />
-      </div>
-      <div id="sso">
-        <tg-login backendUrl="/auth/tg/verify"></tg-login>
-      </div>
-    </main>
-	</div>
+<div id="vueapp">
+  <header>
+  </header>
+  <main>
+    <!--    <file-upload></file-upload>-->
+    <!--    <file-get></file-get>-->
+    <channels></channels>
+  </main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script id="vuescript">
-	/* boilerplate for vue3-sfc-loader */
-	const options = {
+  /* boilerplate for vue3-sfc-loader */
+  const options = {
     moduleCache: {
       vue: Vue,
     },
@@ -113,14 +111,13 @@
 
   const { loadModule, version } = window["vue3-sfc-loader"];
   /* end of boilerplate for vue3-sfc-loader */
-
+  sessionStorage.setItem("sessionKey", "3ec1928e9299157509445424d3884160e928d4e1697a0535b745196ba7a23441");
   axios.defaults.baseURL = '/api';
   const va = Vue.createApp({
     components: {
-      'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
-      'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
-      'logo-link': Vue.defineAsyncComponent(() => loadModule('../../resources/components/logo.vue', options)),
-    }
+      'channels': Vue.defineAsyncComponent(() => loadModule('../../resources/components/channels.vue', options)),
+    },
+
   });
   va.directive('visible', function(el, binding) {
     el.style.visibility = !!binding.value ? 'visible' : 'hidden';
@@ -129,3 +126,4 @@
 </script>
 </body>
 </html>
+

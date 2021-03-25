@@ -96,14 +96,14 @@ class ProfileController extends Controller
     $title = trim($request->input('title'));
     $street_name = trim($request->input('street_name'));
     $street_number = trim($request->input('street_number'));
-    app('db')->update("UPDATE user_locations 
+    app('db')->update("UPDATE user_locations
                       SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
                       WHERE user_id = :user_id AND id = :id",
-                      ['title' => $title, 
-                      'location_id' => $location_id, 
-                      'street_name' => $street_name, 
+                      ['title' => $title,
+                      'location_id' => $location_id,
+                      'street_name' => $street_name,
                       'street_number' => $street_number,
-                      'id' => $id, 
+                      'id' => $id,
                       'user_id' => $user_id]);
   }
 
@@ -121,7 +121,7 @@ class ProfileController extends Controller
     $id = $request->input('id');
     app('db')->delete("DELETE FROM user_locations
                       WHERE user_id = :user_id AND id = :id",
-                      ['id' => $id, 
+                      ['id' => $id,
                       'user_id' => $user_id]);
   }
 
@@ -211,6 +211,22 @@ class ProfileController extends Controller
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$userId]);
     return response()->json(['message' => 'User has been registered','useremail' => UsersManager::getUserInfo($user->id)->email]);
+
+  }
+  public function servicesFlow(Request $request, $locationId){
+
+    $user_id = $request->input('user_id');
+
+    $results = app('db') //s.name_en, uls.frequency
+    ->select("SELECT ls.service_id, s.name_en as name, channel, frequency
+FROM location_services AS ls
+JOIN services s ON s.id = ls.service_id
+LEFT JOIN user_location_services uls ON uls.service_id = s.id
+LEFT JOIN user_locations ul ON ul.location_id = ls.location_id
+WHERE ls.location_id = :locId AND ul.user_id = :user_id", ['user_id' => $user_id, 'locId' => $locationId]);
+
+
+    return response()->json(['results'=>$results]);
 
   }
 }

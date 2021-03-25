@@ -139,6 +139,7 @@ export default {
         sessionStorage.setItem('email',response.data.useremail)
 
         this.verifyMessage = 'You are verified'
+        this.getChannels()
         sessionStorage.setItem("secretKey", secretKey)
 
       }).catch((err) => {
@@ -173,8 +174,34 @@ export default {
         this.googleRecaptchaSiteKey = responce.data.googleRecaptchaSiteKey
       ));
     },
-
+    async getChannels(){
+      await axios({
+        baseURL: 'http://127.0.0.1/', // optional
+        method: 'post',
+        url: '/api/channels',
+        headers: {
+          'Authorization': 'Bearer 3179d8aa1b259f2f8066840c5d154e53abe359346cbdd8c2d4301014c5eeb6b9'
+        }
+      }).then((response) => {
+        let telegramName;
+        let email;
+        if(response.data[0].telegram_id != null){
+          telegramName = response.data[0].username
+        }
+        if(response.data[0].email != null){
+          email = response.data[0].email
+        }
+        let channels = {'email': email, 'telegram': telegramName}
+        this.channels.push(channels);
+      }).catch((err) =>{
+        console.log(err)
+      });
+    },
+    aeert(){
+      alert('loded')
+    }
   },
+
   mounted: async function(){
     this.verifyMessage = ''
     await this.getKeys();
@@ -191,27 +218,7 @@ export default {
         }
       }
     }
-    await axios({
-      baseURL: 'http://127.0.0.1/', // optional
-      method: 'post',
-      url: '/api/channels',
-      headers: {
-        'Authorization': 'Bearer 3ec1928e9299157509445424d3884160e928d4e1697a0535b745196ba7a23441'
-      }
-    }).then((response) => {
-      let telegramName;
-      let email;
-      if(response.data[0].telegram_id != null){
-        telegramName = response.data[0].username
-      }
-      if(response.data[0].email != null){
-        email = response.data[0].email
-      }
-      let channels = {'email': email, 'telegram': telegramName}
-      this.channels.push(channels);
-    }).catch((err) =>{
-      console.log(err)
-    });
+    this.getChannels()
 
   },
   updated: function (){

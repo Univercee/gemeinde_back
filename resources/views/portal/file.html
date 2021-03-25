@@ -79,6 +79,7 @@
     <!--    <file-upload></file-upload>-->
     <!--    <file-get></file-get>-->
     <channels></channels>
+    <services></services>
   </main>
 </div>
 
@@ -111,11 +112,12 @@
 
   const { loadModule, version } = window["vue3-sfc-loader"];
   /* end of boilerplate for vue3-sfc-loader */
-  sessionStorage.setItem("sessionKey", "3ec1928e9299157509445424d3884160e928d4e1697a0535b745196ba7a23441");
+  sessionStorage.setItem("sessionKey", "3179d8aa1b259f2f8066840c5d154e53abe359346cbdd8c2d4301014c5eeb6b9");
   axios.defaults.baseURL = '/api';
   const va = Vue.createApp({
     components: {
       'channels': Vue.defineAsyncComponent(() => loadModule('../../resources/components/channels.vue', options)),
+      'services': Vue.defineAsyncComponent(() => loadModule('../../resources/components/locationService.vue', options)),
     },
 
   });

@@ -115,6 +115,8 @@
   /* end of boilerplate for vue3-sfc-loader */
 
   axios.defaults.baseURL = '/api';
+  axios.defaults.headers.common['Content-Type'] = 'application/json'
+  
   const va = Vue.createApp({
     components: {
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),

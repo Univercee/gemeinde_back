@@ -74,7 +74,8 @@
   /* end of boilerplate for vue3-sfc-loader */
 
   axios.defaults.baseURL = '/api';
-
+  axios.defaults.headers.common['Content-Type'] = 'application/json'
+  
   const va = Vue.createApp({
     components: {
       'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),

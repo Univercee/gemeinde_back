@@ -2,6 +2,8 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use GuzzleHttp\Middleware;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -15,25 +17,15 @@
 $router->get('/phpinfo', 'ConfigController@phpinfo');
 
 //------------------------ PAGES ------------------------
-$router->get('/', function () use ($router) {return view('portal.index');});
+$router->get('/', function(){return view('portal.index');});
 $router->get('/signup', function(){return view('portal.signinup');});
 $router->get('/profile',function(){return view('portal.profile');});
 
 
 
-//------------------------ MIDDLEWARE ------------------------
-$router->group(['middleware' => 'auth'], function () use ($router) {
-  $router->post('/profile','ProfileController@userInfo');
-});
-
-
-$router->get('/signup', function(){return view('portal.signinup');});
-$router->get('/profile',function(){return view('portal.profile');});
-//to test getter and setter
-$router->get('/profiletest',function(){return view('portal.file');});
-
+//------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
-	$router->get('/', function () use ($router) {return view('api.index');});
+	$router->get('/', function(){return view('api.index');});
 	$router->post('/keys', 'ConfigController@getKeys');
 
 	$router->group(['prefix' => 'locations'], function ($router) {
@@ -49,18 +41,18 @@ $router->group(['prefix' => 'api'], function ($router) {
 		$router->post('/tg/verify', 'TelegramAuthController@authentication');
 	});
 
-	$router->group(['prefix' => 'profile'], function ($router) {
-		//lastname/firstname/language
-		$router->get('/personalDetails', 'ProfileController@getPersonalDetails');
-		$router->post('/personalDetails', 'ProfileController@setPersonalDetails');
-		//avatar
-		$router->get('/avatar', 'ProfileController@getAvatar');
-		$router->post('/avatar', 'ProfileController@setAvatar');
-		$router->delete('/avatar', 'ProfileController@deleteAvatar');
-		//user locations
-		$router->get('/userLocations', 'ProfileController@getUserLocations');
-		$router->post('/userLocations', 'ProfileController@addUserLocation');
-		$router->patch('/userLocations', 'ProfileController@setUserLocation');
-		$router->delete('/userLocations', 'ProfileController@deleteUserLocation');
-	});
+  $router->group(['prefix' => 'profile'], function ($router) {
+    //lastname/firstname/language
+    $router->get('/personalDetails', 'ProfileController@getPersonalDetails');
+    $router->post('/personalDetails', 'ProfileController@setPersonalDetails');
+    //avatar
+    $router->get('/avatar', 'ProfileController@getAvatar');
+    $router->post('/avatar', 'ProfileController@setAvatar');
+    $router->delete('/avatar', 'ProfileController@deleteAvatar');
+    //user locations
+    $router->get('/userLocations', 'ProfileController@getUserLocations');
+    $router->post('/userLocations', 'ProfileController@addUserLocation');
+    $router->patch('/userLocations', 'ProfileController@setUserLocation');
+    $router->delete('/userLocations', 'ProfileController@deleteUserLocation');
+  });
 });

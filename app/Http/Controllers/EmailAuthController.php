@@ -10,13 +10,19 @@ use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
 
+    public function __construct()
+    {
+      $this->middleware('enforceJson');
+    }
+
     // [GENA-7]
     public function identification(Request $request){
-        $email = $request->input('email');
+        $data = $request->json()->all();
+        $email = $data['email'];
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
             return response()->json(['error' => 'Bad Request'], 400);
         }
-        $score = $this->getRecaptcha($request->input('token'));
+        $score = $this->getRecaptcha($data['token']);
         if($score < 0.5) {
             return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
         }

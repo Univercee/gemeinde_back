@@ -93,8 +93,8 @@ export default {
     async getServices(){
       await axios({
         baseURL: 'http://127.0.0.1/', // optional
-        method: 'post',
-        url: '/api/services',
+        method: 'get',
+        url: '/api/services/location/5',
         headers: {
           'Authorization': 'Bearer 3179d8aa1b259f2f8066840c5d154e53abe359346cbdd8c2d4301014c5eeb6b9'
         }

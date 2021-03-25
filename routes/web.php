@@ -26,7 +26,7 @@ $router->get('/profiletest',function(){return view('portal.file');});
 //------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
 
-  $router->post('/services/', 'ProfileController@servicesFlow');
+  $router->get('/services/location/{locationId}', 'ProfileController@servicesFlow');
 
   $router->post('/getavatar/', 'ProfileController@getAvatar');
   $router->post('/gravatar', 'EmailAuthController@gravatar');

@@ -19,8 +19,8 @@ class ProfileController extends Controller
 {
   public function __construct()
   {
-//    $this->middleware('enforceJson', ['except' => ['setAvatar']]);
-//    $this->middleware('enforceJson:true', ['only' => ['setAvatar']]);
+    $this->middleware('enforceJson', ['except' => ['setAvatar']]);
+    $this->middleware('enforceJson:true', ['only' => ['setAvatar']]);
     $this->middleware('a10n');
   }
 

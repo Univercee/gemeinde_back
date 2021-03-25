@@ -17,13 +17,11 @@ class isAuthorized
     {
 
         
-        if($request->hasHeader('Authorization')){
-            $sessionKey = explode(" ", $request->header('Authorization'))[1];
+        $sessionKey = $request->bearerToken();
+        if($sessionKey){
             $user_id = SessionsManager::getUserIdBySessionKey($sessionKey);
             if($user_id){
-                $request_array = $request->json()->all();
-                $request_array['user_id'] = $user_id;
-                $request->json()->replace($request_array);
+                $request->merge(['user_id' => $user_id]);
                 return $next($request);
             }
         }

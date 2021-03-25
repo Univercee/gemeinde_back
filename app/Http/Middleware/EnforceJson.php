@@ -15,7 +15,11 @@ class EnforceJson
      */
     public function handle(Request $request, \Closure $next, $allowUpload = false)
     {   
-        if ($request->isJson() || $allowUpload || empty($request->all())) {
+        if (empty($request->all())) {
+            $request->headers->set('Content-Type', 'application/json');
+            return $next($request);
+        }
+        else if($request->isJson() || $allowUpload){
             return $next($request);
         }
         return response()->json(('Not a JSON format'), 415);

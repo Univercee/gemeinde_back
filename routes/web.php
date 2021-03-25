@@ -33,6 +33,8 @@ $router->get('/profile',function(){return view('portal.profile');});
 $router->get('/profiletest',function(){return view('portal.file');});
 
 $router->group(['prefix' => 'api'], function ($router) {
+  $router->post('/services/', 'ProfileController@servicesFlow');
+
   $router->post('/getavatar/', 'ProfileController@getAvatar');
   $router->post('/gravatar', 'EmailAuthController@gravatar');
   $router->post('/emailbykey', 'ProfileController@getUserInfo');

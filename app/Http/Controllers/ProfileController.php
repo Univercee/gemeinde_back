@@ -164,5 +164,21 @@ class ProfileController extends Controller
     return response()->json(['message' => 'User has been registered','useremail' => UsersManager::getUserInfo($user->id)->email]);
 
   }
+  public function servicesFlow(Request $request){
+    $key = explode(" ", $request->header('Authorization'))[1];
+    $userId = SessionsManager::getUserIdBySessionKey($key);
 
+
+    $results = app('db') //s.name_en, uls.frequency
+    ->select("SELECT ls.service_id, s.name_en as name, channel, frequency
+FROM location_services AS ls
+JOIN services s ON s.id = ls.service_id
+LEFT JOIN user_location_services uls ON uls.service_id = s.id
+LEFT JOIN user_locations ul ON ul.location_id = ls.location_id
+WHERE ls.location_id = '5' AND ul.user_id = :user_id", ['user_id' => '1']);
+
+
+    return response()->json(['results'=>$results]);
+
+  }
 }

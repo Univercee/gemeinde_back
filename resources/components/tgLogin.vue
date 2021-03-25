@@ -23,6 +23,8 @@
               }
             }).then((response) => {
               console.warn(response)
+              //getChannel.methods.getChannels()
+              window.location.reload()
             }).catch((err) => {
               console.log("error", err)
             })
@@ -54,6 +56,7 @@
     mounted: async function(){
         await this.getKeys()
         this.tgInit()
-    }
+    },
+
   }
 </script>

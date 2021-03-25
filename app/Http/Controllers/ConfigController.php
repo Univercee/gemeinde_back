@@ -9,7 +9,7 @@ class ConfigController extends Controller
 {
     public function __construct()
     {
-      $this->middleware('enforceJson', ['except' => ['phpinfo']]);
+      $this->middleware('enforceJson');
     }
     
     public function getKeys(){
@@ -18,9 +18,5 @@ class ConfigController extends Controller
                 "tgBotName" => getenv('TG_BOT_NAME'),
                 "appRoot" => getenv('APP_ROOT')];
         return response()->json($keys);
-    }
-
-    public function phpinfo() {
-        echo phpinfo();
     }
 }

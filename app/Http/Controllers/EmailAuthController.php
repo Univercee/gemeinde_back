@@ -17,12 +17,11 @@ class EmailAuthController extends Controller{
 
     // [GENA-7]
     public function identification(Request $request){
-        $data = $request->json()->all();
-        $email = $data['email'];
+        $email = $request->input('email');
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
             return response()->json(['error' => 'Bad Request'], 400);
         }
-        $score = $this->getRecaptcha($data['token']);
+        $score = $this->getRecaptcha($request->input('token'));
         if($score < 0.5) {
             return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
         }

@@ -76,13 +76,14 @@ $app->configure('app');
 */
 
  $app->middleware([
-     App\Http\Middleware\CorsMiddleware::class
+    App\Http\Middleware\CorsMiddleware::class
 
 //     App\Http\Middleware\ExampleMiddleware::class
  ]);
 
  $app->routeMiddleware([
-     'auth' => App\Http\Middleware\isAuthorized::class,
+    'a10n' => App\Http\Middleware\isAuthorized::class,
+    'enforceJson' => App\Http\Middleware\EnforceJson::class
  ]);
 
 /*

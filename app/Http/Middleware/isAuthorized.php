@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-
+use App\Managers\SessionsManager;
 class isAuthorized
 {
     /**
@@ -16,14 +16,15 @@ class isAuthorized
     public function handle($request, Closure $next)
     {
 
-      if($request->hasHeader('Authorization')){
-            $sessionKey = explode(" ", $request->header('Authorization'))[1];
-            $keyExists = app('db')->select("SELECT user_id, session_key FROM sessions WHERE session_key = :skey",['skey'=> $sessionKey]);
-            if($keyExists){
-               return $next($request);
+        
+        $sessionKey = $request->bearerToken();
+        if($sessionKey){
+            $user_id = SessionsManager::getUserIdBySessionKey($sessionKey);
+            if($user_id){
+                $request->merge(['user_id' => $user_id]);
+                return $next($request);
             }
         }
-
-        return response()->json(['Error'=>$request->header('Authorization')]);
+        return response()->json(['Error'=>"Unauthorized"], 401);
     }
 }

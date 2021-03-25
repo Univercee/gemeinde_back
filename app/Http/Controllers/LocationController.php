@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
+    public function __construct()
+    {
+      $this->middleware('enforceJson');
+    }
+
     // [GENA-5]
     public function getServicesByZipCode($zipcode){
 

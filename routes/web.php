@@ -2,6 +2,8 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use GuzzleHttp\Middleware;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -12,27 +14,18 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/phpinfo', 'ConfigController@phpinfo');
 
 //------------------------ PAGES ------------------------
-$router->get('/', function () use ($router) {return view('portal.index');});
+$router->get('/', function(){return view('portal.index');});
 $router->get('/signup', function(){return view('portal.signinup');});
 $router->get('/profile',function(){return view('portal.profile');});
-
-
-
-//------------------------ MIDDLEWARE ------------------------
-$router->group(['middleware' => 'auth'], function () use ($router) {
-  $router->post('/profile','ProfileController@userInfo');
-});
-
-
-$router->get('/signup', function(){return view('portal.signinup');});
-$router->get('/profile',function(){return view('portal.profile');});
-//to test getter and setter
 $router->get('/profiletest',function(){return view('portal.file');});
 
+
+
+//------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
+
   $router->post('/services/', 'ProfileController@servicesFlow');
 
   $router->post('/getavatar/', 'ProfileController@getAvatar');
@@ -65,22 +58,12 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/emailchannel', 'ProfileController@identification');
   });
 
-  $router->get('/', function () use ($router) {
-    return view('api.index');
-  });
+
   $router->post('/keys', 'ConfigController@getKeys');
 
   $router->group(['prefix' => 'locations'], function ($router) {
     $router->get('/{zipcode}/services', "LocationController@getServicesByZipCode");
     $router->get('/', 'LocationController@getLocationsHaveServices');
-  });
-
-  $router->group(['prefix' => 'auth'], function ($router) {
-    //email
-    $router->post('/email', 'EmailAuthController@identification');
-    $router->get('/email/verify/{key}', 'EmailAuthController@authentication');
-    //telegram
-    $router->post('/tg/verify', 'TelegramAuthController@authentication');
   });
 
   $router->group(['prefix' => 'profile'], function ($router) {
@@ -91,6 +74,10 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/avatar', 'ProfileController@getAvatar');
     $router->post('/avatar', 'ProfileController@setAvatar');
     $router->delete('/avatar', 'ProfileController@deleteAvatar');
-
+    //user locations
+    $router->get('/userLocations', 'ProfileController@getUserLocations');
+    $router->post('/userLocations', 'ProfileController@addUserLocation');
+    $router->patch('/userLocations', 'ProfileController@setUserLocation');
+    $router->delete('/userLocations', 'ProfileController@deleteUserLocation');
   });
 });

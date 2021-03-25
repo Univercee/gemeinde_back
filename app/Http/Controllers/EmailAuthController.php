@@ -10,6 +10,11 @@ use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 class EmailAuthController extends Controller{
 
+    public function __construct()
+    {
+      $this->middleware('enforceJson');
+    }
+
     // [GENA-7]
     public function identification(Request $request){
         $email = $request->input('email');
@@ -45,11 +50,11 @@ class EmailAuthController extends Controller{
         }
         if(is_null($user->registered_at)){
             $sessionKey = $this->confirmRegistration($user->id, $user->email);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
         else{
             $sessionKey = $this->confirmLogin($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
     }
 
@@ -82,6 +87,9 @@ class EmailAuthController extends Controller{
         $headers = @get_headers($uri);
         if (preg_match("|200|", $headers[0])) {
             $avatar = $uri;
+        }
+        else{
+            $avatar = AvatarsManager::getAvataaars();
         }
         app('db')->update("UPDATE users
                         SET registered_at = NOW(),

@@ -8,16 +8,21 @@ define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 
 class TelegramAuthController extends Controller{
 
+    public function __construct()
+    {
+      $this->middleware('enforceJson');
+    }
+
     // [GENA-9]
     // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
     public function authentication(Request $request) {
-      $auth_data = $request['auth_data'];
+        $auth_data = $request->input('auth_data');
 
 
-      $check_hash = $auth_data['hash'];
-      unset($auth_data['hash']);
+        $check_hash = $auth_data['hash'];
+        unset($auth_data['hash']);
 
-      $hash = $this->getAuthHash($auth_data);
+        $hash = $this->getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {
             return response()->json(['error' => 'Data is NOT from Telegram'], 400);
         }

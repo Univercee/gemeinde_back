@@ -1,50 +1,50 @@
 <template>
-    <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" v-on:change="emitData()">
+    <div class="input-group">
+        <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" @change="returnSelected()" />
+        <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
+    </div>
 </template>
+
 <script>
 export default {
     data() {
         return {
-            ts:null,
-            created:false
+            ts: null
         }
     },
-    props:{
-        data:null,
-        id:null,
-        index:null
+    props: {
+        locations: Array
     },
     methods: {
         initTomSelect() {
             this.ts = new TomSelect(this.$refs.tomSelect, {
-                dropdownClass: 'form-control',
                 openOnFocus: false,
                 maxItems: 1,
+                maxOptions: 20,
                 valueField: 'id',
-                searchField: ['name','zipcode'],
-                labelField: 'name',
-                sortField: 'name',
+                searchField: ['display_name'],
+                labelField: 'display_name',
+                sortField: 'display_name',
                 closeAfterSelect: true,
-                searchConjunction: 'or',
-                options: this.$props.data,
+                searchConjunction: 'and',
+                options: this.locations,
                 render: {
-                    'no_results':function(data,escape){
-			            return '<div class="no-results">😞 At the moment we are not offering any services in "'+escape(data.input)+'". Please <a href="https://docs.google.com/forms/d/e/1FAIpQLScqylrgpCicOf3k3NNkKDdF7Q3MX7XBdfsFmvZbzuWItZOt1A/viewform?vc=0&c=0&w=1&flr=0&gxids=7628&entry.839337160='+escape(data.input)+'">let us know</a> you are interested to join and we will notify you once we add your location.</div>';
+                    'no_results': function(data,escape) {
+			            return '<div class="no-results">Unknown location "'+escape(data.input)+'".</div>';
 		            }
                 }
             });
             this.ts.on('focus', () => {
                 this.ts.clear();
             });
-            if(this.$props.id != null){
-                this.ts.setValue(this.$props.id)
-            }
-            this.created = true
         },
-        emitData(){
-            if(this.created){
-                this.$emit('emitData', this.ts.getValue(), this.$props.index)
-            }
+
+        showDropdownList() {
+            this.ts.open();
+        },
+
+        returnSelected() {
+            this.$emit('tsChanged', this.ts.getValue())
         }
     },
     mounted() {

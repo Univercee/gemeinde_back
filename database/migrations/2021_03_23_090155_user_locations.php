@@ -20,16 +20,16 @@ class UserLocations extends Migration
 
         $table->foreign('user_id')
           ->references('id')
-          ->on('users');
+          ->on('users')->onDelete('cascade');
 
         $table->foreign('location_id')
           ->references('id')
-          ->on('locations');
+          ->on('locations')->onDelete('cascade');
 
-        $table->string('title')->nullable();
+        $table->string('title',255)->nullable();
 
-        $table->string('street_name')->nullable();
-        $table->string('street_number')->nullable();
+        $table->string('street_name',255)->nullable();
+        $table->string('street_number',255)->nullable();
       });
     }
 

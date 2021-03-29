@@ -45,16 +45,12 @@ return [
             'auth_mode' => null,
         ],
 
-        'ses' => [
-            'transport' => 'ses',
-        ],
-
-        'mailgun' => [
-            'transport' => 'mailgun',
-        ],
-
-        'postmark' => [
-            'transport' => 'postmark',
+        'mailjet' => [
+            'transport' => 'mailjet',
+            'key' => env('MAILJET_APIKEY'),
+            'secret' => env('MAILJET_APISECRET'),
+            'call'    => true, // can be set to false to mock requests
+            'options' => ['version' => 'v3.1'], // additional Mailjet options, see https://github.com/mailjet/mailjet-apiv3-php#options
         ],
 
         'sendmail' => [

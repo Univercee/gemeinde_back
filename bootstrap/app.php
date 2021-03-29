@@ -23,12 +23,11 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
- $app->withFacades();
+$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
- $app->withEloquent();
-
-
-
+$app->withFacades();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -77,8 +76,6 @@ $app->configure('app');
 
  $app->middleware([
     App\Http\Middleware\CorsMiddleware::class
-
-//     App\Http\Middleware\ExampleMiddleware::class
  ]);
 
  $app->routeMiddleware([
@@ -97,15 +94,19 @@ $app->configure('app');
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
+$app->register(Mailjet\LaravelMailjet\MailjetServiceProvider::class);
+$app->register(Mailjet\LaravelMailjet\MailjetMailServiceProvider::class);
 
 $app->configure('mail');
-$app->configure("filesystems");
+$app->configure('database');
+$app->configure('services');
+$app->configure('filesystems');
 
 $app->alias('mail.manager', Illuminate\Mail\MailManager::class);
 $app->alias('mail.manager', Illuminate\Contracts\Mail\Factory::class);
@@ -113,6 +114,8 @@ $app->alias("Storage",Illuminate\Support\Facades\Storage::class);
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
+$app->alias('Mailjet', Mailjet\LaravelMailjet\Facades\Mailjet::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

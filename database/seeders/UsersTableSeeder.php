@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 use DB;
+
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -13,51 +15,35 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $t = Carbon::now();
         DB::table('users')->insert([
             [
                 'id' => 1,
-                'email' => "lukas.andersson@switzerland.com",
+                'email' => "alert+lukas@gemeindeonline.ch",
                 'first_name' => "Lukas",
                 'last_name' => "Andersson",
-                'username' => "lukas",
-                'registered_at' => null,
-                'secretkey' => null,
-                'key_until' => null,
-                'auth_type' => null
+                'registered_at' => $t
             ],
             [
                 'id' => 2,
-                'email' => "josy.lindberg@switzerland.com",
+                'email' => "alert+josy@gemeindeonline.ch",
                 'first_name' => "Josy",
                 'last_name' => "Lindberg",
-                'username' => "josy",
-                'registered_at' => null,
-                'secretkey' => null,
-                'key_until' => null,
-                'auth_type' => null
+                'registered_at' => $t
             ],
             [
                 'id' => 3,
-                'email' => "ernst.lindberg@switzerland.com",
+                'email' => "alert+ernst@gemeindeonline.ch",
                 'first_name' => "Ernst",
                 'last_name' => "Lindberg",
-                'username' => "ernst",
-                'registered_at' => null,
-                'secretkey' => null,
-                'key_until' => null,
-                'auth_type' => null
+                'registered_at' => $t
             ],
             [
                 'id' => 4,
-                'email' => "meyer.holm@switzerland.com",
-                'first_name' => "Meyer",
-                'last_name' => "Holm",
-                'username' => "meyer",
-                'registered_at' => null,
-                'secretkey' => null,
-                'key_until' => null,
-                'auth_type' => null
+                'email' => "alert+stefan@gemeindeonline.ch",
+                'first_name' => "Stefan",
+                'last_name' => "Meyer",
+                'registered_at' => $t
             ]
         ]);
     }

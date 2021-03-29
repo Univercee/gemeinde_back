@@ -17,11 +17,9 @@
                 <div class="mt-1 float-end"><!-- <a class="link-light" href="#">finde mich</a> --></div>
             </div>
             <form class="d-flex" @submit.prevent="submit">
-                <div class="input-group">
-                    <tomSelect v-if="locations" :data="locations" v-on:emitData="getTomSelectData"></tomSelect>
-                    <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
-                </div>
+                <tomSelect ref="ts" v-if="locationsAll" :locations="locationsAll" @tsChanged="showServicesAtLocation"></tomSelect>
             </form>
+            <div v-if="noService.msg" class="mt-2">😞 At the moment we are not offering any services in <em>{{this.noService.location.display_name}}</em>. Please <a :href="this.noService.formUrl+this.noService.location.display_name">let us know</a> you are interested and we will notify you once we extend our service to your location.</div>
         </div>
     </div>
 
@@ -30,9 +28,10 @@
 </template>
 
 <script>
-import tomSelect from './tomSelect.vue'
-  export default {
-    components:{
+import tomSelect from './tomSelect.vue';
+
+export default {
+    components: {
         tomSelect
     },
     data() {
@@ -46,11 +45,16 @@ import tomSelect from './tomSelect.vue'
                 zoom: 7.5,
                 markersDropped: false,
                 markers: [],
-                infowindow: null
+                infowindow: null,
+                key: null
             },
-            googleMapKey: null,
-            locations: null,
-            ts: null
+            locationsAll: null,
+            locationsMap: null,
+            noService: {
+                location: null,
+                msg: false,
+                formUrl: null
+            }
         }
     },
     mounted: async function() {
@@ -65,7 +69,10 @@ import tomSelect from './tomSelect.vue'
         async getLocations() {
             await axios
                 .get('/locations')
-                .then(response => (this.locations = response.data.locations));
+                .then(response => (this.locationsMap = response.data));
+            await axios
+                .get('/locations/all')
+                .then(response => (this.locationsAll = response.data));
         },
 
         initMap() {
@@ -79,28 +86,28 @@ import tomSelect from './tomSelect.vue'
                     }
                 );
             };
-            script.src = 'https://maps.googleapis.com/maps/api/js?key='+this.googleMapKey+'&language=de';
+            script.src = 'https://maps.googleapis.com/maps/api/js?key='+this.map.key+'&language=de';
             document.getElementById('vueapp').after(script);
-            
         },
 
         async getKeys(){
-			await axios.post("/keys").then(response => (
-				this.googleMapKey = response.data.googleMapKey
-			));
-		},
+            await axios.get("/keys").then(response => {
+                this.map.key = response.data.googleMapKey;
+                this.noService.formUrl = response.data.locationRequestForm;
+            });
+        },
 
         dropMarkers() {
             if(!this.checkMapInViewport() || this.map.markersDropped) {
                 return;
             }
             let m = null;
-            for(let i in this.locations) {
-                let zip = this.locations[i].zipcode;
-                let id = this.locations[i].id;
+            for(let i in this.locationsMap) {
+                let zip = this.locationsMap[i].zipcode;
+                let id = this.locationsMap[i].id;
                 setTimeout(() => {
                     m = new google.maps.Marker({
-                        position: new google.maps.LatLng(this.locations[i].lat,this.locations[i].lng),
+                        position: new google.maps.LatLng(this.locationsMap[i].lat,this.locationsMap[i].lng),
                         map: this.map.el,
                         zipcode: zip,
                         animation: google.maps.Animation.DROP,
@@ -108,20 +115,15 @@ import tomSelect from './tomSelect.vue'
                     });
                     this.map.markers[id] = m;
                     m.addListener("click", () => {
-                        this.openInfoWindow(id);
+                        this.openInfoWindow(this.map.markers[id]);
                     });
                 }, i*250);
             }
             this.map.markersDropped = true;
         },
 
-        async openInfoWindow(id) {
-            if(this.map.infowindow) {
-                this.map.infowindow.close();
-                this.map.infowindow = null;
-            }
-
-            let marker = this.map.markers[id];
+        async openInfoWindow(marker) {
+            this.closeInfoWindow();
             let content = await this.getInfoWindowContent(marker.zipcode);
             const iw = new google.maps.InfoWindow({
                 content: content
@@ -152,6 +154,13 @@ import tomSelect from './tomSelect.vue'
             }
         },
 
+        closeInfoWindow() {
+            if(this.map.infowindow) {
+                this.map.infowindow.close();
+                this.map.infowindow = null;
+            }
+        },
+
         checkMapInViewport() {
             let box = this.$refs.mapWrapper.getBoundingClientRect();
             return (
@@ -161,11 +170,19 @@ import tomSelect from './tomSelect.vue'
         },
 
         submit() {
-            this.ts.open();
+            this.$refs.ts.showDropdownList();
         },
-        getTomSelectData(id){
-            if(id){
-                this.openInfoWindow(id);
+
+        showServicesAtLocation(id) {
+            this.noService.msg = false;
+            this.noService.location = null;
+            this.closeInfoWindow();
+            let marker = this.map.markers[id];
+            if (marker) {
+                this.openInfoWindow(marker);
+            } else if(id) {
+                this.noService.location = _.find(this.locationsAll, {id: parseInt(id)});
+                this.noService.msg = true;
             }
         }
     }

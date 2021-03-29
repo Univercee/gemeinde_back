@@ -1,16 +1,15 @@
 <?php
-
 namespace App\Managers;
 
-
-use Illuminate\Support\Facades\Http;
-
-class UsersManager{
-    public static function getUserInfo($user_id){
-        $userEmail = app('db')->select("SELECT * FROM users WHERE id = :id",['id'=>$user_id]);
-        return $userEmail[0];
+class UsersManager
+{
+    public static function get($id) {
+        $user = app('db')->select("SELECT * FROM users WHERE id = :id", ['id' => $id]);
+        return empty($user) ? null : $user[0];
     }
-    public static function getAuthHash($auth_data){
+
+    //TODO: Move to TelegramAuthController
+    public static function getAuthHash($auth_data) {
       $data_check_arr = [];
       foreach ($auth_data as $key => $value) {
         $data_check_arr[] = $key . '=' . $value;
@@ -21,24 +20,35 @@ class UsersManager{
       $hash = hash_hmac('sha256', $data_check_string, $secret_key);
       return $hash;
     }
-    public static function getRecaptcha($token){
-      $response = Http::asForm()
-        ->post('https://www.google.com/recaptcha/api/siteverify', [
-          'secret' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
-          'response' => $token,
-        ])->json();
-      return (float)json_encode(floatval($response['score']));
+
+    // [GENA-7]
+    public static function getByKey($key) {
+      $user = app('db')->select("SELECT * FROM users WHERE verification_key = :k", ['k' => $key]);
+      return empty($user) ? null : $user[0];
     }
-  public static function getUserByKey($key){
-    $user = app('db')->select("SELECT * FROM users
-                                WHERE secretkey = :k",['k'=>$key]);
-    return empty($user) ? $user : $user[0];
-  }
-  public static function addUser($email, $userId){
-    $secretKey = uniqid();
-    app('db')->UPDATE("UPDATE users
-                            SET email = :email, secretkey = '$secretKey', key_until = NOW() + INTERVAL 24 HOUR
-                            WHERE id = $userId", ['email' => $email]);
-    return ['key'=>$secretKey];
-  }
+
+    // [GENA-7]
+    public static function getByEmail($email) {
+      $user = app('db')->select("SELECT * FROM users WHERE email = :email", ['email' => $email]);
+      return empty($user) ? null : $user[0];
+    }
+
+    // [GENA-7]
+    public static function add($email) {
+      $key = bin2hex(random_bytes(32));
+      app('db')->insert("INSERT INTO users (email, verification_key, verification_key_expires_at)
+                        VALUES(?, ?, NOW() + INTERVAL 1 DAY)",
+                        [$email, $key]);
+      return $key;
+    }
+
+    // [GENA-7]
+    public static function setVerificationKey($email) {
+      $key = uniqid();
+      app('db')->update("UPDATE users
+                    SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 5 MINUTE
+                    WHERE email = :email",
+                    ['email' => $email, 'k' => $key]);
+      return $key;
+    }
 }

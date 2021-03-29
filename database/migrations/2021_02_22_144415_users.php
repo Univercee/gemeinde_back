@@ -18,15 +18,14 @@ class Users extends Migration
             $table->increments('id');
             $table->string('email',255)->nullable()->unique()->index();
             $table->string('telegram_id',255)->nullable()->unique()->index();
+            $table->string('telegram_username',255)->nullable();
             $table->string('first_name',255)->nullable();
             $table->string('last_name',255)->nullable();
             $table->string('language',255)->default('en');
-            $table->string('username',255)->nullable();
             $table->string('avatar',255)->nullable();
             $table->timestamp('registered_at')->nullable();
-            $table->string('secretkey', 255)->nullable();
-            $table->timestamp('key_until')->nullable();
-            $table->string('auth_type',2)->nullable();
+            $table->string('verification_key',255)->nullable();
+            $table->timestamp('verification_key_expires_at')->nullable();
         });
     }
 

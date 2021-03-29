@@ -91,7 +91,7 @@ export default {
         },
 
         async getKeys(){
-            await axios.post("/keys").then(response => {
+            await axios.get("/keys").then(response => {
                 this.map.key = response.data.googleMapKey;
                 this.noService.formUrl = response.data.locationRequestForm;
             });

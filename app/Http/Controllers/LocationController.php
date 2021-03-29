@@ -13,7 +13,7 @@ class LocationController extends Controller
     {
         if(!preg_match("/^[1-9]\d{3}$/", $zipcode)) // https://rgxdb.com/r/3GYNWXVR
         {
-            return response()->json(['error' => 'Bad Request'], 400);
+            abort(response()->json(['error' => 'Bad Request'], 400));
         }
 
         $results = app('db')
@@ -24,7 +24,7 @@ class LocationController extends Controller
                         LEFT JOIN services s ON s.id = ls.service_id
                         WHERE l.zipcode = :zipcode", ['zipcode' => $zipcode]);
         if(empty($results)){
-            return response()->json(['error' => 'Not found'], 404);
+          abort(response()->json(['error' => 'Not found'], 404));
         }
         $l = $results[0];
         $location_services['location'] = ['id' => $l->location_id, 'zipcode' => $l->zipcode,

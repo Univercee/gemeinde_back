@@ -1,6 +1,8 @@
 <?php
 namespace App\Managers;
 
+use Illuminate\Support\Facades\DB;
+
 class UsersManager
 {
     public static function get($id) {
@@ -8,18 +10,7 @@ class UsersManager
         return empty($user) ? null : $user[0];
     }
 
-    //TODO: Move to TelegramAuthController
-    public static function getAuthHash($auth_data) {
-      $data_check_arr = [];
-      foreach ($auth_data as $key => $value) {
-        $data_check_arr[] = $key . '=' . $value;
-      }
-      sort($data_check_arr);
-      $data_check_string = implode("\n", $data_check_arr);
-      $secret_key = hash('sha256', BOT_TOKEN, true);
-      $hash = hash_hmac('sha256', $data_check_string, $secret_key);
-      return $hash;
-    }
+
 
     // [GENA-7]
     public static function getByKey($key) {
@@ -51,4 +42,107 @@ class UsersManager
                     ['email' => $email, 'k' => $key]);
       return $key;
     }
+
+  public static function setVerificationRegistrationKey($email) {
+    $key = uniqid();
+    app('db')->update("UPDATE users
+                    SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 1 DAY
+                    WHERE email = :email",
+      ['email' => $email, 'k' => $key]);
+    return $key;
+  }
+
+
+  // [GENA-9]
+  public static function confirmRegistration($auth_data){
+    $first_name = $auth_data['first_name'] ?? null;
+    $last_name = $auth_data['last_name'] ?? null;
+    $username = $auth_data['username'] ?? null;
+    $avatar = $auth_data['photo_url'] ?? null;
+    $id = DB::table('users')->insertGetId(
+      ['telegram_id' => $auth_data['id'],
+        'first_name' => $first_name,
+        'last_name' => $last_name,
+        'username' => $username,
+        'avatar' => $avatar,
+        'auth_type' => 'TG']
+    );
+    return SessionsManager::generateSessionKey($id);
+  }
+
+
+  // [GENA-9]
+  public static function confirmLogin($telegram_id, $user_id){
+    app('db')->update("UPDATE users
+                            SET users.auth_type = 'TG'
+                            WHERE users.telegram_id = :telegram_id",
+      ['telegram_id'=>$telegram_id]);
+    return SessionsManager::generateSessionKey($user_id);
+  }
+  //TODO: Move to TelegramAuthController
+  public static function getAuthHash($auth_data) {
+    $data_check_arr = [];
+    foreach ($auth_data as $key => $value) {
+      $data_check_arr[] = $key . '=' . $value;
+    }
+    sort($data_check_arr);
+    $data_check_string = implode("\n", $data_check_arr);
+    $secret_key = hash('sha256', BOT_TOKEN, true);
+    $hash = hash_hmac('sha256', $data_check_string, $secret_key);
+    return $hash;
+  }
+
+  // [GENA-9]
+  public static function getUserByTelegramId($telegram_id){
+    $user = app('db')->select("SELECT id,telegram_id
+                                    FROM users
+                                    WHERE telegram_id=:telegram_id",['telegram_id'=>$telegram_id]);
+    return empty($user) ? $user : $user[0];
+  }
+
+///////////////////
+
+  // [GENA-7]
+  public static function confirmRegistrationEmail($id, $email){
+    //TODO:
+    //$avatar = AvatarsManager::getDefault();
+    //$id = UsersManager::completeRegistration()
+    $avatar = null;
+    $hash = md5(strtolower(trim($email)));
+    $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404&s=200';
+    $headers = @get_headers($uri);
+    if (preg_match("|200|", $headers[0])) {
+      $avatar = $uri;
+    }
+    else{
+      $avatar = AvatarsManager::getAvataaars();
+    }
+    app('db')->update("UPDATE users
+                        SET registered_at = NOW(),
+                            users.key_until = null,
+                            users.secretkey = null,
+                            users.avatar = :avatar,
+                            users.auth_type = 'E'
+                        WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
+    //TODO: send WelcomeMail
+    return SessionsManager::generateSessionKey($id);
+  }
+
+  // [GENA-7]
+  public static function confirmLoginEmail($id){
+    app('db')->update("UPDATE users
+                        SET users.key_until = null,
+                            users.secretkey = null,
+                            users.auth_type = 'E'
+                        WHERE users.id = :id",['id'=>$id]);
+    return SessionsManager::generateSessionKey($id);
+  }
+
+  // [GENA-7]
+  public static function onLinkExpire($id){
+    app('db')->update("UPDATE users
+                        SET users.key_until = null,
+                            users.secretkey = null
+                        WHERE users.id = :id",['id'=>$id]);
+  }
 }

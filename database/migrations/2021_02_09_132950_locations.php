@@ -16,11 +16,12 @@ class Locations extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('zipcode',4);
-            $table->string('name_en',255);
-            $table->string("name_de",255);
+            $table->string('name_en',255)->nullable();
+            $table->string("name_de",255)->nullable();
             $table->string('region',2);
             $table->double("lat");
             $table->double('lng');
+            $table->string('language',2);
         });
     }
 

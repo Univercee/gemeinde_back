@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Str;
-
-$zahhar = [
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -71,11 +69,3 @@ $zahhar = [
     'migrations' => 'migrations'
 
 ];
-
-if(env('DB_SSLKEY') && extension_loaded('pdo_mysql')) {
-    echo "OK!";
-    var_dump($zahhar);
-}
-
-
-return $zahhar;

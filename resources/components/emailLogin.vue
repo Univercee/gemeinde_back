@@ -72,7 +72,7 @@
 
 			},
 			async getKeys(){
-				await axios.post("/keys").then(responce => (
+				await axios.get("/keys").then(responce => (
 					this.googleRecaptchaSiteKey = responce.data.googleRecaptchaSiteKey
 				));
 			},

@@ -22,52 +22,46 @@ $router->get('/profile',function(){return view('portal.profile');});
 $router->get('/profiletest',function(){return view('portal.file');});
 
 
-
 //------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
 
-  $router->get('/services/location/{locationId}', 'ProfileController@servicesFlow');
-
-  $router->post('/getavatar/', 'ProfileController@getAvatar');
-  $router->post('/gravatar', 'EmailAuthController@gravatar');
-  $router->post('/emailbykey', 'ProfileController@getUserInfo');
-  $router->post('/channels', 'ProfileController@getChannels');
-  //setter
-  $router->post("/file", [
-    'as' => 'file', 'uses' => 'ProfileController@setAvatar'
-  ]);
   $router->get('/', function () use ($router) {
     return view('api.index');
   });
-  $router->post('/keys', 'ConfigController@getKeys');
 
-  $router->get('/locations/{zipcode}/services', "LocationController@getServicesByZipCode");
-  $router->get('/locations', 'LocationController@getLocationsHaveServices');
+  $router->get('/keys', 'ConfigController@getKeys');
+
+  $router->get('/services/location/{locationId}', 'ProfileController@servicesFlow');
+  $router->post('/gravatar', 'EmailAuthController@gravatar'); //TODO: internal stuff, do not expose
+  $router->post('/emailbykey', 'ProfileController@getUserInfo');//TODO: purpose?
+  $router->post('/channels', 'ProfileController@getChannels');
+  //setter
+  $router->post("/file", [ //TODO: $router->post('/avatar', 'ProfileController@setAvatar');?
+    'as' => 'file', 'uses' => 'ProfileController@setAvatar'
+  ]);
 
   $router->group(['prefix' => 'auth'], function ($router) {
     //email
-    $router->post('/email', 'EmailAuthController@identification');
-    $router->get('/email/verify/{key}', 'EmailAuthController@authentication');
+    $router->post('/email', 'EmailAuthController@authenticate');
+    $router->get('/email/verify/{key}', 'EmailAuthController@verify');
     //telegram
     $router->post('/tg/verify', 'TelegramAuthController@authentication');
     //telegram channel
-    $router->post('/tg/channel', 'ProfileController@confirmChannel');
+    $router->post('/tg/channel', 'ProfileController@confirmChannel'); //TODO: reuse /tg/verify?
     //email channel
     $router->post('/email/channel', 'ProfileController@confirmEmailChannel');
-    $router->get('/emailchannel/verify/{key}', 'ProfileController@authentication');
-    $router->post('/emailchannel', 'ProfileController@identification');
+    $router->get('/emailchannel/verify/{key}', 'ProfileController@authentication'); //TODO: reuse @verify
+    $router->post('/emailchannel', 'ProfileController@identification'); //TODO: reuse?
   });
-
-
-  $router->post('/keys', 'ConfigController@getKeys');
 
   $router->group(['prefix' => 'locations'], function ($router) {
     $router->get('/{zipcode}/services', "LocationController@getServicesByZipCode");
     $router->get('/', 'LocationController@getLocationsHaveServices');
+    $router->get('/all', 'LocationController@getAllLocations');
   });
 
   $router->group(['prefix' => 'profile'], function ($router) {
-    //lastname/firstname/language
+    //lastname, firstname, language
     $router->get('/personalDetails', 'ProfileController@getPersonalDetails');
     $router->post('/personalDetails', 'ProfileController@setPersonalDetails');
     //avatar

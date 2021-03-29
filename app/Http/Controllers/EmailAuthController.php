@@ -34,11 +34,12 @@ class EmailAuthController extends Controller
         if($user && $user->registered_at) {
           //user exists and email is verified → user wants to log in
           $key = UsersManager::setVerificationKey($email);
+          //TODO: Send UserLoginEmail
           return response()->json(['message' => 'Login email sent'], 200);
         } elseif ($user && !$user->registered_at) {
           //user exists, but email is not yet verified → expired? was not delivered? spam?
           // TODO: check if 5min passed since link was sent, and send same email again
-          Mail::to($email)->send(new UserRegistrationMail($key));
+          //Mail::to($email)->send(new UserRegistrationMail($key));
           return response()->json(['message' => 'Registration email sent again'], 200);
         } else {
           //user does not exist → user wants to register
@@ -62,6 +63,7 @@ class EmailAuthController extends Controller
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
         else{
+          //TODO: Move confirmRegistration to UsersManager
             $sessionKey = $this->confirmLogin($user->id);
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
@@ -69,6 +71,9 @@ class EmailAuthController extends Controller
 
     // [GENA-7]
     private function confirmRegistration($id, $email){
+        //TODO:
+        //$avatar = AvatarsManager::getDefault();
+        //$id = UsersManager::completeRegistration()
         $avatar = null;
         $hash = md5(strtolower(trim($email)));
         $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404&s=200';
@@ -86,6 +91,7 @@ class EmailAuthController extends Controller
                             users.avatar = :avatar,
                             users.auth_type = 'E'
                         WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
+        //TODO: send WelcomeMail
         return SessionsManager::generateSessionKey($id);
     }
 

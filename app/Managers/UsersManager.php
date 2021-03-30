@@ -104,19 +104,9 @@ class UsersManager
 
   // [GENA-7]
   public static function confirmRegistrationEmail($id, $email){
-    //TODO:
-    //$avatar = AvatarsManager::getDefault();
-    //$id = UsersManager::completeRegistration()
-    $avatar = null;
-    $hash = md5(strtolower(trim($email)));
-    $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404&s=200';
-    $headers = @get_headers($uri);
-    if (preg_match("|200|", $headers[0])) {
-      $avatar = $uri;
-    }
-    else{
-      $avatar = AvatarsManager::getAvataaars();
-    }
+
+    $avatar = AvatarsManager::getGravatar($email);
+    if(!$avatar) $avatar = AvatarsManager::getAvataaars();
     app('db')->update("UPDATE users
                         SET registered_at = NOW(),
                             users.key_until = null,
@@ -144,5 +134,15 @@ class UsersManager
                         SET users.key_until = null,
                             users.secretkey = null
                         WHERE users.id = :id",['id'=>$id]);
+  }
+  public static function waitFiveMin($user): bool
+  {
+    $wait = false;
+    $timePlus = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." -5 minutes"));
+    $timeVer = date("Y-m-d H:i:s",strtotime(date($user->verification_key_expires_at)." -1 day"));
+    if($timePlus < $timeVer) {
+    $wait = true;
+    }
+    return $wait;
   }
 }

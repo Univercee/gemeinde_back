@@ -42,6 +42,18 @@ class AvatarsManager{
         return $avatar;
     }
 
+    public static function getGravatar($email){
+      $avatar = null;
+      $hash = md5(strtolower(trim($email)));
+      $uri = 'http://www.gravatar.com/avatar/' . $hash . '?d=404&s=200';
+      $headers = @get_headers($uri);
+
+      if (preg_match("|200|", $headers[0])) {
+        $avatar = $uri;
+      }
+      return $avatar;
+    }
+
 }
 
 ?>

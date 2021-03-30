@@ -1,16 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Mail\UserLoginMail;
 use Illuminate\Http\Request;
-
-use App\Managers\SessionsManager;
-use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 use App\Managers\RecaptchaManager;
-
 use Illuminate\Support\Facades\Mail;
-use App\Mail\UserWelcomeMail;
+use App\Mail\UserLoginMail;
+use App\Mail\UserRegistrationMail;
+
 class EmailAuthController extends Controller
 {
 
@@ -37,17 +34,15 @@ class EmailAuthController extends Controller
           $key = UsersManager::setVerificationKey($email);
           Mail::to($email)->send(new UserLoginMail($key));
           return response()->json(['message' => 'Login email sent']);
-        } elseif ($user && !$user->registered_at) {
-
-          if(UsersManager::waitFiveMin($user)) {
-            return response()->json(['message' => 'Please wait atleast 5 min']);
-          }
+        } elseif ($user && !$user->registered_a && UsersManager::waitFiveMin($user)) {
+            return response()->json(['message' => 'Please wait at least 5 min']);
+        } elseif($user && !$user->registered_a) {
           $key = UsersManager::setVerificationRegistrationKey($email);
-          Mail::to($email)->send(new UserWelcomeMail($key));
+          Mail::to($email)->send(new UserRegistrationMail($key));
           return response()->json(['message' => 'Registration email sent again']);
         } else {
           $key = UsersManager::add($email);
-          Mail::to($email)->send(new UserWelcomeMail($key));
+          Mail::to($email)->send(new UserRegistrationMail($key));
           return response()->json(['message' => 'Registration email sent']);
         }
     }
@@ -63,12 +58,10 @@ class EmailAuthController extends Controller
         } else if(is_null($user->registered_at)) {
             $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email);
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
-        }
-        else{
+        } else {
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
             return response()->json(['message' => 'User has been logged in','sessionkey' => $sessionKey]);
         }
     }
-
 
 }

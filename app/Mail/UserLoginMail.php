@@ -5,7 +5,7 @@ use App\Mail\MailjetTemplateMailable;
 
 class UserLoginMail extends MailjetTemplateMailable
 {
-  protected $templateId = 2716228;
+  protected $templateId = 2732329;
   public $url;
 
   /**
@@ -14,6 +14,6 @@ class UserLoginMail extends MailjetTemplateMailable
    * @return void
    */
   public function __construct($key) {
-    $this->url = env('APP_URL').'/api/auth/email/verify/'.$key; // {{var:url}} in MJ $templateId
+    $this->url = env('APP_URL').'/signup/#'.$key; // {{var:url}} in MJ $templateId // {{var:url}} in MJ $templateId
   }
 }

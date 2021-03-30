@@ -5,10 +5,10 @@
             <img class="avatar-img" :src="avatar_src" alt="User avatar">
             <img class="edit-img modal-open" src="resources/assets/images/edit.png" alt="">
         </div>
-        
+
         <!-- Modal -->
         <div class="modal" id="modal">
-            <div class="modal-dialog">        
+            <div class="modal-dialog">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-body">
@@ -24,7 +24,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default modal-close">Close</button>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -48,14 +48,14 @@ export default {
                 let delimiter = ""
                 if(this.avatar != null){
                    delimiter = this.avatar.includes('?') ? '&' : '?'
-                }  
+                }
                 this.avatar_src = response.data.image + delimiter + new Date().getTime()
             })
         },
         updateAvatar(){
            document.getElementById('modal').classList = "modal modal-close-animation"
             let formData = new FormData()
-            formData.append('file',this.$refs.avatar.files[0])                   
+            formData.append('file',this.$refs.avatar.files[0])
             axios({
                 method: 'post',
                 url: '/profile/avatar',
@@ -70,7 +70,7 @@ export default {
                 this.message = err.response.data.error
             })
         },
-        deleteAvatar(){               
+        deleteAvatar(){
             axios({
                 method: 'delete',
                 url: '/profile/avatar'
@@ -102,7 +102,7 @@ export default {
                     avatarModal.style.display = "none"
                 }
                 else if(avatarModal.classList.contains('modal-open-animation')){
-                    avatarModal.classList = "modal"  
+                    avatarModal.classList = "modal"
                 }
             });
         }
@@ -132,13 +132,13 @@ export default {
         cursor: pointer;
         height: 20%;
         width: 20%;
-        opacity: 0.9;   
+        opacity: 0.9;
         visibility: hidden;
     }
     .delete-img{
         z-index: 10;
         top: 80%;
-        left: 0%;  
+        left: 0%;
     }
     .edit-img{
         z-index: 10;

@@ -1,19 +1,39 @@
 <template>
     <div>
+        <h3>Personal details</h3>
         <form @submit.prevent="updatePersonalDetails()" action="POST">
-            <div class="form-group">
-                <input type="text" v-model="firstname" ref="firstname">
+          <div class="container m-0 p-0">
+            <div class="form-group row mb-2">
+              <div class="col-4">
+                <label for="firstname">First name</label>
+              </div>
+              <div class="col-8">
+                <input type="text" id="firstname" v-model="firstname" ref="firstname">
+              </div>
             </div>
-            <div class="form-group">
-            <input type="text" v-model="lastname" ref="lastname">
+            <div class="form-group row mb-2">
+              <div class="col-4">
+                <label for="lastname">Last name</label>
+              </div>
+              <div class="col-8">
+                <input type="text" id="lastname" v-model="lastname" ref="lastname">
+              </div>
             </div>
-            <div class="form-group">
+            <div class="form-group row mb-2">
+              <div class="col-4">
+                <label for="language">Language</label>
+              </div>
+              <div class="col-8">
                 <select v-model="language" ref="language">
                     <option value="en">English</option>
                     <option value="de">Deutsch</option>
                 </select>
+              </div>
             </div>
-            <input type="submit" class="btn btn-primary">  
+            <div class="row">
+              <input type="submit" class="btn btn-block btn-outline-primary">
+            </div>
+          </div>
         </form>
     </div>
 </template>

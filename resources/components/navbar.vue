@@ -7,7 +7,23 @@
 			</svg>
 			<span class="h5 ms-1">Gemeinde Online</span>
 		</a>
-		<a class="me-4" href="/signup">Einloggen</a>
-		<a class="btn btn-primary" href="/signup">Anmelden</a>
+		<a v-if="!isAuth" class="me-4" href="/signup">Einloggen</a>
+		<a v-if="!isAuth" class="btn btn-primary" href="/signup">Anmelden</a>
+    <a v-if="isAuth" class="btn btn-primary" href="/logout">Log out</a>
 	</nav>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            isAuth: false
+        }
+    },
+    methods: {
+    },
+    created() {
+        if(sessionStorage.getItem('sessionKey')) this.isAuth = true;
+    }
+}
+</script>

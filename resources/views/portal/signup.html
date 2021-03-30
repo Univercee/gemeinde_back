@@ -74,7 +74,7 @@
       <logo-link></logo-link>
     </header>
     <main>
-    <email-login :isChannel="true"></email-login><!-- TODO merge with verify -->
+    <email-login :isChannel="false"></email-login><!-- TODO merge with verify -->
       <div class="divider">
         <hr/><span>OR</span><hr />
       </div>
@@ -117,7 +117,7 @@
   axios.defaults.baseURL = '/api';
   axios.defaults.headers.common.Authorization = 'Bearer '+sessionStorage.getItem('sessionKey')
   axios.defaults.headers.common['Content-Type'] = 'application/json'
-  
+
   const va = Vue.createApp({
     components: {
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),

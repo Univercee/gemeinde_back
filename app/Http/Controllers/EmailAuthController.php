@@ -10,7 +10,7 @@ use App\Managers\UsersManager;
 use App\Managers\RecaptchaManager;
 
 use Illuminate\Support\Facades\Mail;
-use App\Mail\UserRegistrationMail;
+use App\Mail\UserWelcomeMail;
 class EmailAuthController extends Controller
 {
 
@@ -34,28 +34,21 @@ class EmailAuthController extends Controller
         $user = UsersManager::getByEmail($email);
 
         if($user && $user->registered_at) {
-          //user exists and email is verified → user wants to log in
           $key = UsersManager::setVerificationKey($email);
           Mail::to($email)->send(new UserLoginMail($key));
-          return response()->json(['message' => 'Login email sent'], 200);
+          return response()->json(['message' => 'Login email sent']);
         } elseif ($user && !$user->registered_at) {
-          //user exists, but email is not yet verified → expired? was not delivered? spam?
-          // TODO: check if 5min passed since link was sent, and send same email again
-//          date_default_timezone_set('Europe/Tallinn');
 
-//          $timePlus = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." -5 minutes"));
-//          $timeVer = date("Y-m-d H:i:s",strtotime(date($user->verification_key_expires_at)." -1 day"));
           if(UsersManager::waitFiveMin($user)) {
-            return response()->json(['message' => 'Please wait atleast 5 min'], 200);
+            return response()->json(['message' => 'Please wait atleast 5 min']);
           }
           $key = UsersManager::setVerificationRegistrationKey($email);
-          Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['message' => 'Registration email sent again'], 200);
+          Mail::to($email)->send(new UserWelcomeMail($key));
+          return response()->json(['message' => 'Registration email sent again']);
         } else {
-          //user does not exist → user wants to register
           $key = UsersManager::add($email);
-          Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['message' => 'Registration email sent'], 200);
+          Mail::to($email)->send(new UserWelcomeMail($key));
+          return response()->json(['message' => 'Registration email sent']);
         }
     }
 
@@ -69,11 +62,11 @@ class EmailAuthController extends Controller
             abort(response()->json(['error' => 'Key has expired'], 403));
         } else if(is_null($user->registered_at)) {
             $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
         else{
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
+            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
         }
     }
 

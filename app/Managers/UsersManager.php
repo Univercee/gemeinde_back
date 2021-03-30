@@ -1,7 +1,9 @@
 <?php
 namespace App\Managers;
 
+use App\Mail\UserWelcomeMail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class UsersManager
 {
@@ -109,21 +111,19 @@ class UsersManager
     if(!$avatar) $avatar = AvatarsManager::getAvataaars();
     app('db')->update("UPDATE users
                         SET registered_at = NOW(),
-                            users.key_until = null,
-                            users.secretkey = null,
-                            users.avatar = :avatar,
-                            users.auth_type = 'E'
+                            users.verification_key_expires_at = null,
+                            users.verification_key = null,
+                            users.avatar = :avatar
                         WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
-    //TODO: send WelcomeMail
+    Mail::to($email)->send(new UserWelcomeMail(null));
     return SessionsManager::generateSessionKey($id);
   }
 
   // [GENA-7]
   public static function confirmLoginEmail($id){
     app('db')->update("UPDATE users
-                        SET users.key_until = null,
-                            users.secretkey = null,
-                            users.auth_type = 'E'
+                        SET users.verification_key_expires_at = null,
+                            users.verification_key = null
                         WHERE users.id = :id",['id'=>$id]);
     return SessionsManager::generateSessionKey($id);
   }
@@ -131,8 +131,8 @@ class UsersManager
   // [GENA-7]
   public static function onLinkExpire($id){
     app('db')->update("UPDATE users
-                        SET users.key_until = null,
-                            users.secretkey = null
+                        SET users.verification_key_expires_at = null,
+                            users.verification_key = null
                         WHERE users.id = :id",['id'=>$id]);
   }
   public static function waitFiveMin($user): bool

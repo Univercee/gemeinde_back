@@ -5,7 +5,7 @@ class SessionsManager
 {
     public static function generateSessionKey($user_id) {
         $sessionKey = bin2hex(random_bytes(32));
-        app('db')->insert("INSERT INTO user_sessions (user_id, session_key, key_at, expires_at)
+        app('db')->insert("INSERT INTO user_sessions (user_id, session_key, issued_at, expires_at)
                             VALUES(?, ?, NOW(), NOW()+INTERVAL 1 DAY)",
                             [$user_id, $sessionKey]);
         return $sessionKey;

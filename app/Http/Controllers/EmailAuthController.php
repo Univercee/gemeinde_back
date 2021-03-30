@@ -86,10 +86,9 @@ class EmailAuthController extends Controller
         }
         app('db')->update("UPDATE users
                         SET registered_at = NOW(),
-                            users.key_until = null,
-                            users.secretkey = null,
-                            users.avatar = :avatar,
-                            users.auth_type = 'E'
+                            users.verification_key_expires_at = null,
+                            users.verification_key = null,
+                            users.avatar = :avatar
                         WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
         //TODO: send WelcomeMail
         return SessionsManager::generateSessionKey($id);
@@ -98,9 +97,8 @@ class EmailAuthController extends Controller
     // [GENA-7]
     private function confirmLogin($id){
         app('db')->update("UPDATE users
-                        SET users.key_until = null,
-                            users.secretkey = null,
-                            users.auth_type = 'E'
+                        SET users.verification_key_expires_at = null,
+                            users.verification_key = null
                         WHERE users.id = :id",['id'=>$id]);
         return SessionsManager::generateSessionKey($id);
     }
@@ -108,8 +106,8 @@ class EmailAuthController extends Controller
     // [GENA-7]
     private function onLinkExpire($id){
         app('db')->update("UPDATE users
-                        SET users.key_until = null,
-                            users.secretkey = null
+                        SET users.verification_key_expires_at = null,
+                            users.verification_key = null
                         WHERE users.id = :id",['id'=>$id]);
     }
 }

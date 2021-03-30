@@ -13,7 +13,8 @@ export default {
         }
     },
     props: {
-        locations: Array
+        locations: Array,
+        selectedValue: Number
     },
     methods: {
         initTomSelect() {
@@ -37,6 +38,7 @@ export default {
             this.ts.on('focus', () => {
                 this.ts.clear();
             });
+            this.ts.setValue(this.selectedValue)
         },
 
         showDropdownList() {

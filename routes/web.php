@@ -22,6 +22,8 @@ $router->get('/profile',function(){return view('portal.profile');});
 $router->get('/profiletest',function(){return view('portal.file');});
 
 
+$router->get('/file', function (){return view('portal.file');});
+
 //------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
 
@@ -32,26 +34,13 @@ $router->group(['prefix' => 'api'], function ($router) {
   $router->get('/keys', 'ConfigController@getKeys');
 
   $router->get('/services/location/{locationId}', 'ProfileController@servicesFlow');
-  $router->post('/gravatar', 'EmailAuthController@gravatar'); //TODO: internal stuff, do not expose
-  $router->post('/emailbykey', 'ProfileController@getUserInfo');//TODO: purpose?
-  $router->post('/channels', 'ProfileController@getChannels');
-  //setter
-  $router->post("/file", [ //TODO: $router->post('/avatar', 'ProfileController@setAvatar');?
-    'as' => 'file', 'uses' => 'ProfileController@setAvatar'
-  ]);
 
   $router->group(['prefix' => 'auth'], function ($router) {
     //email
     $router->post('/email', 'EmailAuthController@authenticate');
     $router->get('/email/verify/{key}', 'EmailAuthController@verify');
     //telegram
-    $router->post('/tg/verify', 'TelegramAuthController@authentication');
-    //telegram channel
-    $router->post('/tg/channel', 'ProfileController@confirmChannel'); //TODO: reuse /tg/verify?
-    //email channel
-    $router->post('/email/channel', 'ProfileController@confirmEmailChannel');
-    $router->get('/emailchannel/verify/{key}', 'ProfileController@authentication'); //TODO: reuse @verify
-    $router->post('/emailchannel', 'ProfileController@identification'); //TODO: reuse?
+    $router->post('/tg/verify', 'TelegramAuthController@authentication');     
   });
 
   $router->group(['prefix' => 'locations'], function ($router) {
@@ -73,5 +62,12 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/userLocations', 'ProfileController@addUserLocation');
     $router->patch('/userLocations', 'ProfileController@setUserLocation');
     $router->delete('/userLocations', 'ProfileController@deleteUserLocation');
+    //channels
+    $router->get('/channels', 'ProfileController@getChannels');
+    $router->post('/channels/email', 'ProfileController@addEmailChannel');
+    $router->post('/channels/email/verify/{key}', 'ProfileController@emailChannelVerify');
+    $router->delete('/channels/email/delete', 'ProfileController@deleteEmailChannel');
+    $router->post('/channels/tg/verify', 'ProfileController@tgChannelVerify');
+    $router->delete('/channels/tg/delete', 'ProfileController@deleteTgChannel');
   });
 });

@@ -1,5 +1,6 @@
 <?php
 namespace App\Managers;
+use Illuminate\Support\Facades\Storage;
 define("GETAVATAAARS_DATA",[
                             'avatarStyle'       => ['Transparent'],
                             'facialHair'        => ['Blank'],
@@ -21,11 +22,21 @@ class AvatarsManager{
         return $avatar;
     }
 
-    public static function setAvatar($user_id, $avatar){
+    public static function setAvatar($user_id, $file){
+        $url = Storage::disk('local')->url('app/avatars/'.$user_id.'.jpg');
+        Storage::disk('local')->putFileAs('avatars',$file, $user_id.'.jpg');
         app('db')->update("UPDATE users
                         SET avatar = :avatar
                         WHERE id = :user_id",
-                        ['user_id' => $user_id, 'avatar' => $avatar]);
+                        ['user_id' => $user_id, 'avatar' => $url]);
+    }
+
+    public static function deleteAvatar($user_id){
+    Storage::disk('local')->delete('app/avatars/'.$user_id.'.jpg');
+    app('db')->update('UPDATE users
+                        SET avatar = NULL
+                        WHERE id = :user_id',
+      ['user_id' => $user_id]);
     }
 
     public static function getAvataaars(){

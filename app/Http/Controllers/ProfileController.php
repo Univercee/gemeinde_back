@@ -32,12 +32,10 @@ class ProfileController extends Controller
   //
   public function setAvatar(Request $request)
   {
-    if ($request->hasFile('file')) {
-      AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'));
+    if (!$request->hasFile('file')) {
+      abort(response()->json(['error' => 'Bad request'], 400)); 
     }
-    else{
-      abort(response()->json(['Error' => 'Image not found'], 404));
-    }
+    AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'));
   }
 
 
@@ -82,6 +80,9 @@ class ProfileController extends Controller
   //[GENA-32]
   public function setUserLocation(Request $request)
   {
+    if(!$request->input('user_location_id')){
+      abort(response()->json(['error'=>'Bad request'], 400));
+    }
     UsersManager::setUserLocation($request->input('user_id'), 
                                   $request->input('user_location_id'), 
                                   $request->input('location_id'), 
@@ -95,13 +96,24 @@ class ProfileController extends Controller
   //[GENA-32]
   public function addUserLocation(Request $request)
   {
-    UsersManager::addUserLocation($request->input('user_id'));
+    if(!$request->input('location_id')){
+      abort(response()->json(['error'=>$request->all()], 400));
+    }
+    UsersManager::addUserLocation($request->input('user_id'), 
+                                  $request->input('location_id'), 
+                                  $request->input('title'), 
+                                  $request->input('street_name'), 
+                                  $request->input('street_number')
+                                );
   }
 
 
   //[GENA-32]
   public function deleteUserLocation(Request $request)
   {
+    if(!$request->input('id')){
+      abort(response()->json(['error'=>'Bad request'], 400));
+    }
     UsersManager::deleteUserLocation($request->input('user_id'), $request->input('id'));
   }
 

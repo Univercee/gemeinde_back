@@ -130,10 +130,13 @@ class UsersManager
                         'user_id' => $user_id]);
     }
 
-    public static function addUserLocation($user_id){
-      app('db')->insert("INSERT INTO user_locations(user_id, location_id, title)
-                        VALUES(?, 352, 'New location')",
-                        [$user_id]);
+    public static function addUserLocation($user_id, $location_id, $title, $street_name, $street_number){
+      $title = trim($title);
+      $street_name = trim($street_name);
+      $street_number = trim($street_number);
+      app('db')->insert("INSERT INTO user_locations(user_id, title, location_id, street_name, street_number)
+                        VALUES(?, ?, ?, ?, ?)",
+                        [$user_id, $title, $location_id, $street_name, $street_number]);
     }
 
     public static function deleteUserLocation($user_id, $user_location_id){

@@ -158,8 +158,8 @@ class ProfileController extends Controller
       app('db')->update("UPDATE users
         SET users.verification_key_expires_at = null,
             users.verification_key = null,
-            users.email = users.email_buffer,
-            users.email_buffer = null
+            users.email = users.email_pending,
+            users.email_pending = null
         WHERE users.id = :id",['id'=>$user->id]);
     }
     return response()->json(['message' => 'Channel has been added']);

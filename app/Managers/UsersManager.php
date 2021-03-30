@@ -62,7 +62,7 @@ class UsersManager
     public static function setChannelVerificationKey($id, $email) {
       $key = uniqid();
       app('db')->update("UPDATE users
-                    SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 1 HOUR, email_buffer = :email
+                    SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 1 HOUR, email_pending = :email
                     WHERE id = :id",
                     ['id' => $id, 'k' => $key, 'email' => $email]);
       return $key;

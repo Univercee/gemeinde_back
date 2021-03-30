@@ -36,7 +36,7 @@ class TelegramAuthController extends Controller{
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
         else{
-            $sessionKey = $this->confirmLogin($auth_data['id'], $user->id);
+            $sessionKey = $this->confirmLogin($user->id);
             return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey], 200);
         }
     }
@@ -51,20 +51,15 @@ class TelegramAuthController extends Controller{
             ['telegram_id' => $auth_data['id'],
             'first_name' => $first_name,
             'last_name' => $last_name,
-            'username' => $username,
-            'avatar' => $avatar,
-            'auth_type' => 'TG']
+            'telegram_username' => $username,
+            'avatar' => $avatar]
         );
         return SessionsManager::generateSessionKey($id);
     }
 
 
     // [GENA-9]
-    private function confirmLogin($telegram_id, $user_id){
-        app('db')->update("UPDATE users
-                            SET users.auth_type = 'TG'
-                            WHERE users.telegram_id = :telegram_id",
-                            ['telegram_id'=>$telegram_id]);
+    private function confirmLogin($user_id){
         return SessionsManager::generateSessionKey($user_id);
     }
 

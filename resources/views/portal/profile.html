@@ -14,6 +14,7 @@
       <profile-avatar></profile-avatar>
       <profile-details></profile-details>
       <profile-locations></profile-locations>
+      <user-channels></user-channels>
 	</div> <!-- end of vuejs app -->
 
 	
@@ -67,7 +68,8 @@
     components: {
       'profile-details': Vue.defineAsyncComponent(() => loadModule('../resources/components/personalDetails.vue', options)),
       'profile-avatar': Vue.defineAsyncComponent(() => loadModule('../resources/components/avatar.vue', options)),
-      'profile-locations': Vue.defineAsyncComponent(() => loadModule('../resources/components/userLocations.vue', options))
+      'profile-locations': Vue.defineAsyncComponent(() => loadModule('../resources/components/userLocations.vue', options)),
+      'user-channels': Vue.defineAsyncComponent(() => loadModule('../../resources/components/channels.vue', options))
     }
   });
   va.mount('#vueapp');

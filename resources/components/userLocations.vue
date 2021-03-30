@@ -6,7 +6,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" :id="'heading'+location.id">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#location'+location.id" aria-expanded="false" :aria-controls="'location'+location.id">
-                        <h3>{{location.title}} {{getprimaryLocationById(location.location_id)}} {{location.street_name}} {{location.street_number}}</h3>
+                        <h3>{{location.title}} {{getPrimaryLocationById(location.location_id)}} {{location.street_name}} {{location.street_number}}</h3>
                     </button>
                     </h2>
                     <div :id="'location'+location.id" class="accordion-collapse collapse" :aria-labelledby="'heading'+location.id" data-bs-parent="#accordionLocations">
@@ -103,12 +103,12 @@ export default {
                 method: 'get',
                 url: '/locations',
             }).then((response)=>{
-                this.primary_locations = response.data.locations
+                this.primary_locations = response.data
             }).catch(()=>{
               //catching errors
             })
         },
-        getprimaryLocationById(id){
+        getPrimaryLocationById(id){
             for(let i=0; i<this.primary_locations.length; i++){
                 if(this.primary_locations[i].id == id){
                     return this.primary_locations[i].name

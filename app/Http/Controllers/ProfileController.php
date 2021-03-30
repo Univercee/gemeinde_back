@@ -14,6 +14,10 @@ use App\Managers\AvatarsManager;
 use App\Managers\SessionsManager;
 use App\Managers\UsersManager;
 use App\Mail\ChannelMail;
+use App\Http\Controllers\EmailAuthController;
+use App\Http\Controllers\TelegramAuthController;
+use App\Mail\UserRegistrationMail;
+use App\Managers\RecaptchaManager;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 class ProfileController extends Controller
 {
@@ -24,208 +28,183 @@ class ProfileController extends Controller
     $this->middleware('a10n');
   }
 
-  public function setAvatar(Request $request){
-    if ($request->hasFile('file')) {
-      $user_id = $request->input('user_id');
-      $url = Storage::disk('local')->url('app/avatars/'.$user_id.'.jpg');
-      Storage::disk('local')->putFileAs('avatars',request()->file('file'), $user_id.'.jpg');
-      AvatarsManager::setAvatar($user_id, $url);
-      return response()->json(['auth'=>$request->header('Authorization')]);
-    }
-    return response()->json(['Error' => 'Image not found'],404);
-  }
 
-  public function getAvatar(Request $request){
-    $user_id = $request->input('user_id');
-    return response()->json(['image' => AvatarsManager::getAvatar($user_id)]);
-  }
-
-  public function deleteAvatar(Request $request){
-    $user_id = $request->input('user_id');
-    Storage::disk('local')->delete('app/avatars/'.$user_id.'.jpg');
-    app('db')->update('UPDATE users
-                        SET avatar = NULL
-                        WHERE id = :user_id',
-      ['user_id' => $user_id]);
-  }
-
-  public function setPersonalDetails(Request $request)
+  //
+  public function setAvatar(Request $request)
   {
-    $user_id = $request->input('user_id');
-
-    $firstname = trim($request->input('firstname'));
-    $lastname = trim($request->input('lastname'));
-    $language = $request->input('language');
-
-    $firstname = ($firstname == "") ? null : $firstname;
-    $lastname = ($lastname == "") ? null : $lastname;
-    $language = ($language == 'en' || $language == 'de') ? $language : 'en';
-    app('db')->update("UPDATE users
-                        SET first_name = :firstname, last_name = :lastname, language = :language
-                        WHERE id = :user_id",
-      ['firstname' => $firstname, 'lastname' => $lastname, 'language' => $language, 'user_id' => $user_id]);
-    return response()->json(['message' => 'Personal details has updated'], 200);
+    if ($request->hasFile('file')) {
+      AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'));
+    }
+    else{
+      abort(response()->json(['Error' => 'Image not found'], 404));
+    }
   }
+
+
+  //
+  public function getAvatar(Request $request)
+  {
+    return response()->json(['image' => AvatarsManager::getAvatar($request->input('user_id'))], 200);
+  }
+
+
+  //
+  public function deleteAvatar(Request $request)
+  {
+    AvatarsManager::deleteAvatar($request->input('user_id'));
+  }
+
+
+  //
+  public function setPersonalDetails(Request $request){
+    UsersManager::setPersonalDetails($request->input('user_id'), $request->input('firstname'), $request->input('lastname'), $request->input('language'));
+  }
+
 
   //[GENA-32]
   public function getPersonalDetails(Request $request)
   {
-    $user_id = $request->input('user_id');
-    $user_data = app('db')->select("SELECT first_name, last_name, language FROM users
-                                        WHERE id = :user_id",
-      ['user_id' => $user_id]);
-    $user_data = empty($user_data) ? null : $user_data[0];
-    return response()->json(['firstname' => $user_data->first_name, 'lastname' => $user_data->last_name, 'language' => $user_data->language], 200);
+    $personal_details = UsersManager::getPersonalDetails($request->input('user_id'));
+    return response()->json(['firstname' => $personal_details->first_name, 
+                            'lastname' => $personal_details->last_name, 
+                            'language' => $personal_details->language], 200
+                          );
   }
 
+
   //[GENA-32]
-  public function getUserLocations(Request $request){
-    $user_id = $request->input('user_id');
-    $user_locations = app('db')->select("SELECT id, location_id, title, street_name, street_number FROM user_locations
-                                        WHERE user_id = :user_id",
-                                        ['user_id' => $user_id]);
-    return response()->json($user_locations, 200);
+  public function getUserLocations(Request $request)
+  {
+    return response()->json(UsersManager::getUserLocations($request->input('user_id')), 200);
+  }
+
+
+  //[GENA-32]
+  public function setUserLocation(Request $request)
+  {
+    UsersManager::setUserLocation($request->input('user_id'), 
+                                  $request->input('user_location_id'), 
+                                  $request->input('location_id'), 
+                                  $request->input('title'), 
+                                  $request->input('street_name'), 
+                                  $request->input('street_number')
+                                );
+  }
+
+
+  //[GENA-32]
+  public function addUserLocation(Request $request)
+  {
+    UsersManager::addUserLocation($request->input('user_id'));
+  }
+
+
+  //[GENA-32]
+  public function deleteUserLocation(Request $request)
+  {
+    UsersManager::deleteUserLocation($request->input('user_id'), $request->input('id'));
+  }
+
+
+  //
+  public function getChannels(Request $request)
+  { 
+    return response()->json(UsersManager::getChannels($request->input('user_id')), 200);
+  }
+
+
+  //
+  public function addEmailChannel(Request $request){
+      $email = $request->input('email');
+      if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
+          abort(response()->json(['error' => 'Bad Request'], 400));
+      }
+      $score = RecaptchaManager::getScore($request->input('token'));
+      if($score < 0.5) {
+          abort(response()->json(['Error'=> 'You are robot, dont event try! I am a teapot.'], 418));
+      }
+      $key = UsersManager::setChannelVerificationKey($request->input('user_id'), $email);
+      Mail::to($email)->send(new UserRegistrationMail($key));
+      return response()->json(['message' => 'Registration email sent'], 200);
+  }
+
+
+  //GET FUNCTION FROM EMAIL_AUTH_CONTROLLER
+  public function emailChannelVerify($key){
+    $user = UsersManager::getByKey($key);
+    if(!$user) {
+        abort(response()->json(['error' => 'Not found'], 404));
+    } 
+    else if(strtotime($user->verification_key_expires_at) < time()) {
+        app('db')->update("UPDATE users
+        SET users.verification_key_expires_at = null,
+            users.verification_key = null
+        WHERE users.id = :id",['id'=>$user->id]);
+        abort(response()->json(['error' => 'Key has expired'], 403));
     }
-
-  //[GENA-32]
-  public function setUserLocation(Request $request){
-    $user_id = $request->input('user_id');
-
-    $id = $request->input('id');
-    $location_id = $request->input('location_id');
-    $title = trim($request->input('title'));
-    $street_name = trim($request->input('street_name'));
-    $street_number = trim($request->input('street_number'));
-    app('db')->update("UPDATE user_locations
-                      SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
-                      WHERE user_id = :user_id AND id = :id",
-                      ['title' => $title,
-                      'location_id' => $location_id,
-                      'street_name' => $street_name,
-                      'street_number' => $street_number,
-                      'id' => $id,
-                      'user_id' => $user_id]);
-  }
-
-  //[GENA-32]
-  public function addUserLocation(Request $request){
-    $user_id = $request->input('user_id');
-    app('db')->insert("INSERT INTO user_locations(user_id, title)
-                      VALUES(?, 'New location')",
-                      [$user_id]);
-  }
-
-  //[GENA-32]
-  public function deleteUserLocation(Request $request){
-    $user_id = $request->input('user_id');
-    $id = $request->input('id');
-    app('db')->delete("DELETE FROM user_locations
-                      WHERE user_id = :user_id AND id = :id",
-                      ['id' => $id,
-                      'user_id' => $user_id]);
+    else{
+      app('db')->update("UPDATE users
+        SET users.verification_key_expires_at = null,
+            users.verification_key = null,
+            users.email = users.email_buffer,
+            users.email_buffer = null
+        WHERE users.id = :id",['id'=>$user->id]);
+    }
+    return response()->json(['message' => 'Channel has been added']);
   }
 
 
-
-
-
-
-  public function getUserInfo(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    $userEmail = UsersManager::getUserInfo($userId);
-    return response()->json(['email'=>$userEmail->email]);
-  }
-  public function getChannels(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    $userData = UsersManager::getUserInfo($userId);
-
-    return response()->json([$userData]);
-  }
-
-  public function confirmChannel(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    $userInfo = UsersManager::getUserInfo($userId);
-
-    $auth_data = $request['auth_data'];
+  
+  //GET FUNCTION FROM TELEGRAM_AUTH_CONTROLLER
+  public function tgChannelVerify(Request $request){
+    $auth_data = $request->input('auth_data');
     $check_hash = $auth_data['hash'];
     unset($auth_data['hash']);
 
-    $hash = UsersManager::getAuthHash($auth_data);
+    $data_check_arr = [];
+    foreach ($auth_data as $key => $value) {
+      $data_check_arr[] = $key . '=' . $value;
+    }
+    sort($data_check_arr);
+    $data_check_string = implode("\n", $data_check_arr);
+    $secret_key = hash('sha256', BOT_TOKEN, true);
+    $hash = hash_hmac('sha256', $data_check_string, $secret_key);
+
     if (strcmp($hash, $check_hash) !== 0) {
-
-      return response()->json(['error' => 'Data is NOT from Telegram'], 400);
+        return response()->json(['error' => 'Data is NOT from Telegram'], 400);
     }
-
-    app('db')->update("UPDATE users
-                            SET users.telegram_id = :telegram_id, username = :username
-                            WHERE users.email = :email",
-      ['telegram_id'=>$auth_data['id'], 'email'=>$userInfo->email, 'username'=>$auth_data['username']]);
-    return response()->json(['message' => 'User channel authorized']);
-  }
-  public function confirmEmailChannel(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-//    return response()->json(['message' => $userId]);
-
-    app('db')->update("UPDATE users
-                        SET email = 'daig@mail.ru'
-                        WHERE id = :id",['id'=>$userId]);
-    return response()->json(['message' => 'User channel authorized']);
-
-  }
-  ///Email identification for channel
-  public function identification(Request $request){
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    $email = $request->input('email');
-    if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
-      return response()->json(['error' => 'Bad Request'], 400);
-    }
-    $score = UsersManager::getRecaptcha(($request->input('token')));
-    if($score < 0.5) {
-      return response()->json(['Error'=> 'You are robot, dont event try!!!!'], 400);
-    }
-    $send = UsersManager::addUser($email, $userId);
-    Mail::to($email)->send(new ChannelMail($send));
-    return response()->json(['message' => 'Email sent'], 200);
-  }
-
-  //verify channel connection by verify link
-  public function authentication(Request $request,$key){
-    $user = UsersManager::getUserByKey($key);
-    $key = explode(" ", $request->header('Authorization'))[1];
-    $userId = SessionsManager::getUserIdBySessionKey($key);
-    if(empty($user)){
-      return response()->json(['error' => 'Not found'], 403);
-    }
-    if(strtotime($user->key_until) < time()){
-      $this->onLinkExpire($userId->id);
-      return response()->json(['error' => 'Key has expired'], 403);
+    if ((time() - $auth_data['auth_date']) > 86400) {
+        return response()->json(['error' => 'Data is outdated'], 400);
     }
     app('db')->update("UPDATE users
-                        SET users.key_until = null,
-                            users.secretkey = null,
-                            users.auth_type = 'E'
-                        WHERE users.id = :id",['id'=>$userId]);
-    return response()->json(['message' => 'User has been registered','useremail' => UsersManager::getUserInfo($user->id)->email]);
-
+                      SET telegram_id = :t_id, 
+                          telegram_username = :t_username
+                      WHERE id = :user_id",
+                      ['t_id' => $auth_data['id'], 't_username' => $auth_data['username'], 'user_id' => $request->input('user_id')]);
   }
+
+
+  //
+  public function deleteEmailChannel(Request $request){
+    UsersManager::deleteEmailChannel($request->input('user_id'));
+  }
+
+
+  //
+  public function deleteTgChannel(Request $request){
+    UsersManager::deleteTgChannel($request->input('user_id'));
+  }
+
+
+  //TODO
   public function servicesFlow(Request $request, $locationId){
-
     $user_id = $request->input('user_id');
-
-    $results = app('db') //s.name_en, uls.frequency
-    ->select("SELECT ls.service_id, s.name_en as name, channel, frequency
-FROM location_services AS ls
-JOIN services s ON s.id = ls.service_id
-LEFT JOIN user_location_services uls ON uls.service_id = s.id
-LEFT JOIN user_locations ul ON ul.location_id = ls.location_id
-WHERE ls.location_id = :locId AND ul.user_id = :user_id", ['user_id' => $user_id, 'locId' => $locationId]);
-
-
+    $results = app('db')->select("SELECT ls.service_id, s.name_en as name, channel, frequency
+              FROM location_services AS ls
+              JOIN services s ON s.id = ls.service_id
+              LEFT JOIN user_location_services uls ON uls.service_id = s.id
+              LEFT JOIN user_locations ul ON ul.location_id = ls.location_id
+              WHERE ls.location_id = :locId AND ul.user_id = :user_id", ['user_id' => $user_id, 'locId' => $locationId]);
     return response()->json(['results'=>$results]);
 
   }

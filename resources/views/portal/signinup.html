@@ -74,7 +74,7 @@
       <logo-link></logo-link>
     </header>
     <main>
-    <email-login></email-login><!-- TODO merge with verify -->
+    <email-login :isChannel="true"></email-login><!-- TODO merge with verify -->
       <div class="divider">
         <hr/><span>OR</span><hr />
       </div>
@@ -115,6 +115,7 @@
   /* end of boilerplate for vue3-sfc-loader */
 
   axios.defaults.baseURL = '/api';
+  axios.defaults.headers.common.Authorization = 'Bearer '+sessionStorage.getItem('sessionKey')
   axios.defaults.headers.common['Content-Type'] = 'application/json'
   
   const va = Vue.createApp({

@@ -25,7 +25,7 @@ class TelegramAuthController extends Controller{
 
         $hash = UsersManager::getAuthHash($auth_data);
         if (strcmp($hash, $check_hash) !== 0) {
-            return response()->json(['error' => 'Data is NOT from Telegram'], 400);
+            return abort(response()->json(['error' => 'Data is NOT from Telegram'], 400));
         }
         if ((time() - $auth_data['auth_date']) > 86400) {
             return response()->json(['error' => 'Data is outdated'], 400);
@@ -37,8 +37,8 @@ class TelegramAuthController extends Controller{
             return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey], 200);
         }
         else{
-            $sessionKey = UsersManager::confirmLogin($auth_data['id'], $user->id);
-            return response()->json(['message' => 'User authorized','sessionkey' => $sessionKey], 200);
+            //$sessionKey = UsersManager::confirmLogin($auth_data['id'], $user->id);
+            return response()->json(['message' => 'User authorized','sessionkey' => SessionsManager::generateSessionKey($user->id)], 200);
         }
     }
 

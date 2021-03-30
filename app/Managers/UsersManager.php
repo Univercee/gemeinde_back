@@ -65,22 +65,21 @@ class UsersManager
       ['telegram_id' => $auth_data['id'],
         'first_name' => $first_name,
         'last_name' => $last_name,
-        'username' => $username,
-        'avatar' => $avatar,
-        'auth_type' => 'TG']
+        'telegram_username' => $username,
+        'avatar' => $avatar,]
     );
     return SessionsManager::generateSessionKey($id);
   }
 
 
   // [GENA-9]
-  public static function confirmLogin($telegram_id, $user_id){
-    app('db')->update("UPDATE users
-                            SET users.auth_type = 'TG'
-                            WHERE users.telegram_id = :telegram_id",
-      ['telegram_id'=>$telegram_id]);
-    return SessionsManager::generateSessionKey($user_id);
-  }
+//  public static function confirmLogin($telegram_id, $user_id){
+//    app('db')->update("UPDATE users
+//                            SET users.auth_type = 'TG'
+//                            WHERE users.telegram_id = :telegram_id",
+//      ['telegram_id'=>$telegram_id]);
+//    return SessionsManager::generateSessionKey($user_id);
+//  }
   //TODO: Move to TelegramAuthController
   public static function getAuthHash($auth_data) {
     $data_check_arr = [];

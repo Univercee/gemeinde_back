@@ -66,7 +66,7 @@ class EmailAuthController extends Controller
         }
         else{
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+            return response()->json(['message' => 'User has been logged in','sessionkey' => $sessionKey]);
         }
     }
 

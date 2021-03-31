@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<form @submit.prevent="submit" method="post" class="needs-validation" novalidate>
-      
+
       <div v-if="state=='wait'">
         <div class="d-flex justify-content-center mb-3">
           <div class="align-items-center lds-facebook"><div></div><div></div><div></div></div>
-        </div>	
+        </div>
 			</div>
 
       <div v-if="state=='answer'">
@@ -69,21 +69,29 @@
 					this.errors.push('email is bad')
 					return false; //otherwise execution goes on to axios
 				}
-        this.setState('wait')
-        let url = '/auth/email'
+        this.setState('wait');
         if(this.$props.isChannel){
-          url = '/profile/channels/email'
-        }
-				await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then((token) => (
-					axios.post(url,{email: this.email, token: token})
-          .then((response) =>{
-            this.setState('sent')
-          })
+          let url = '/profile/channels/email';
+          axios.post(url,{email: this.email})
+            .then((response) =>{
+              this.setState('sent')
+            })
+					.catch((err) => {
+						this.setState('error', 'Something goes wrong. Please, try again')
+					});
+        } else {
+          let url = '/auth/email';
+          await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then((token) => (
+					  axios.post(url,{email: this.email, token: token})
+              .then((response) =>{
+                this.setState('sent')
+              })
 					.catch((err) => {
 						this.setState('error', 'Something goes wrong. Please, try again')
 					})
 				));
 
+        }
 			},
       async verify(secretKey){
         await axios.get('/auth/email/verify/'+secretKey).then((response) => {
@@ -119,12 +127,8 @@
 				));
 			},
 		},
-    
+
 		async mounted(){
-      this.setState('wait')
-			await this.getKeys();
-      this.initRecaptcha()
-      this.setState('input')
       if (window.location.hash) {
         this.setState('wait')
         let secretKey = window.location.hash.split("#")[1];
@@ -136,6 +140,14 @@
           }
         }
       }
+      if(!this.$props.isChannel) {
+        this.setState('wait')
+	  		await this.getKeys();
+        this.initRecaptcha()
+        console.log("Captcha loaded");
+      }
+      this.setState('input')
+      console.log(this.$props.isChannel);
 		}
 	}
 </script>

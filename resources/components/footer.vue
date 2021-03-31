@@ -18,7 +18,7 @@
 		</div>
 
 		<div class="col-md-5">
-			<div class="text-muted">Designed and managed by your neighbors in 🇨🇭Switzerland: <a class="fst-italic" href="https://bergdigital.ch">Berg Digital</a>.<br />Built by skilled developers in 🇪🇪 Estonia: <a class="fst-italic" href="https://bits.ee">Baltic IT Solutions OÜ</a>.</div>
+			<div class="text-muted">Designed by your neighbors in 🇨🇭&nbsp;Switzerland: <a class="fst-italic" href="https://bergdigital.ch">Berg Digital</a>.<br />Built by skilled developers in 🇪🇪&nbsp;Estonia: <a class="fst-italic" href="https://bits.ee">Baltic IT Solutions OÜ</a>.</div>
 		</div>
 
 	</div>

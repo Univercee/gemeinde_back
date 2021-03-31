@@ -1,23 +1,14 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
-
-use App\Mail\WelcomeMail;
-use http\Client\Curl\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use App\Managers\AvatarsManager;
-use App\Managers\SessionsManager;
 use App\Managers\UsersManager;
-use App\Mail\ChannelMail;
-use App\Http\Controllers\EmailAuthController;
-use App\Http\Controllers\TelegramAuthController;
 use App\Mail\UserRegistrationMail;
 use App\Managers\RecaptchaManager;
+
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 class ProfileController extends Controller
 {
@@ -33,7 +24,7 @@ class ProfileController extends Controller
   public function setAvatar(Request $request)
   {
     if (!$request->hasFile('file')) {
-      abort(response()->json(['error' => 'Bad request'], 400)); 
+      abort(response()->json(['error' => 'Bad request'], 400));
     }
     AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'));
   }
@@ -63,8 +54,8 @@ class ProfileController extends Controller
   public function getPersonalDetails(Request $request)
   {
     $personal_details = UsersManager::getPersonalDetails($request->input('user_id'));
-    return response()->json(['firstname' => $personal_details->first_name, 
-                            'lastname' => $personal_details->last_name, 
+    return response()->json(['firstname' => $personal_details->first_name,
+                            'lastname' => $personal_details->last_name,
                             'language' => $personal_details->language], 200
                           );
   }
@@ -83,11 +74,11 @@ class ProfileController extends Controller
     if(!$request->input('user_location_id')){
       abort(response()->json(['error'=>'Bad request'], 400));
     }
-    UsersManager::setUserLocation($request->input('user_id'), 
-                                  $request->input('user_location_id'), 
-                                  $request->input('location_id'), 
-                                  $request->input('title'), 
-                                  $request->input('street_name'), 
+    UsersManager::setUserLocation($request->input('user_id'),
+                                  $request->input('user_location_id'),
+                                  $request->input('location_id'),
+                                  $request->input('title'),
+                                  $request->input('street_name'),
                                   $request->input('street_number')
                                 );
   }
@@ -99,10 +90,10 @@ class ProfileController extends Controller
     if(!$request->input('location_id')){
       abort(response()->json(['error'=>$request->all()], 400));
     }
-    UsersManager::addUserLocation($request->input('user_id'), 
-                                  $request->input('location_id'), 
-                                  $request->input('title'), 
-                                  $request->input('street_name'), 
+    UsersManager::addUserLocation($request->input('user_id'),
+                                  $request->input('location_id'),
+                                  $request->input('title'),
+                                  $request->input('street_name'),
                                   $request->input('street_number')
                                 );
   }
@@ -120,7 +111,7 @@ class ProfileController extends Controller
 
   //
   public function getChannels(Request $request)
-  { 
+  {
     return response()->json(UsersManager::getChannels($request->input('user_id')), 200);
   }
 
@@ -130,10 +121,6 @@ class ProfileController extends Controller
       $email = $request->input('email');
       if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
           abort(response()->json(['error' => 'Bad Request'], 400));
-      }
-      $score = RecaptchaManager::getScore($request->input('token'));
-      if($score < 0.5) {
-          abort(response()->json(['Error'=> 'You are robot, dont event try! I am a teapot.'], 418));
       }
       $key = UsersManager::setChannelVerificationKey($request->input('user_id'), $email);
       Mail::to($email)->send(new UserRegistrationMail($key));
@@ -146,7 +133,7 @@ class ProfileController extends Controller
     $user = UsersManager::getByKey($key);
     if(!$user) {
         abort(response()->json(['error' => 'Not found'], 404));
-    } 
+    }
     else if(strtotime($user->verification_key_expires_at) < time()) {
         app('db')->update("UPDATE users
         SET users.verification_key_expires_at = null,
@@ -166,7 +153,7 @@ class ProfileController extends Controller
   }
 
 
-  
+
   //GET FUNCTION FROM TELEGRAM_AUTH_CONTROLLER
   public function tgChannelVerify(Request $request){
     $auth_data = $request->input('auth_data');
@@ -189,7 +176,7 @@ class ProfileController extends Controller
         return response()->json(['error' => 'Data is outdated'], 400);
     }
     app('db')->update("UPDATE users
-                      SET telegram_id = :t_id, 
+                      SET telegram_id = :t_id,
                           telegram_username = :t_username
                       WHERE id = :user_id",
                       ['t_id' => $auth_data['id'], 't_username' => $auth_data['username'], 'user_id' => $request->input('user_id')]);

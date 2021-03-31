@@ -17,7 +17,7 @@ use GuzzleHttp\Middleware;
 
 //------------------------ PAGES ------------------------
 $router->get('/', function(){return view('portal.index');});
-$router->get('/signup', function(){return view('portal.signinup');});
+$router->get('/signup', function(){return view('portal.signup');});
 $router->get('/profile',function(){return view('portal.profile');});
 $router->get('/profiletest',function(){return view('portal.file');});
 
@@ -40,7 +40,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/email', 'EmailAuthController@authenticate');
     $router->get('/email/verify/{key}', 'EmailAuthController@verify');
     //telegram
-    $router->post('/tg/verify', 'TelegramAuthController@authentication');     
+    $router->post('/tg/verify', 'TelegramAuthController@authentication');
   });
 
   $router->group(['prefix' => 'locations'], function ($router) {

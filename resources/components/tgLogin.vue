@@ -15,7 +15,7 @@
       },
       dataSize:{
         type: String,
-        default: 'medium'
+        default: 'large'
       }
     },
     methods: {

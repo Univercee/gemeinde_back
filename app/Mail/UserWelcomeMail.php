@@ -14,6 +14,6 @@ class UserWelcomeMail extends MailjetTemplateMailable
    * @return void
    */
   public function __construct($key) {
-    $this->url = env('APP_URL').'/signup/#'.$key; // {{var:url}} in MJ $templateId
+    $this->url = env('APP_URL').'/signup#'.$key; // {{var:url}} in MJ $templateId
   }
 }

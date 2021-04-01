@@ -33,8 +33,6 @@ $router->group(['prefix' => 'api'], function ($router) {
 
   $router->get('/keys', 'ConfigController@getKeys');
 
-  $router->get('/services/location/{locationId}', 'ProfileController@servicesFlow');
-
   $router->group(['prefix' => 'auth'], function ($router) {
     //email
     $router->post('/email', 'EmailAuthController@authenticate');
@@ -47,6 +45,8 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/{zipcode}/services', "LocationController@getServicesByZipCode");
     $router->get('/', 'LocationController@getLocationsHaveServices');
     $router->get('/all', 'LocationController@getAllLocations');
+    //location services
+    $router->get('/services/{locationId}/{user_location_id}', 'ProfileController@servicesFlow');
   });
 
   $router->group(['prefix' => 'profile'], function ($router) {
@@ -69,5 +69,8 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->delete('/channels/email/delete', 'ProfileController@deleteEmailChannel');
     $router->post('/channels/tg/verify', 'ProfileController@tgChannelVerify');
     $router->delete('/channels/tg/delete', 'ProfileController@deleteTgChannel');
+    //
+    $router->patch('/services', 'ProfileController@setUserServices');
+    $router->delete('/services', 'ProfileController@deleteUserServices');
   });
 });

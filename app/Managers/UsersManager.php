@@ -29,7 +29,7 @@ class UsersManager
     // [GENA-7]
     public static function add($email) {
       $key = bin2hex(random_bytes(32));
-      app('db')->insert("INSERT INTO users (email, verification_key, verification_key_expires_at)
+      app('db')->insert("INSERT INTO users (email_pending, verification_key, verification_key_expires_at)
                         VALUES(?, ?, NOW() + INTERVAL 1 DAY)",
                         [$email, $key]);
       return $key;
@@ -137,7 +137,7 @@ class UsersManager
   }
 
     public static function getChannels($user_id){
-      $channels = app('db')->select("SELECT email, telegram_username FROM users
+      $channels = app('db')->select("SELECT email as email, telegram_username as tg FROM users
                               WHERE id = :user_id",
                               ['user_id' => $user_id]);
       return $channels[0];
@@ -154,23 +154,24 @@ class UsersManager
 
     public static function deleteEmailChannel($user_id){
       $channels = UsersManager::getChannels($user_id);
-      var_dump($channels);
-      if($channels->telegram_username){
-        app('db')->delete("UPDATE users
+      if($channels->tg){
+        return app('db')->delete("UPDATE users
                           SET email = null
                           WHERE id = :user_id",
                           ['user_id' => $user_id]);
       }
+      return false;
     }
 
     public static function deleteTgChannel($user_id){
       $channels = UsersManager::getChannels($user_id);
       if($channels->email){
-        app('db')->delete("UPDATE users
+        return app('db')->delete("UPDATE users
                           SET telegram_id = null, telegram_username = null
                           WHERE id = :user_id",
                           ['user_id' => $user_id]);
       }
+      return false;
     }
 
     public static function setPersonalDetails($user_id, $firstname, $lastname, $language){
@@ -179,7 +180,7 @@ class UsersManager
       $firstname = ($firstname == "") ? null : $firstname;
       $lastname = ($lastname == "") ? null : $lastname;
       $language = ($language == 'en' || $language == 'de') ? $language : 'en';
-      app('db')->update("UPDATE users
+      return app('db')->update("UPDATE users
                           SET first_name = :firstname, last_name = :lastname, language = :language
                           WHERE id = :user_id",
                           ['firstname' => $firstname, 'lastname' => $lastname, 'language' => $language, 'user_id' => $user_id]);
@@ -203,7 +204,7 @@ class UsersManager
       $title = trim($title);
       $street_name = trim($street_name);
       $street_number = trim($street_number);
-      app('db')->update("UPDATE user_locations
+      return app('db')->update("UPDATE user_locations
                         SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
                         WHERE user_id = :user_id AND id = :id",
                         ['title' => $title,
@@ -218,13 +219,13 @@ class UsersManager
       $title = trim($title);
       $street_name = trim($street_name);
       $street_number = trim($street_number);
-      app('db')->insert("INSERT INTO user_locations(user_id, title, location_id, street_name, street_number)
+      return app('db')->insert("INSERT INTO user_locations(user_id, title, location_id, street_name, street_number)
                         VALUES(?, ?, ?, ?, ?)",
                         [$user_id, $title, $location_id, $street_name, $street_number]);
     }
 
     public static function deleteUserLocation($user_id, $user_location_id){
-      app('db')->delete("DELETE FROM user_locations
+      return app('db')->delete("DELETE FROM user_locations
                         WHERE user_id = :user_id AND id = :id",
                         ['id' => $user_location_id,
                         'user_id' => $user_id]);

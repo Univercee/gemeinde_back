@@ -1,31 +1,17 @@
 <template>
     <div>
         <div class="avatar">
-            <img class="delete-img" v-on:click="deleteAvatar()" v-if="avatar != null" src="resources/assets/images/delete.png" alt="">
-            <img class="avatar-img" :src="avatar_src" alt="User avatar">
-            <img class="edit-img modal-open" src="resources/assets/images/edit.png" alt="">
-        </div>
-
-        <!-- Modal -->
-        <div class="modal" id="modal">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <form @submit.prevent="updateAvatar()" enctype="multipart/form-data" action="POST">
-                            <div class="form-group">
-                                <input type="file" ref="avatar" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" class="btn btn-primary">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default modal-close">Close</button>
-                    </div>
-                </div>
+            <label v-if="avatar" class="edit-img" for="avatar-upload">
+                <img src="resources/assets/images/edit.png" alt="">
+            </label>
+            <img class="avatar-img" :src="avatar??'resources/assets/images/profile/avatar_default.jpg'" alt="User avatar">
+            <div v-if="avatar" class="delete-img" v-on:click="deleteAvatar()">
+                <img src="resources/assets/images/delete.png" alt="">
             </div>
+            <label v-if="!avatar" for="avatar-upload" class="edit">
+                +
+            </label>
+            <input class="d-none" id="avatar-upload" ref="avatar" type="file" @change="updateAvatar()"/>
         </div>
     </div>
 </template>
@@ -33,9 +19,7 @@
 export default {
     data() {
         return {
-            avatar:null,
-            avatar_src:null,
-            message:null
+            avatar:null
         }
     },
     methods: {
@@ -48,12 +32,11 @@ export default {
                 let delimiter = ""
                 if(this.avatar != null){
                    delimiter = this.avatar.includes('?') ? '&' : '?'
-                }
-                this.avatar_src = response.data.image + delimiter + new Date().getTime()
+                   this.avatar = response.data.image + delimiter + new Date().getTime()
+                } 
             })
         },
         updateAvatar(){
-           document.getElementById('modal').classList = "modal modal-close-animation"
             let formData = new FormData()
             formData.append('file',this.$refs.avatar.files[0])
             axios({
@@ -63,61 +46,62 @@ export default {
                 headers:{
                     'content-type': 'multipart/form-data'
                 }
-            }).then(async (response)=>{
-                this.message = response.data.message
-                await this.fetchAvatar()
-            }).catch((err)=>{
-                this.message = err.response.data.error
+            }).then(response=>{
+                this.notify(response.data.message, false)
+                this.fetchAvatar()
+            }).catch(err=>{
+                this.notify(err.response.data.message, true)
             })
         },
         deleteAvatar(){
             axios({
                 method: 'delete',
                 url: '/profile/avatar'
-            }).then(async (response)=>{
-                this.message = response.data.message
-                await this.fetchAvatar()
-            }).catch((err)=>{
-                this.message = err.response.data.error
+            }).then(response=>{
+                this.notify(response.data.message, false)
+                this.fetchAvatar()
+            }).catch(err=>{
+                this.notify(err.response.data.message, true)
             })
         },
-        initModal(){
-            var avatarModal = document.getElementById('modal');
-            var btnClose = document.getElementsByClassName('modal-close');
-            var btnShow= document.getElementsByClassName('modal-open');
-            for(let el of btnShow){
-                el.addEventListener('click', (e) => {
-                    avatarModal.style.display = "block"
-                    avatarModal.classList = "modal modal-open-animation"
-                })
-            }
-            for(let el of btnClose){
-                el.addEventListener('click', (e) => {
-                    avatarModal.classList = "modal modal-close-animation"
-                })
-            }
-            avatarModal.addEventListener('animationend', () => {
-                if(avatarModal.classList.contains('modal-close-animation')){
-                    avatarModal.classList = "modal"
-                    avatarModal.style.display = "none"
-                }
-                else if(avatarModal.classList.contains('modal-open-animation')){
-                    avatarModal.classList = "modal"
-                }
-            });
+        notify(message, isError){
+            this.$emit('notify', message, isError)
         }
     },
     async created() {
         await this.fetchAvatar()
-        this.initModal()
     }
 }
 </script>
 <style>
+    .edit{
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        z-index: 20;
+        background-color: rgba(0,0,0,0.5);
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        font-size: 115px;
+        color: #fff;
+    }
+    .edit::selection{
+        background: none;
+    }
+    .avatar:hover .edit, .edit-img:hover, .delete-img:hover{
+        animation: edit-show linear 0.07s;
+        animation-fill-mode: forwards;
+        cursor: pointer;
+    }
     .avatar{
         position: relative;
         width: 200px;
         height: 200px;
+        border-radius: 50%;
     }
     .avatar-img{
         position: absolute;
@@ -126,60 +110,47 @@ export default {
         width: 100%;
         border-radius: 50%;
         object-fit: cover;
+        border: solid black 2px;
     }
     .edit-img, .delete-img{
         position: absolute;
         cursor: pointer;
-        height: 20%;
-        width: 20%;
-        opacity: 0.9;
-        visibility: hidden;
-    }
-    .delete-img{
+        height: 50%;
+        width: 100%;
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 60px;
+        color: #fff;
         z-index: 10;
-        top: 80%;
-        left: 0%;
     }
     .edit-img{
-        z-index: 10;
-        top: 80%;
-        left: 80%;
+        border: solid #1d8eea 2px;
+        background-color: rgba(29,142,234, 0.5);
+        border-radius: 100px 100px 0 0;
+        top: 0;
+        left: 0;
+        
     }
-    .edit-img:hover, .delete-img:hover{
-        opacity: 1;
+    .delete-img{
+        border: solid #af0007 2px;
+        background-color: rgba(175,0,7, 0.5);
+        border-radius: 0 0 100px 100px;
+        top: 50%;
+        left: 0;
     }
-    .modal-open-animation{
-        animation: modal_open ease-out 0.3s;
-        animation-iteration-count: 1;
+    .delete-img img, .edit-img img{
+        width: 70px;
+        height: 70px;
     }
-    .modal-close-animation{
-        animation: modal_close ease-in 0.3s;
-        animation-iteration-count: 1;
-    }
-    .avatar:hover .edit-img{
-        visibility: visible;
-    }
-    .avatar:hover .delete-img{
-        visibility: visible;
-    }
-    @keyframes modal_open {
+
+    @keyframes edit-show {
         0% {
-            top:-50%;
             opacity: 0;
         }
         100% {
             opacity: 1;
-            top:0;
-        }
-    }
-    @keyframes modal_close {
-        0% {
-            top:0%;
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-            top:-100%;
         }
     }
 </style>

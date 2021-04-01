@@ -24,16 +24,17 @@ class AvatarsManager{
 
     public static function setAvatar($user_id, $file){
         $url = Storage::disk('local')->url('app/avatars/'.$user_id.'.jpg');
-        Storage::disk('local')->putFileAs('avatars',$file, $user_id.'.jpg');
+        $return = Storage::disk('local')->putFileAs('avatars',$file, $user_id.'.jpg');
         app('db')->update("UPDATE users
                         SET avatar = :avatar
                         WHERE id = :user_id",
                         ['user_id' => $user_id, 'avatar' => $url]);
+        return $return;
     }
 
     public static function deleteAvatar($user_id){
     Storage::disk('local')->delete('app/avatars/'.$user_id.'.jpg');
-    app('db')->update('UPDATE users
+    return app('db')->update('UPDATE users
                         SET avatar = NULL
                         WHERE id = :user_id',
       ['user_id' => $user_id]);

@@ -144,10 +144,8 @@
         this.setState('wait')
 	  		await this.getKeys();
         this.initRecaptcha()
-        console.log("Captcha loaded");
       }
       this.setState('input')
-      console.log(this.$props.isChannel);
 		}
 	}
 </script>

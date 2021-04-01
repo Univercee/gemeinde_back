@@ -65,7 +65,10 @@
         state: null
 			}
 		},
-    props:['isChannel'],
+    props:{
+      isChannel:Boolean,
+      default: false
+    },
 		methods: {
 			async submit() {
 				this.errors = []

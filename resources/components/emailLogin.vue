@@ -9,9 +9,11 @@
 			</div>
 
       <div v-if="state=='answer'">
-          <h1>You are verified</h1>
+
+          <p class="backendMsg">{{ backendMessage }}</p>
+        <img src="/resources/assets/images/greentick.png" class="email-img">
         <div>
-          <a href="/profile" role="button" class="btn form-control btn-success btn-sm">Continue</a>
+          <a href="/profile" role="button" class="btn form-control btn-primary btn-sm">Continue</a>
         </div>
       </div>
 
@@ -33,10 +35,12 @@
       </div>
 
       <div v-if="state=='sent'">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Email is sent!</strong> Please check your email.
-            <button v-on:click="state='input'" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <p class="text-center">{{backendMessage}}</p>
+        <img src="/resources/assets/images/envelope.png" class="email-img">
+<!--        <div class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--            <strong>Email is sent!</strong> Please check your email.-->
+<!--            <button v-on:click="state='input'" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--        </div>-->
       </div>
 
       <div v-if="state=='error'">
@@ -55,6 +59,7 @@
 			return {
 				errors: null,
 				message: null,
+        backendMessage: null,
 				googleRecaptchaSiteKey: null,
 				email: null,
         state: null
@@ -74,16 +79,21 @@
           let url = '/profile/channels/email';
           axios.post(url,{email: this.email})
             .then((response) =>{
+
               this.setState('sent')
             })
 					.catch((err) => {
 						this.setState('error', 'Something goes wrong. Please, try again')
-					});
+            console.warn(err)
+
+          });
         } else {
           let url = '/auth/email';
           await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then((token) => (
 					  axios.post(url,{email: this.email, token: token})
               .then((response) =>{
+               console.warn(response.data.message)
+                this.backendMessage = response.data.message
                 this.setState('sent')
               })
 					.catch((err) => {
@@ -95,16 +105,23 @@
 			},
       async verify(secretKey){
         await axios.get('/auth/email/verify/'+secretKey).then((response) => {
+          console.warn(response.data)
           sessionStorage.setItem('sessionKey', response.data.sessionkey)
+          if(response.data.status == 'logged'){
+            document.location.href = '/profile'
+            return true
+          }
+          this.backendMessage = response.data.message
           this.setState('answer')
         }).catch((err) => {
           if(err.response.status === 404) {
-            this.setState('error', 'Verification key is not found, please try again')
+            console.warn(err.response.data.error)
+            this.setState('error', err.response.data.error)
           }else if (err.response.status === 403){
-            this.setState('error', 'Verification key is expired, please try again')
+            this.setState('error', err.response.data.error)
           }
           else{
-            this.setState('error', 'Something goes wrong')
+            this.setState('error', 'Unable to identify error')
           }
         });
       },
@@ -130,7 +147,9 @@
 
 		async mounted(){
       if (window.location.hash) {
-        this.setState('wait')
+        if (this.state != 'answer') {
+          this.setState('wait')
+        }
         let secretKey = window.location.hash.split("#")[1];
         if (secretKey) {
           if(this.$props.isChannel){
@@ -141,11 +160,13 @@
         }
       }
       if(!this.$props.isChannel) {
-        this.setState('wait')
 	  		await this.getKeys();
         this.initRecaptcha()
       }
-      this.setState('input')
+      if(this.state == null) {
+        this.setState('input')
+      }
+      console.log(this.$props.isChannel);
 		}
 	}
 </script>
@@ -197,5 +218,12 @@
       height: 32px;
     }
   }
+.email-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
+  width: 50%;
+}
 
 </style>

@@ -33,17 +33,17 @@ class EmailAuthController extends Controller
         if($user && $user->registered_at) {
           $key = UsersManager::setVerificationKey($email);
           Mail::to($email)->send(new UserLoginMail($key));
-          return response()->json(['message' => 'Login email sent']);
-        } elseif ($user && !$user->registered_a && UsersManager::waitFiveMin($user)) {
+          return response()->json(['status' => 'login', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
+        } elseif ($user && !$user->registered_at && UsersManager::waitFiveMin($user)) {
             return response()->json(['message' => 'Please wait at least 5 min']);
-        } elseif($user && !$user->registered_a) {
+        } elseif($user && !$user->registered_at) {
           $key = UsersManager::setVerificationRegistrationKey($email);
           Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['message' => 'Registration email sent again']);
+          return response()->json(['status' => 'regAgain', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
         } else {
           $key = UsersManager::add($email);
           Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['message' => 'Registration email sent']);
+          return response()->json(['status' => 'reg', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
         }
     }
 
@@ -51,16 +51,16 @@ class EmailAuthController extends Controller
     public function verify($key){
         $user = UsersManager::getByKey($key);
         if(!$user) {
-            abort(response()->json(['error' => 'Not found'], 404));
+            abort(response()->json(['error' => 'Verification key is not found or already used by you, please try again'], 404));
         } else if(strtotime($user->verification_key_expires_at) < time()) {
             UsersManager::onLinkExpire($user->id);
             abort(response()->json(['error' => 'Key has expired'], 403));
         } else if(is_null($user->registered_at)) {
             $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email);
-            return response()->json(['message' => 'User has been registered','sessionkey' => $sessionKey]);
+            return response()->json(['status' => 'registered','message' => 'Congratulations! You are successfully registered now and may proceed to your profile.','sessionkey' => $sessionKey]);
         } else {
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
-            return response()->json(['message' => 'User has been logged in','sessionkey' => $sessionKey]);
+            return response()->json(['status' => 'logged' ,'message' => 'User has been logged in','sessionkey' => $sessionKey]);
         }
     }
 

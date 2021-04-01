@@ -46,13 +46,14 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => false, //DO NOT CHANGE -> Azure mySQL qill not connect
+            'strict' => true,
             'engine' => null,
+            'version' => env('DB_VERSION','8.0.15'),
+            'timezone' => env('DB_TIMEZONE', date('P')),
             'sslmode' => env('DB_SSLMODE', 'prefer'),
-            'options' => [] //DO NOT CHANGE -> Azure mySQL qill not connect
-            /*'options' => (env('DB_SSLKEY') && extension_loaded('pdo_mysql')) ? [
-                PDO::MYSQL_ATTR_SSL_CA => env('DB_SSLKEY'),
-            ] : [ PDO::MYSQL_ATTR_INIT_COMMAND => 'SET GLOBAL time_zone = "'.date('P').'"']*/
+            'options' => extension_loaded('pdo_mysql')
+              ? array_filter([PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),])
+              : [],
         ]
     ],
 

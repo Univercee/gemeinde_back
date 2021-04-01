@@ -8,7 +8,16 @@
             tgBotName: null
         }
     },
-    props: ['isChannel'],
+    props:{
+      isChannel:{
+        type:Boolean,
+        default:false
+      },
+      dataSize:{
+        type: String,
+        default: 'medium'
+      }
+    },
     methods: {
       async onTelegramAuth(user) {
         await axios.post('/auth/tg/verify', {auth_data: user}).then((response) => {       
@@ -32,7 +41,7 @@
         let script = document.createElement('script');
         script.setAttribute('src','https://telegram.org/js/telegram-widget.js?14')
         script.setAttribute('data-telegram-login',this.tgBotName)
-        script.setAttribute('data-size','medium')
+        script.setAttribute('data-size',this.dataSize)
         script.setAttribute('data-radius','5')
         script.setAttribute('async',true)
         script.setAttribute('data-onauth','onTelegramAuth(user)')

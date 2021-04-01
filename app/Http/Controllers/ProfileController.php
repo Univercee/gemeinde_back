@@ -8,7 +8,7 @@ use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 use App\Mail\UserRegistrationMail;
 use App\Managers\RecaptchaManager;
-
+use DB;
 define('BOT_TOKEN', env('TG_BOT_TOKEN'));
 class ProfileController extends Controller
 {
@@ -26,7 +26,11 @@ class ProfileController extends Controller
     if (!$request->hasFile('file')) {
       abort(response()->json(['error' => 'Bad request'], 400));
     }
-    AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'));
+    if(AvatarsManager::setAvatar($request->input('user_id'), request()->file('file'))){
+      return response()->json(['message'=>'Avatar updated'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t update avatar'], 422));
+    
   }
 
 
@@ -40,13 +44,19 @@ class ProfileController extends Controller
   //
   public function deleteAvatar(Request $request)
   {
-    AvatarsManager::deleteAvatar($request->input('user_id'));
+    if(AvatarsManager::deleteAvatar($request->input('user_id'))){
+      return response()->json(['message'=>'Avatar deleted'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t delete avatar'], 422));
   }
 
 
   //
   public function setPersonalDetails(Request $request){
-    UsersManager::setPersonalDetails($request->input('user_id'), $request->input('firstname'), $request->input('lastname'), $request->input('language'));
+    if(UsersManager::setPersonalDetails($request->input('user_id'), $request->input('firstname'), $request->input('lastname'), $request->input('language'))){
+      return response()->json(['message'=>'Personal details updated'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t update personal details'], 422));
   }
 
 
@@ -71,16 +81,20 @@ class ProfileController extends Controller
   //[GENA-32]
   public function setUserLocation(Request $request)
   {
-    if(!$request->input('user_location_id')){
-      abort(response()->json(['error'=>'Bad request'], 400));
+    if(!$request->input('id') || !$request->input('location_id')){
+      abort(response()->json(['message'=>'Location not specified'], 400));
     }
-    UsersManager::setUserLocation($request->input('user_id'),
-                                  $request->input('user_location_id'),
+    if(UsersManager::setUserLocation($request->input('user_id'),
+                                  $request->input('id'),
                                   $request->input('location_id'),
                                   $request->input('title'),
                                   $request->input('street_name'),
                                   $request->input('street_number')
-                                );
+                                )){
+                                  return response()->json(['message'=>'Location updated'], 200);
+                                };
+  
+  abort(response()->json(['message'=>'Couldn\'t update location'], 422));
   }
 
 
@@ -88,14 +102,18 @@ class ProfileController extends Controller
   public function addUserLocation(Request $request)
   {
     if(!$request->input('location_id')){
-      abort(response()->json(['error'=>$request->all()], 400));
+      abort(response()->json(['message'=>'Location not specified'], 400));
     }
-    UsersManager::addUserLocation($request->input('user_id'),
+    if(UsersManager::addUserLocation($request->input('user_id'),
                                   $request->input('location_id'),
                                   $request->input('title'),
                                   $request->input('street_name'),
                                   $request->input('street_number')
-                                );
+                                )){
+                                  return response()->json(['message'=>'Location added'], 200);
+                                };
+    
+    abort(response()->json(['message'=>'Couldn\'t add location'], 422));
   }
 
 
@@ -103,9 +121,12 @@ class ProfileController extends Controller
   public function deleteUserLocation(Request $request)
   {
     if(!$request->input('id')){
-      abort(response()->json(['error'=>'Bad request'], 400));
+      abort(response()->json(['message'=>'Deleted location not chosen'], 400));
     }
-    UsersManager::deleteUserLocation($request->input('user_id'), $request->input('id'));
+    if(UsersManager::deleteUserLocation($request->input('user_id'), $request->input('id'))){
+      return response()->json(['message'=>'Location deleted'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t delete location'], 422));
   }
 
 
@@ -125,6 +146,7 @@ class ProfileController extends Controller
       $key = UsersManager::setChannelVerificationKey($request->input('user_id'), $email);
       Mail::to($email)->send(new UserRegistrationMail($key));
       return response()->json(['message' => 'Registration email sent'], 200);
+      return response()->json(['message'=>'Email channel verified'], 200);
   }
 
 
@@ -185,26 +207,53 @@ class ProfileController extends Controller
 
   //
   public function deleteEmailChannel(Request $request){
-    UsersManager::deleteEmailChannel($request->input('user_id'));
+    if(UsersManager::deleteEmailChannel($request->input('user_id'))){
+      return response()->json(['message'=>'Email channel deleted'], 200);
+    };
+    
+    abort(response()->json(['message'=>'Couldn\'t delete email channel'], 422));
+    
   }
 
 
   //
   public function deleteTgChannel(Request $request){
-    UsersManager::deleteTgChannel($request->input('user_id'));
+    if(UsersManager::deleteTgChannel($request->input('user_id'))){
+      return response()->json(['message'=>'Telegram channel deleted'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t delete telegram channel'], 422));
   }
 
 
   //TODO
-  public function servicesFlow(Request $request, $locationId){
-    $user_id = $request->input('user_id');
-    $results = app('db')->select("SELECT ls.service_id, s.name_en as name, channel, frequency
-              FROM location_services AS ls
-              JOIN services s ON s.id = ls.service_id
-              LEFT JOIN user_location_services uls ON uls.service_id = s.id
-              LEFT JOIN user_locations ul ON ul.location_id = ls.location_id
-              WHERE ls.location_id = :locId AND ul.user_id = :user_id", ['user_id' => $user_id, 'locId' => $locationId]);
-    return response()->json(['results'=>$results]);
+  public function servicesFlow(Request $request, $locationId, $user_location_id){
+    $results = app('db')->select("SELECT ls.service_id, s.name_en as name, channel, uls.frequency
+                                  FROM location_services AS ls
+                                  JOIN services s ON s.id = ls.service_id
+                                  JOIN locations l ON l.id = ls.location_id AND l.id = :location_id
+                                  LEFT JOIN user_locations ul ON ul.location_id = l.id AND user_id = :user_id AND ul.id = :user_location_id
+                                  LEFT JOIN user_location_services uls ON uls.user_location_id = ul.id AND uls.service_id =s.id", 
+                                ['user_id' => $request->input('user_id'), 
+                                'location_id' => $locationId,
+                                'user_location_id' => $user_location_id]);
 
+    return response()->json(['results'=>$results]);
+  }
+
+  public function setUserServices(Request $request){
+    $services = $request->input('services');
+    $user_location_id = $request->input('user_location_id');
+    for($i=0; $i<count($services); $i++){
+      unset($services[$i]['name']);
+      $services[$i]['user_location_id'] = $user_location_id;
+    }
+    DB::table('user_location_services')->where('user_location_id', $user_location_id)->delete();
+    DB::table('user_location_services')->upsert(
+      $services,
+      ['user_location_id', 'service_id'], ['channel', 'frequency']
+    );
+  }
+  public function deleteUserServices(Request $request){
+    DB::table('user_location_services')->where('user_location_id', $request->input('user_location_id'))->delete();
   }
 }

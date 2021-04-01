@@ -44,7 +44,7 @@ class LocationController extends Controller
     // [GENA-4]
     public function getLocationsHaveServices(){
         $results = app('db')
-                ->select("SELECT DISTINCT locations.id, zipcode, name_de AS 'name', region, lat, lng
+                ->select("SELECT DISTINCT locations.id, zipcode, name_de AS 'name', CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, region, lat, lng
                         FROM locations
                         JOIN location_services ON location_services.location_id = locations.id");
         return response()->json($results);

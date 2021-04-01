@@ -59,12 +59,14 @@ export default {
                     lastname:this.lastname,
                     language:this.language
                 }
-            }).then(()=>{
+            }).then(response=>{
                 this.fetchPersonalDetails()
-            }).catch(()=>{
+                this.notify(response.data.message, false)
+            }).catch(err=>{
                 this.firstname = old_firstname
                 this.lastname = old_lastname
                 this.language = old_language
+                this.notify(err.response.data.message, true)
             })
         },
         fetchPersonalDetails(){
@@ -76,6 +78,9 @@ export default {
                 this.lastname = response.data.lastname,
                 this.language = response.data.language
             })
+        },
+        notify(message, isError){
+            this.$emit('notify', message, isError)
         }
     },
     async mounted() {

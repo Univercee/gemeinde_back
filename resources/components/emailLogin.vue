@@ -162,7 +162,6 @@
       if(!this.$props.isChannel) {
 	  		await this.getKeys();
         this.initRecaptcha()
-        console.log("Captcha loaded");
       }
       if(this.state == null) {
         this.setState('input')

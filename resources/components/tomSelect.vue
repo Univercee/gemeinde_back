@@ -1,7 +1,7 @@
 <template>
     <div class="input-group">
-        <input class="form-control" ref="tomSelect" placeholder="PLZ oder Ortsname" @change="returnSelected()" />
-        <button class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
+        <input required class="form-control" ref="tomSelect" placeholder="Select a location" @change="returnSelected()"/>
+        <button v-if="viewSearchButton" class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
     </div>
 </template>
 
@@ -14,7 +14,11 @@ export default {
     },
     props: {
         locations: Array,
-        selectedValue: Number
+        selectedValue: Number,
+        viewSearchButton:{
+            type: Boolean,
+            default: true
+        }
     },
     methods: {
         initTomSelect() {
@@ -37,6 +41,7 @@ export default {
             });
             this.ts.on('focus', () => {
                 this.ts.clear();
+                this.ts.open();
             });
             this.ts.setValue(this.selectedValue)
         },

@@ -103,7 +103,9 @@ class UsersManager
                         SET registered_at = NOW(),
                             users.verification_key_expires_at = null,
                             users.verification_key = null,
-                            users.avatar = :avatar
+                            users.avatar = :avatar,
+                            users.email = users.email_pending,
+                            users.email_pending = null
                         WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
     Mail::to($email)->send(new UserWelcomeMail(null));
     return SessionsManager::generateSessionKey($id);

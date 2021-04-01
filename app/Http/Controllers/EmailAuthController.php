@@ -56,7 +56,7 @@ class EmailAuthController extends Controller
             UsersManager::onLinkExpire($user->id);
             abort(response()->json(['error' => 'Key has expired'], 403));
         } else if(is_null($user->registered_at)) {
-            $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email);
+            $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email_pending);
             return response()->json(['status' => 'registered','message' => 'Congratulations! You are successfully registered now and may proceed to your profile.','sessionkey' => $sessionKey]);
         } else {
             $sessionKey = UsersManager::confirmLoginEmail($user->id);

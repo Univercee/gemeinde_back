@@ -9,7 +9,7 @@
 		</a>
 		<a v-if="!isAuth" class="me-4" href="/signup">Einloggen</a>
 		<a v-if="!isAuth" class="btn btn-primary" href="/signup">Anmelden</a>
-    <a v-if="isAuth" class="btn btn-primary" href="/logout">Log out</a>
+    <a v-if="isAuth" class="btn btn-primary" @click.prevent="logout" href="#logout">Log out</a>
 	</nav>
 </template>
 
@@ -21,6 +21,10 @@ export default {
         }
     },
     methods: {
+      logout() {
+        sessionStorage.removeItem('sessionKey');
+        window.location.href = '/';
+      }
     },
     created() {
         if(sessionStorage.getItem('sessionKey')) this.isAuth = true;

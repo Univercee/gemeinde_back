@@ -17,10 +17,15 @@ use GuzzleHttp\Middleware;
 
 //------------------------ PAGES ------------------------
 $router->get('/', function(){return view('portal.index');});
-$router->get('/signup', function(){return view('portal.signup');});
+//$router->get('/signup', function(){return view('portal.signup');});
+$router->get('/signup[/{lang}]', function(){return view('portal.signup');});
 $router->get('/profile',function(){return view('portal.profile');});
 $router->get('/profiletest',function(){return view('portal.file');});
 
+$router->get('/test/{lang}', function ($lang){
+  app('translator')->setLocale($lang);
+  return view('profile');
+});
 
 $router->get('/file', function (){return view('portal.file');});
 

@@ -81,6 +81,7 @@
       <div id="sso">
         <tg-login></tg-login>
       </div>
+      <test></test>
     </main>
 	</div>
 
@@ -88,6 +89,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
 <script src="https://unpkg.com/vue@next"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-i18n@next"></script>
 <script id="vuescript">
 	/* boilerplate for vue3-sfc-loader */
 	const options = {
@@ -123,12 +125,38 @@
       'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
       'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
       'logo-link': Vue.defineAsyncComponent(() => loadModule('../../resources/components/logo.vue', options)),
+      'test': Vue.defineAsyncComponent(() => loadModule('../../resources/components/test.vue', options)),
     }
   });
   va.directive('visible', function(el, binding) {
     el.style.visibility = !!binding.value ? 'visible' : 'hidden';
   });
+
+
+  const messages = {
+    en: {
+      message: {
+        hello: 'hello world'
+      }
+    },
+    de: {
+      message: {
+        hello: 'Gutten morgen'
+      }
+    }
+  }
+
+  // 2. Create i18n instance with options
+  const i18n = VueI18n.createI18n({
+    locale: 'ja', // set locale
+    fallbackLocale: 'en', // set fallback locale
+    messages, // set locale messages
+    // If you need to specify other options, you can set other options
+    // ...
+  })
+  va.use(i18n)
   va.mount('#vueapp');
 </script>
 </body>
 </html>
+

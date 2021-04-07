@@ -30,7 +30,7 @@ class ProfileController extends Controller
       return response()->json(['message'=>'Avatar updated'], 200);
     };
     abort(response()->json(['message'=>'Couldn\'t update avatar'], 422));
-    
+
   }
 
 
@@ -93,7 +93,7 @@ class ProfileController extends Controller
                                 )){
                                   return response()->json(['message'=>'Location updated'], 200);
                                 };
-  
+
   abort(response()->json(['message'=>'Couldn\'t update location'], 422));
   }
 
@@ -112,7 +112,7 @@ class ProfileController extends Controller
                                 )){
                                   return response()->json(['message'=>'Location added'], 200);
                                 };
-    
+
     abort(response()->json(['message'=>'Couldn\'t add location'], 422));
   }
 
@@ -145,8 +145,8 @@ class ProfileController extends Controller
       }
       $key = UsersManager::setChannelVerificationKey($request->input('user_id'), $email);
       Mail::to($email)->send(new UserRegistrationMail($key));
-      return response()->json(['message' => 'Registration email sent'], 200);
-      return response()->json(['message'=>'Email channel verified'], 200);
+      return response()->json(['message' => __('auth.mailSend')], 200);
+      return response()->json(['message'=> __('auth.mailVerified')], 200);
   }
 
 
@@ -154,14 +154,14 @@ class ProfileController extends Controller
   public function emailChannelVerify($key){
     $user = UsersManager::getByKey($key);
     if(!$user) {
-        abort(response()->json(['error' => 'Not found'], 404));
+        abort(response()->json(['error' => __('auth.notFound')], 404));
     }
     else if(strtotime($user->verification_key_expires_at) < time()) {
         app('db')->update("UPDATE users
         SET users.verification_key_expires_at = null,
             users.verification_key = null
         WHERE users.id = :id",['id'=>$user->id]);
-        abort(response()->json(['error' => 'Key has expired'], 403));
+        abort(response()->json(['error' => __('auth.keyExpired')], 403));
     }
     else{
       app('db')->update("UPDATE users
@@ -171,7 +171,7 @@ class ProfileController extends Controller
             users.email_pending = null
         WHERE users.id = :id",['id'=>$user->id]);
     }
-    return response()->json(['message' => 'Channel has been added']);
+    return response()->json(['message' => __('auth.channelAdded')]);
   }
 
 
@@ -192,10 +192,10 @@ class ProfileController extends Controller
     $hash = hash_hmac('sha256', $data_check_string, $secret_key);
 
     if (strcmp($hash, $check_hash) !== 0) {
-        return response()->json(['error' => 'Data is NOT from Telegram'], 400);
+        return response()->json(['error' => __('auth.notTgData')], 400);
     }
     if ((time() - $auth_data['auth_date']) > 86400) {
-        return response()->json(['error' => 'Data is outdated'], 400);
+        return response()->json(['error' => __('auth.outDateData')], 400);
     }
     app('db')->update("UPDATE users
                       SET telegram_id = :t_id,
@@ -210,9 +210,9 @@ class ProfileController extends Controller
     if(UsersManager::deleteEmailChannel($request->input('user_id'))){
       return response()->json(['message'=>'Email channel deleted'], 200);
     };
-    
+
     abort(response()->json(['message'=>'Couldn\'t delete email channel'], 422));
-    
+
   }
 
 
@@ -232,8 +232,8 @@ class ProfileController extends Controller
                                   JOIN services s ON s.id = ls.service_id
                                   JOIN locations l ON l.id = ls.location_id AND l.id = :location_id
                                   LEFT JOIN user_locations ul ON ul.location_id = l.id AND user_id = :user_id AND ul.id = :user_location_id
-                                  LEFT JOIN user_location_services uls ON uls.user_location_id = ul.id AND uls.service_id =s.id", 
-                                ['user_id' => $request->input('user_id'), 
+                                  LEFT JOIN user_location_services uls ON uls.user_location_id = ul.id AND uls.service_id =s.id",
+                                ['user_id' => $request->input('user_id'),
                                 'location_id' => $locationId,
                                 'user_location_id' => $user_location_id]);
 

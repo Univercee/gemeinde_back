@@ -1,3 +1,21 @@
+function langDetect(){
+  let href = window.location.href.split("#").pop()
+  if(href == 'en' || href == 'de') {
+    this.lang = href
+  }else{
+    this.lang = navigator.language.split('-')[0]
+  }
+  return this.lang
+}
+
+i18n = VueI18n.createI18n({
+		globalInjection: true,
+		legacy: false,
+		locale: langDetect(),
+		fallbackLocale: 'en'
+	})
+
+
 /* boilerplate for vue3-sfc-loader */
 const options = {
   moduleCache: {

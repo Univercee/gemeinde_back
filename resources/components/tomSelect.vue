@@ -1,9 +1,20 @@
 <template>
     <div class="input-group">
-        <input required class="form-control" ref="tomSelect" placeholder="Select a location" @change="returnSelected()"/>
+        <input required class="form-control" ref="tomSelect" :placeholder="$root.t('tomSelect_1')" @change="returnSelected()"/>
         <button v-if="viewSearchButton" class="btn btn-primary" type="submit"><svg class="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M19 17l-5.15-5.15a7 7 0 1 0-2 2L17 19zM3.5 8A4.5 4.5 0 1 1 8 12.5 4.5 4.5 0 0 1 3.5 8z"/></svg></button>
     </div>
 </template>
+
+<i18n>
+{
+  "en":{
+    "tomSelect_1":"Select a location"
+  },
+  "de":{
+    "tomSelect_1":"Select a location"
+  }
+}
+</i18n>
 
 <script>
 export default {

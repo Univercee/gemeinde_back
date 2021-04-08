@@ -1,11 +1,11 @@
 <template>
     <div>
-        <h3>Personal details</h3>
+        <h3>{{$root.t('personalDetails_1')}}</h3>
         <form @submit.prevent="updatePersonalDetails()" action="POST">
           <div class="container m-0 p-0">
             <div class="form-group row mb-2">
               <div class="col-4">
-                <label for="firstname">First name</label>
+                <label for="firstname">{{$root.t('personalDetails_2')}}</label>
               </div>
               <div class="col-8">
                 <input type="text" id="firstname" v-model="firstname" ref="firstname">
@@ -13,7 +13,7 @@
             </div>
             <div class="form-group row mb-2">
               <div class="col-4">
-                <label for="lastname">Last name</label>
+                <label for="lastname">{{$root.t('personalDetails_3')}}</label>
               </div>
               <div class="col-8">
                 <input type="text" id="lastname" v-model="lastname" ref="lastname">
@@ -21,7 +21,7 @@
             </div>
             <div class="form-group row mb-2">
               <div class="col-4">
-                <label for="language">Language</label>
+                <label for="language">{{$root.t('personalDetails_4')}}</label>
               </div>
               <div class="col-8">
                 <select v-model="language" ref="language">
@@ -37,6 +37,24 @@
         </form>
     </div>
 </template>
+
+<i18n>
+{
+  "en":{
+    "personalDetails_1":"Personal details",
+    "personalDetails_2":"First name",
+    "personalDetails_3":"Last name",
+    "personalDetails_4":"Language"
+  },
+  "de":{
+    "personalDetails_1":"Personal details",
+    "personalDetails_2":"First name",
+    "personalDetails_3":"Last name",
+    "personalDetails_4":"Language"
+  }
+}
+</i18n>
+
 <script>
 export default {
     data() {
@@ -61,6 +79,7 @@ export default {
                 }
             }).then(response=>{
                 this.fetchPersonalDetails()
+                this.$i18n.locale = this.language
                 this.notify(response.data.message, false)
             }).catch(err=>{
                 this.firstname = old_firstname

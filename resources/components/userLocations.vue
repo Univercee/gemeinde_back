@@ -1,11 +1,11 @@
 <template>
     <div>
-        <h3>My locations</h3>
+        <h3>{{$root.t('userLocations_1')}}</h3>
         <div class="accordion mb-4" id="accordionLocations">
             <div class="accordion-item" :class="{'mt-1':index==new_index}" :key="location" v-for="(location, index) in user_locations">
                 <h4 class="accordion-header" :id="'heading'+location.id">
                     <button v-if="index!=new_index" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#location'+location.id" aria-expanded="false" :aria-controls="'location'+location.id">
-                        <h4>{{location.title==''?'Untitled':location.title}}</h4>
+                        <h4>{{location.title==''?$root.t('userLocations_2'):location.title}}</h4>
                     </button>
                     <button v-if="index==new_index" class="btn btn-block btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#location'+location.id" aria-expanded="false" :aria-controls="'location'+location.id">
                         <h3>+</h3>
@@ -16,15 +16,15 @@
                         <form @submit.prevent="updateLocation(index);">
                             <div class="form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/home.png" alt="Title">
+                                    <img class="form-img" src="resources/assets/images/profile/home.png" :alt="$root.t('userLocations_3')">
                                 </div>
                                 <div class="col-11">
-                                    <input style="width:100%" type="text" v-model="location.title" placeholder="Location title">
+                                    <input style="width:100%" type="text" v-model="location.title" :placeholder="$root.t('userLocations_4')">
                                 </div>
                             </div>
                             <div class="form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/zip.png" alt="Location">      
+                                    <img class="form-img" src="resources/assets/images/profile/zip.png" :alt="$root.t('userLocations_5')">      
                                 </div>
                                 <div class="col-11">
                                     <tomSelect :viewSearchButton="false" v-if="primary_locations" :locations="primary_locations" :selectedValue="parseInt(location.location_id)" @tsChanged="location.location_id = $event"></tomSelect>
@@ -33,20 +33,20 @@
                             
                             <div class="form-group form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/location.png" alt="Address">
+                                    <img class="form-img" src="resources/assets/images/profile/location.png" :alt="$root.t('userLocations_6')">
                                 </div>
                                 <div class="col-11 d-flex justify-content-between">
-                                    <input style="width:70%" type="text" placeholder="Street name" v-model="location.street_name">
-                                    <input style="width:26%" type="text" placeholder="Street number" v-model="location.street_number">
+                                    <input style="width:70%" type="text" :placeholder="$root.t('userLocations_7')" v-model="location.street_name">
+                                    <input style="width:26%" type="text" :placeholder="$root.t('userLocations_8')" v-model="location.street_number">
                                 </div>
                             </div>
                             <locationServices :userLocation="location.id" :location="location.location_id" :channels="channels" :ref="'services'+index"></locationServices>
                             <div class="d-flex flex-column justify-content-end" v-if="index!=new_index">
-                                <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-                                <button class="btn btn-outline-danger btn-sm mt-3" v-on:click="deleteLocation(index)">Delete</button>
+                                <button type="submit" class="btn btn-primary btn-sm">{{$root.t('userLocations_9')}}</button>
+                                <button class="btn btn-outline-danger btn-sm mt-3" v-on:click="deleteLocation(index)">{{$root.t('userLocations_10')}}</button>
                             </div>
                             <div class="d-flex justify-content-end" v-if="index==new_index">
-                                <button class="btn btn-primary btn-sm" v-on:click="addLocation()">Add</button>
+                                <button class="btn btn-primary btn-sm" v-on:click="addLocation()">{{$root.t('userLocations_11')}}</button>
                             </div>
                         </form>
                     </div>
@@ -56,6 +56,38 @@
         
     </div>
 </template>
+
+<i18n>
+{
+  "en":{
+    "userLocations_1":"My Locations",
+    "userLocations_2":"Untitled",
+    "userLocations_3":"Title",
+    "userLocations_4":"Location title",
+    "userLocations_5":"Location",
+    "userLocations_6":"Address",
+    "userLocations_7":"Street name",
+    "userLocations_8":"Street number",
+    "userLocations_9":"Apply",
+    "userLocations_10":"Delete",
+    "userLocations_11":"Add"
+  },
+  "de":{
+    "userLocations_1":"My Locations",
+    "userLocations_2":"Untitled",
+    "userLocations_3":"Title",
+    "userLocations_4":"Location title",
+    "userLocations_5":"Location",
+    "userLocations_6":"Address",
+    "userLocations_7":"Street name",
+    "userLocations_8":"Street number",
+    "userLocations_9":"Apply",
+    "userLocations_10":"Delete",
+    "userLocations_11":"Add"
+  }
+}
+</i18n>
+
 <script>
 import tomSelect from './tomSelect.vue'
 import locationServices from './locationService.vue'

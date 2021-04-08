@@ -49,12 +49,6 @@
 	<script src="../resources/assets/js/sfc-loader.js"></script>
 	<script src="../resources/assets/js/axios-defaults.js"></script>
   <script>
-	i18n = VueI18n.createI18n({
-		globalInjection: true,
-		legacy: false,
-		locale: "ja",
-		fallbackLocale: 'en'
-	})
     const va = Vue.createApp({
       components: {
         'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),
@@ -67,7 +61,8 @@
 		const { t } = VueI18n.useI18n() // call `useI18n`, and spread `t` from  `useI18n` returning
 		return { t } // return render context that included `t`
 	  }
-    }).use(i18n);
+    })
+	va.use(i18n) //look for the 'i18n' in scf-loader.js
     va.mount('#vueapp');
   </script>
 </body>

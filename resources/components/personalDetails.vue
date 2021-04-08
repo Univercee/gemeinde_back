@@ -93,9 +93,12 @@ export default {
                 method: 'get',
                 url: '/profile/personalDetails'
             }).then((response)=>{
-                this.firstname = response.data.firstname,
-                this.lastname = response.data.lastname,
+                this.firstname = response.data.firstname
+                this.lastname = response.data.lastname
                 this.language = response.data.language
+
+                const urlParams = new URLSearchParams(window.location.search);
+                if(urlParams.get('lang') != 'en'|'de') this.$i18n.locale = this.language
             })
         },
         notify(message, isError){

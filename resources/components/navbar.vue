@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-light bg-white fixed-top px-5">
+	<nav class="navbar navbar-dark bg-dark fixed-top px-5">
 		<a class="navbar-brand me-md-auto" href="#">
 			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
 				<path d="m0 0h32v32h-32z" fill="#da291c"/>
@@ -13,14 +13,14 @@
           {{$i18n.locale.toUpperCase()}}
         </button>
         <ul class="dropdown-menu py-0 lang-list" ref="language-dropdown-list" aria-labelledby="dropdownMenuButton1">
-          <li class="dropdown-item lang-item" @click="setLang('en')">
+          <a :href="getLangUrl('en')" class="dropdown-item lang-item">
             <div class="lang" :class="$i18n.locale=='en'?'lang-active':''">EN</div>
             <p class="lang-lable">English</p>
-          </li>
-          <li class="dropdown-item lang-item" @click="setLang('de')">
+          </a>
+          <a :href="getLangUrl('de')" class="dropdown-item lang-item">
             <div class="lang" :class="$i18n.locale=='de'?'lang-active':''">DE</div>
             <p class="lang-lable">Deutsch</p>
-          </li>
+          </a>
         </ul>
       </div>
 
@@ -62,7 +62,11 @@ export default {
       setLang(lang){
         this.$i18n.locale = lang
       },
-
+      getLangUrl(lang){
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('lang',lang)
+        return window.location.pathname+'?'+urlParams
+      },
       initDropdown(){
         this.$refs['language-dropdown'].addEventListener('mouseover', ()=>{
           this.$refs['language-dropdown-btn']['aria-expanded'] = true

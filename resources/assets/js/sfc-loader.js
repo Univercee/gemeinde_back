@@ -1,5 +1,6 @@
 function langDetect(){
-  let href = window.location.href.split("#").pop()
+  const urlParams = new URLSearchParams(window.location.search);
+  let href = urlParams.get('lang')
   if(href == 'en' || href == 'de') {
     this.lang = href
   }else{

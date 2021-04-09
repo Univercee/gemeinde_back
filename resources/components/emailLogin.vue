@@ -93,7 +93,7 @@
         } else {
           let url = '/auth/email';
           await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then((token) => (
-					  axios.post(url,{email: this.email, token: token, lang:this.langDetect()})
+					  axios.post(url,{email: this.email, token: token, lang: 'en'}) //lang:this.langDetect()
               .then((response) =>{
                console.warn(response.data.message)
                 this.backendMessage = response.data.message

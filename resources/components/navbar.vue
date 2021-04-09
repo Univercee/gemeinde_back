@@ -9,18 +9,18 @@
 		</a>
     <div class="lang-wrapper">
       <div class="dropdown dropdown-my" ref="language-dropdown">
-        <button class="lang lang-active dropdown-toggle" ref="language-dropdown-btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="lang btn btn-primary dropdown-toggle" ref="language-dropdown-btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
           {{$i18n.locale.toUpperCase()}}
         </button>
         <ul class="dropdown-menu py-0 lang-list" ref="language-dropdown-list" aria-labelledby="dropdownMenuButton1">
-          <a :href="getLangUrl('en')" class="dropdown-item lang-item">
-            <div class="lang" :class="$i18n.locale=='en'?'lang-active':''">EN</div>
+          <div @click="$i18n.locale='en'" class="dropdown-item lang-item">              <!-- TODO: click function will change when backend is ready -->
+            <div class="lang btn" :class="$i18n.locale=='en'?'btn-primary':''">EN</div>
             <p class="lang-lable">English</p>
-          </a>
-          <a :href="getLangUrl('de')" class="dropdown-item lang-item">
-            <div class="lang" :class="$i18n.locale=='de'?'lang-active':''">DE</div>
+          </div>
+          <div @click="$i18n.locale='de'"  class="dropdown-item lang-item">
+            <div class="lang btn" :class="$i18n.locale=='de'?'btn-primary':''">DE</div>
             <p class="lang-lable">Deutsch</p>
-          </a>
+          </div>
         </ul>
       </div>
 
@@ -70,13 +70,13 @@ export default {
       initDropdown(){
         this.$refs['language-dropdown'].addEventListener('mouseover', ()=>{
           this.$refs['language-dropdown-btn']['aria-expanded'] = true
-          this.$refs['language-dropdown-btn'].classList = 'lang lang-active dropdown-toggle show'
+          this.$refs['language-dropdown-btn'].classList = 'lang btn btn-primary dropdown-toggle show'
           this.$refs['language-dropdown-list'].classList = 'dropdown-menu py-0 lang-list show'
           this.$refs['language-dropdown-list']['data-bs-popper'] = 'none'
         })
         this.$refs['language-dropdown'].addEventListener('mouseleave', ()=>{
           this.$refs['language-dropdown-btn']['aria-expanded'] = false
-          this.$refs['language-dropdown-btn'].classList = 'lang lang-active dropdown-toggle'
+          this.$refs['language-dropdown-btn'].classList = 'lang btn btn-primary dropdown-toggle'
           this.$refs['language-dropdown-list'].classList = 'dropdown-menu py-0 lang-list'
           delete this.$refs['language-dropdown-list']['data-bs-popper']
         })
@@ -93,18 +93,11 @@ export default {
 
 <style>
   .lang{
-    width: 50px;
-    height: 50px;
-    color: #2F80ED;
-    background-color: transparent;
     font-family: Roboto;
     font-size: 24px;
     font-style: normal;
     font-weight: 500;
-    line-height: 44px;
-    letter-spacing: 0.6499999761581421px;
-    text-align: center;
-    border: solid #2F80ED 3px;
+    border: solid #0d6efd 3px;
     margin-right: 0.7em;
   }
   .lang::after{
@@ -114,18 +107,13 @@ export default {
     display: flex;
     margin-right: 2em;
   }
-  .lang-active{
-    color: #fff;
-    background-color: #2F80ED;
-  }
   .lang-item{
     cursor: pointer;
     display: flex;
-    padding: 0.5em;
   }
   .lang-item:hover .lang{
     color: #fff;
-    background-color: #2F80ED;
+    background-color: #0d6efd;
   }
   .lang-lable{
     font-family: Roboto;

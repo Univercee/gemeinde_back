@@ -24,6 +24,7 @@
                 <label for="language">{{$root.t('personalDetails_4')}}</label>
               </div>
               <div class="col-8">
+                <!-- TODO: profile language will sync with page languge when backend is ready  -->
                 <select v-model="language" ref="language">
                     <option value="en">English</option>
                     <option value="de">Deutsch</option>
@@ -96,9 +97,6 @@ export default {
                 this.firstname = response.data.firstname
                 this.lastname = response.data.lastname
                 this.language = response.data.language
-
-                const urlParams = new URLSearchParams(window.location.search);
-                if(urlParams.get('lang') != 'en'|'de') this.$i18n.locale = this.language
             })
         },
         notify(message, isError){

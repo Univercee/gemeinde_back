@@ -76,7 +76,7 @@
     <main>
     <email-login></email-login><!-- TODO merge with verify -->
       <div class="divider">
-        <hr/><span>OR</span><hr />
+        <hr/><span>{{$root.t('or')}}</span><hr />
       </div>
       <div id="sso">
         <tg-login></tg-login>
@@ -91,6 +91,7 @@
   <script src="https://unpkg.com/vue-i18n@next"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
+  <script src="../resources/assets/js/i18n.js"></script>
   <script id="vuescript">
     const va = Vue.createApp({
       components: {

@@ -19,6 +19,7 @@ class EmailAuthController extends Controller
     // [GENA-7]
     public function authenticate(Request $request) {
         $email = $request->input('email');
+        $lang = $request->input('lang');
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
             abort(response()->json(['error' => 'Bad Request'], 400));
         }
@@ -41,7 +42,7 @@ class EmailAuthController extends Controller
           Mail::to($email)->send(new UserRegistrationMail($key));
           return response()->json(['status' => 'regAgain', 'message' => __('auth.verifyLinkMsg')]);
         } else {
-          $key = UsersManager::add($email);
+          $key = UsersManager::add($email, $lang);
           Mail::to($email)->send(new UserRegistrationMail($key));
           return response()->json(['status' => 'reg', 'message' => __('auth.verifyLinkMsg')]);
         }

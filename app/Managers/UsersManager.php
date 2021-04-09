@@ -27,11 +27,11 @@ class UsersManager
     }
 
     // [GENA-7]
-    public static function add($email) {
+    public static function add($email, $lang) {
       $key = bin2hex(random_bytes(32));
-      app('db')->insert("INSERT INTO users (email_pending, verification_key, verification_key_expires_at)
-                        VALUES(?, ?, NOW() + INTERVAL 1 DAY)",
-                        [$email, $key]);
+      app('db')->insert("INSERT INTO users (email_pending, verification_key, verification_key_expires_at, language)
+                        VALUES(?, ?, NOW() + INTERVAL 1 DAY, ?)",
+                        [$email, $key, $lang]);
       return $key;
     }
 

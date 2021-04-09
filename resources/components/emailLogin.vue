@@ -93,11 +93,12 @@
         } else {
           let url = '/auth/email';
           await grecaptcha.execute(this.googleRecaptchaSiteKey, {action: 'submit'}).then((token) => (
-					  axios.post(url,{email: this.email, token: token})
+					  axios.post(url,{email: this.email, token: token, lang:this.langDetect()})
               .then((response) =>{
                console.warn(response.data.message)
                 this.backendMessage = response.data.message
                 this.setState('sent')
+                console.warn(response.data)
               })
 					.catch((err) => {
 						this.setState('error', 'Something goes wrong. Please, try again')
@@ -114,6 +115,8 @@
             document.location.href = '/profile'
             return true
           }
+          console.warn(response.data)
+
           this.backendMessage = response.data.message
           this.setState('answer')
         }).catch((err) => {
@@ -136,6 +139,7 @@
         this.message = message
         this.state = state
       },
+
       initRecaptcha(){
         const script = document.createElement('script');
         script.src = "https://www.google.com/recaptcha/api.js?render="+this.googleRecaptchaSiteKey

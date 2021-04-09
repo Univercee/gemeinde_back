@@ -38,53 +38,26 @@
 
 		<footer-component></footer-component>
 	</div> <!-- end of vuejs app -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://unpkg.com/vue@next"></script>
-	<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/tom-select@1.1/dist/js/tom-select.base.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+	<script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
 	<script src="../resources/assets/js/modernizr.js"></script>
-<script>
-  /* boilerplate for vue3-sfc-loader */
-  const options = {
-    moduleCache: {
-      vue: Vue,
-    },
-
-    getFile(url) {
-      return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-    },
-
-    addStyle(styleStr) {
-      const style = document.createElement('style');
-      style.textContent = styleStr;
-      const ref = document.head.getElementsByTagName('style')[0] || null;
-      document.head.insertBefore(style, ref);
-    },
-
-    log(type, ...args) {
-      console.log(type, ...args);
-    }
-  }
-
-  const { loadModule, version } = window["vue3-sfc-loader"];
-  /* end of boilerplate for vue3-sfc-loader */
-
-  axios.defaults.baseURL = '/api';
-  axios.defaults.headers.common['Content-Type'] = 'application/json'
-  
-  const va = Vue.createApp({
-    components: {
-      'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),
-      'navbar-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/navbar.vue', options)),
-      'megaicons-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/megaicons.vue', options)),
-      'bottomline-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/bottomline.vue', options)),
-      'footer-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/footer.vue', options)),
-    }
-  });
-  va.mount('#vueapp');
-</script>
-
+  <script src="../resources/assets/js/sfc-loader.js"></script>
+  <script src="../resources/assets/js/axios-defaults.js"></script>
+  <script>
+    const va = Vue.createApp({
+      components: {
+        'locator-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/locator.vue', options)),
+        'navbar-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/navbar.vue', options)),
+        'megaicons-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/megaicons.vue', options)),
+        'bottomline-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/bottomline.vue', options)),
+        'footer-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/footer.vue', options)),
+      }
+    });
+    va.mount('#vueapp');
+  </script>
 </body>
 </html>

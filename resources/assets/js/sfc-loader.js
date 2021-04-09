@@ -15,6 +15,14 @@ const options = {
     document.head.insertBefore(style, ref);
   },
 
+  customBlockHandler(block, filename, options) {
+		if ( block.type !== 'i18n' )
+			return
+		const messages = JSON.parse(block.content);
+		for ( let locale in messages )
+			i18n.global.mergeLocaleMessage(locale, messages[locale]);
+	},
+  
   log(type, ...args) {
     console.log(type, ...args);
   }

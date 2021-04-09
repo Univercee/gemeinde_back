@@ -45,8 +45,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tom-select@1.1/dist/js/tom-select.base.min.js"></script>
   <script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://unpkg.com/vue-i18n@next"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
+  <script src="../resources/assets/js/i18n.js"></script>
   <script>
     const va = Vue.createApp({
       components: {
@@ -57,6 +59,10 @@
         'navbar-component': Vue.defineAsyncComponent(() => loadModule('../../resources/components/navbar.vue', options)),
         'footer-component': Vue.defineAsyncComponent(() => loadModule('../resources/components/footer.vue', options)),
         'notification-block': Vue.defineAsyncComponent(() => loadModule('../resources/components/notification.vue', options))
+      },
+      setup() {
+        const { t } = VueI18n.useI18n() // call `useI18n`, and spread `t` from  `useI18n` returning
+        return { t } // return render context that included `t`
       },
       data() {
         return {
@@ -71,6 +77,7 @@
         }
       }
     });
+    va.use(i18n) //look for the 'i18n' in scf-loader.js
     va.mount('#vueapp');
   </script>
 </body>

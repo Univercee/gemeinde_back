@@ -43,7 +43,7 @@
         script.setAttribute('data-onauth','onTelegramAuth(user)')
         script.setAttribute('data-request-access','write')
         script.setAttribute('data-userpic','true')
-        script.setAttribute('data-lang','de')
+        script.setAttribute('data-lang',this.$i18n.locale)
         this.$refs.tgLogin.appendChild(script)
       }
     },

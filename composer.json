@@ -9,7 +9,8 @@
         "illuminate/mail": "^8.29",
         "laravel/lumen-framework": "^8.0",
         "mailjet/laravel-mailjet": "^3.0",
-        "nesbot/carbon": "^2.46"
+        "nesbot/carbon": "^2.46",
+        "westacks/telebot": "^1.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

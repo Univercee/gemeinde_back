@@ -90,7 +90,9 @@
   <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
+<!--  <script src="../resources/plugins/ahma.js"></script>-->
   <script id="vuescript">
+     // import ahma from '../../resources/plugins/ahma.js'
     const va = Vue.createApp({
       components: {
         'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
@@ -101,9 +103,10 @@
     va.directive('visible', function(el, binding) {
       el.style.visibility = !!binding.value ? 'visible' : 'hidden';
     });
+    // va.use(ahma) // HERE I WANT TO USE THIS PLUGIN ahma.js
     va.mount('#vueapp');
   </script>
->>>>>>> main
+
 </body>
 </html>
 

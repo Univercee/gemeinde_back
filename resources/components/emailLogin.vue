@@ -153,6 +153,7 @@
 		},
 
 		async mounted(){
+      // console.warn(ahma.translate())
       if (window.location.hash) {
         if (this.state != 'answer') {
           this.setState('wait')

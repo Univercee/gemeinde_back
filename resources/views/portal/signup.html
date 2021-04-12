@@ -81,9 +81,9 @@
       <div id="sso">
         <tg-login></tg-login>
       </div>
+      <test></test>
     </main>
 	</div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/vue@next"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -91,6 +91,7 @@
   <script src="https://unpkg.com/vue-i18n@next"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
+  <script src="../resources/plugins/langDetector.js"></script>
   <script src="../resources/assets/js/i18n.js"></script>
   <script id="vuescript">
     const va = Vue.createApp({
@@ -108,7 +109,12 @@
     va.directive('visible', function(el, binding) {
       el.style.visibility = !!binding.value ? 'visible' : 'hidden';
     });
+     console.log('signup', langDetector);
+
+     va.use(langDetector, {})
     va.mount('#vueapp');
   </script>
+
 </body>
 </html>
+

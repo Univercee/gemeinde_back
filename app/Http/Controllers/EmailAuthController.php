@@ -19,13 +19,14 @@ class EmailAuthController extends Controller
     // [GENA-7]
     public function authenticate(Request $request) {
         $email = $request->input('email');
+        $lang = $request->input('lang');
         if(!preg_match("/^[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)*@[-!#-'*+\/-9=?^-~]+(?:\.[-!#-'*+\/-9=?^-~]+)+$/i", $email)) {
             abort(response()->json(['error' => 'Bad Request'], 400));
         }
 
         $score = RecaptchaManager::getScore($request->input('token'));
         if($score < 0.5) {
-            abort(response()->json(['Error'=> 'You are robot, dont event try! I am a teapot.'], 418));
+            abort(response()->json(['Error'=> __('auth.botError')], 418));
         }
 
         $user = UsersManager::getByEmail($email);
@@ -33,17 +34,17 @@ class EmailAuthController extends Controller
         if($user && $user->registered_at) {
           $key = UsersManager::setVerificationKey($email);
           Mail::to($email)->send(new UserLoginMail($key));
-          return response()->json(['status' => 'login', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
+          return response()->json(['status' => 'login', 'message' => __('auth.verifyLinkMsg')]);
         } elseif ($user && !$user->registered_at && UsersManager::waitFiveMin($user)) {
-            return response()->json(['message' => 'Please wait at least 5 min']);
+            return response()->json(['message' => __('auth.w5min')]);
         } elseif($user && !$user->registered_at) {
           $key = UsersManager::setVerificationRegistrationKey($email);
           Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['status' => 'regAgain', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
+          return response()->json(['status' => 'regAgain', 'message' => __('auth.verifyLinkMsg')]);
         } else {
-          $key = UsersManager::add($email);
+          $key = UsersManager::add($email, $lang);
           Mail::to($email)->send(new UserRegistrationMail($key));
-          return response()->json(['status' => 'reg', 'message' => 'We sent you a verification email with a link, please find in you inbox']);
+          return response()->json(['status' => 'reg', 'message' => __('auth.verifyLinkMsg')]);
         }
     }
 
@@ -51,16 +52,16 @@ class EmailAuthController extends Controller
     public function verify($key){
         $user = UsersManager::getByKey($key);
         if(!$user) {
-            abort(response()->json(['error' => 'Verification key is not found or already used by you, please try again'], 404));
+            abort(response()->json(['error' => __('auth.keyNotFound')], 404));
         } else if(strtotime($user->verification_key_expires_at) < time()) {
             UsersManager::onLinkExpire($user->id);
-            abort(response()->json(['error' => 'Key has expired'], 403));
+            abort(response()->json(['error' => __('auth.keyExpired')], 403));
         } else if(is_null($user->registered_at)) {
             $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email_pending);
-            return response()->json(['status' => 'registered','message' => 'Congratulations! You are successfully registered now and may proceed to your profile.','sessionkey' => $sessionKey]);
+            return response()->json(['status' => 'registered','message' => __('auth.gzRegMsg'),'sessionkey' => $sessionKey]);
         } else {
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
-            return response()->json(['status' => 'logged' ,'message' => 'User has been logged in','sessionkey' => $sessionKey]);
+            return response()->json(['status' => 'logged' ,'message' => __('auth.userLoggedIn'),'sessionkey' => $sessionKey]);
         }
     }
 

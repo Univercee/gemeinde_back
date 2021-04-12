@@ -154,6 +154,7 @@
 
 		async mounted(){
       // console.warn(langDetector.translate())
+      this.$translate()
       console.warn();
       if (window.location.hash) {
         if (this.state != 'answer') {

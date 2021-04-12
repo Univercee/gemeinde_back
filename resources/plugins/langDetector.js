@@ -3,10 +3,12 @@ const langDetector = {
   install: (app, options) => {
 
     function translate(){
-      let href = window.location.href.split("/").pop()
+      let currentURL = (window.location.href);
+      let splitURL = currentURL.toString().split("/");
+      let href = splitURL[3];
       if(href == 'en' || href == 'de') {
         this.lang = href
-      }else {
+      }else{
         this.lang = navigator.language.split('-')[0]
       }
       return this.lang

@@ -102,6 +102,7 @@ $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 $app->register(Mailjet\LaravelMailjet\MailjetServiceProvider::class);
 $app->register(Mailjet\LaravelMailjet\MailjetMailServiceProvider::class);
+$app->register(WeStacks\TeleBot\Laravel\TeleBotServiceProvider::class);
 
 $app->configure('mail');
 $app->configure('database');
@@ -115,7 +116,7 @@ $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 $app->alias('Mailjet', Mailjet\LaravelMailjet\Facades\Mailjet::class);
-
+$app->alias('TeleBot', WeStacks\TeleBot\Laravel\TeleBot::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -76,7 +76,7 @@
     <main>
     <email-login></email-login><!-- TODO merge with verify -->
       <div class="divider">
-        <hr/><span>OR</span><hr />
+        <hr/><span>{{$root.t('or')}}</span><hr />
       </div>
       <div id="sso">
         <tg-login></tg-login>
@@ -88,17 +88,24 @@
   <script src="https://unpkg.com/vue@next"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+  <script src="https://unpkg.com/vue-i18n@next"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
   <script src="../resources/plugins/langDetector.js"></script>
+  <script src="../resources/assets/js/i18n.js"></script>
   <script id="vuescript">
     const va = Vue.createApp({
       components: {
         'tg-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/tgLogin.vue', options)),
         'email-login': Vue.defineAsyncComponent(() => loadModule('../../resources/components/emailLogin.vue', options)),
         'logo-link': Vue.defineAsyncComponent(() => loadModule('../../resources/components/logo.vue', options)),
+      },
+      setup() {
+        const { t } = VueI18n.useI18n() // call `useI18n`, and spread `t` from  `useI18n` returning
+        return { t } // return render context that included `t`
       }
     });
+    va.use(i18n) //look for the 'i18n' in scf-loader.js
     va.directive('visible', function(el, binding) {
       el.style.visibility = !!binding.value ? 'visible' : 'hidden';
     });

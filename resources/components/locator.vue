@@ -1,7 +1,7 @@
 <template id="locator-component">
 <div>
   <div class="text-center">
-    <h2>Es gibt schon 100 Gemeinden online</h2>
+    <h2>{{$root.t('locator_1')}}</h2>
   </div>
 
   <div class="row g-0 mt-3">
@@ -11,21 +11,48 @@
 
     <div class="col-lg-3 bg-dark p-4 text-white">
         <div id="signupform">
-            <em class="fs-6">Entdecken Sie Dienstleistungen in Ihrer Gemeinde und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute.</em>
+            <em class="fs-6">{{$root.t('locator_2')}}</em>
             <div class="clearfix mt-5">
-                <h4 class="float-start">Mein Wohnort</h4>
+                <h4 class="float-start">{{$root.t('locator_3')}}t</h4>
                 <div class="mt-1 float-end"><!-- <a class="link-light" href="#">finde mich</a> --></div>
             </div>
             <form class="d-flex" @submit.prevent="submit">
                 <tomSelect ref="ts" v-if="locationsAll" :locations="locationsAll" @tsChanged="showServicesAtLocation"></tomSelect>
             </form>
-            <div v-if="noService.msg" class="mt-2">😞 At the moment we are not offering any services in <em>{{this.noService.location.display_name}}</em>. Please <a :href="this.noService.formUrl+this.noService.location.display_name">let us know</a> you are interested and we will notify you once we extend our service to your location.</div>
+            <div v-if="noService.msg" class="mt-2">😞 {{$root.t('locator_4.1')}} <em>{{this.noService.location.display_name}}</em>. {{$root.t('locator_4.2')}} <a :href="this.noService.formUrl+this.noService.location.display_name">{{$root.t('locator_4.3')}}</a> {{$root.t('locator_4.4')}}</div>
         </div>
     </div>
 
   </div>
 </div>
 </template>
+
+<i18n>
+{
+  "en":{
+    "locator_1":"Es gibt schon 100 Gemeinden online",
+    "locator_2":"Entdecken Sie Dienstleistungen in Ihrer Gemeinde und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute.",
+    "locator_3":"Mein Wohnort",
+    "locator_4":{
+        "1":"At the moment we are not offering any services in ",
+        "2":"Please",
+        "3":"let us know",
+        "4":"you are interested and we will notify you once we extend our service to your location."
+    }
+  },
+  "de":{
+    "locator_1":"Es gibt schon 100 Gemeinden online",
+    "locator_2":"Entdecken Sie Dienstleistungen in Ihrer Gemeinde und verbinden Sie sich mit Nachbarn, regionale Unternehmen und Verwaltung in einer Minute.",
+    "locator_3":"Mein Wohnort",
+    "locator_4":{
+        "1":"At the moment we are not offering any services in ",
+        "2":"Please",
+        "3":"let us know",
+        "4":"you are interested and we will notify you once we extend our service to your location."
+    }
+  }
+}
+</i18n>
 
 <script>
 import tomSelect from './tomSelect.vue';
@@ -36,6 +63,7 @@ export default {
     },
     data() {
         return {
+            mapScript: null,
             map: {
                 el: null,
                 center: {
@@ -64,6 +92,18 @@ export default {
         window.addEventListener("scroll", _.debounce(this.dropMarkers, 150, { 'leading': true }));
     },
 
+    computed: {
+        getLocale() {
+            return this.$i18n.locale;
+        }
+    },
+
+    watch: {
+        getLocale() {
+            this.reloadMap()
+        }
+    },
+
     methods: {
 
         async getLocations() {
@@ -76,8 +116,8 @@ export default {
         },
 
         initMap() {
-            var script = document.createElement('script');
-            script.onload = ()=>{
+            this.mapScript = document.createElement('script')
+            this.mapScript.onload = ()=>{
                 this.map.el = new google.maps.Map(
                     this.$refs.mapWrapper,
                     {
@@ -86,8 +126,15 @@ export default {
                     }
                 );
             };
-            script.src = 'https://maps.googleapis.com/maps/api/js?key='+this.map.key+'&language=de';
-            document.getElementById('vueapp').after(script);
+            this.mapScript.src = 'https://maps.googleapis.com/maps/api/js?key='+this.map.key+'&language='+this.$i18n.locale;
+            this.mapScript.id = 'google-maps-script'
+            document.getElementById('vueapp').after(this.mapScript)
+        },
+
+        reloadMap(){
+            this.mapScript.parentNode.removeChild(this.mapScript)
+            delete google.maps;
+            this.initMap()
         },
 
         async getKeys(){

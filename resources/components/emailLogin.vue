@@ -13,15 +13,15 @@
           <p class="backendMsg">{{ backendMessage }}</p>
         <img src="/resources/assets/images/greentick.png" class="email-img">
         <div>
-          <a href="/profile" role="button" class="btn form-control btn-primary btn-sm">Continue</a>
+          <a href="/profile" role="button" class="btn form-control btn-primary btn-sm">{{$root.t('emailLogin_1')}}</a>
         </div>
       </div>
 
       <div v-if="state=='input'">
         <div class="mb-3">
           <div>
-            <label for="email" class="form-label form-label-sm" :class="{'d-none':!email}"><small>E-mail address</small></label>
-            <input type="email" class="form-control form-control-sm" :class="{'is-invalid':errors}" placeholder="E-mail address" aria-describedby="emailHelp" v-model="email" required>
+            <label for="email" class="form-label form-label-sm" :class="{'d-none':!email}"><small>{{$root.t('emailLogin_2')}}</small></label>
+            <input type="email" class="form-control form-control-sm" :class="{'is-invalid':errors}" :placeholder="$root.t('emailLogin_2')" aria-describedby="emailHelp" v-model="email" required>
           </div>
           <div class="invalid-feedback" :class="{'d-block':errors}">
               <ul>
@@ -30,7 +30,7 @@
           </div>
         </div>
         <div>
-            <button role="button" class="btn btn-primary btn-sm">Continue</button>
+            <button role="button" class="btn btn-primary btn-sm">{{$root.t('emailLogin_1')}}</button>
         </div>
       </div>
 
@@ -53,6 +53,20 @@
 		</form>
 	</div>
 </template>
+
+<i18n>
+{
+  "en":{
+    "emailLogin_1":"Continue",
+    "emailLogin_2":"E-mail address"
+  },
+  "de":{
+    "emailLogin_1":"Continue",
+    "emailLogin_2":"E-mail address"
+  }
+}
+</i18n>
+
 <script>
 	export default {
 		data() {

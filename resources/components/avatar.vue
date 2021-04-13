@@ -2,11 +2,11 @@
     <div>
         <div class="avatar">
             <label v-if="avatar" class="edit-img" for="avatar-upload">
-                <img src="resources/assets/images/edit.png" alt="">
+                <img src="/resources/assets/images/edit.png" alt="">
             </label>
-            <img class="avatar-img" :src="avatar??'resources/assets/images/profile/avatar_default.jpg'" alt="User avatar">
+            <img class="avatar-img" :src="avatar??'/resources/assets/images/profile/avatar_default.jpg'" alt="User avatar">
             <div v-if="avatar" class="delete-img" v-on:click="deleteAvatar()">
-                <img src="resources/assets/images/delete.png" alt="">
+                <img src="/resources/assets/images/delete.png" alt="">
             </div>
             <label v-if="!avatar" for="avatar-upload" class="edit">
                 +

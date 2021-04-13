@@ -80,7 +80,6 @@ export default {
                 }
             }).then(response=>{
                 this.fetchPersonalDetails()
-                this.$i18n.locale = this.language
                 this.notify(response.data.message, false)
             }).catch(err=>{
                 this.firstname = old_firstname

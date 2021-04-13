@@ -13,7 +13,7 @@
           {{$i18n.locale.toUpperCase()}}
         </button>
         <ul class="dropdown-menu py-0 lang-list" ref="language-dropdown-list" aria-labelledby="dropdownMenuButton1">
-          <a :href="'../'+getPage('en')" class="dropdown-item lang-item">              <!-- TODO: click function will change when backend is ready -->
+          <a :href="'../'+getPage('en')" class="dropdown-item lang-item">
             <div class="btn lang" :class="$i18n.locale=='en'?'btn-primary':'btn-outline-primary'">EN</div>
             <div class="lang-lable">English</div>
           </a>
@@ -23,7 +23,6 @@
           </a>
         </ul>
       </div>
-
     </div>
 		<a v-if="!isAuth" class="me-4 sign-in" :href="'../signup'">{{ $root.t('navbar_1') }}</a>
 		<a v-if="!isAuth" class="btn btn-primary register" :href="'../signup'">{{ $root.t('navbar_2') }}</a>

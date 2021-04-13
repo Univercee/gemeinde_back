@@ -24,7 +24,6 @@
                 <label for="language">{{$root.t('personalDetails_4')}}</label>
               </div>
               <div class="col-8">
-                <!-- TODO: profile language will sync with page languge when backend is ready  -->
                 <select v-model="language" ref="language">
                     <option value="en">English</option>
                     <option value="de">Deutsch</option>

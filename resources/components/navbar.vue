@@ -25,8 +25,8 @@
       </div>
 
     </div>
-		<a v-if="!isAuth" class="me-4 sign-in" :href="'../'+$i18n.locale+'/signup'">{{ $root.t('navbar_1') }}</a>
-		<a v-if="!isAuth" class="btn btn-primary register" :href="'../'+$i18n.locale+'/signup'">{{ $root.t('navbar_2') }}</a>
+		<a v-if="!isAuth" class="me-4 sign-in" :href="'../signup'">{{ $root.t('navbar_1') }}</a>
+		<a v-if="!isAuth" class="btn btn-primary register" :href="'../signup'">{{ $root.t('navbar_2') }}</a>
     <a v-if="isAuth" class="btn btn-primary" @click.prevent="logout" href="#logout">{{ $root.t('navbar_3') }}</a>
 	</nav>
 </template>

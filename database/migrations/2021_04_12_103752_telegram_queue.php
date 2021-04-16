@@ -16,13 +16,11 @@ class TelegramQueue extends Migration
         Schema::create('telegram_queue', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->timestamp('send_at');
-            $table->string('subject');
+            $table->timestamp('sent_at')->nullable();
             $table->text('body');
-            $table->string('template');
             $table->string('lang',2);
-            $table->string('email');
-            $table->timestamp('delivered_at');
+            $table->string('telegram_id');
+            $table->timestamp('deliver_at')->nullable();
     
             $table->foreign('user_id')
               ->references('id')

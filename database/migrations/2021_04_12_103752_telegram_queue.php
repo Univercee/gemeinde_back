@@ -22,8 +22,7 @@ class TelegramQueue extends Migration
             $table->string('template');
             $table->string('lang',2);
             $table->string('email');
-            $table->timestamp('delivered_at');
-    
+            $table->timestamp('delivered_at')->nullable();
             $table->foreign('user_id')
               ->references('id')
               ->on('users')->onDelete('cascade');

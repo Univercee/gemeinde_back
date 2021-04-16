@@ -20,8 +20,8 @@ class EmailQueue extends Migration
             $table->text('body');
             $table->string('lang',2);
             $table->string('telegram_id');
-            $table->timestamp('delivered_at');
-    
+            $table->timestamp('delivered_at')->nullable();
+
             $table->foreign('user_id')
               ->references('id')
               ->on('users')->onDelete('cascade');

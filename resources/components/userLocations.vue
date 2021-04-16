@@ -16,7 +16,7 @@
                         <form @submit.prevent="updateLocation(index);">
                             <div class="form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/home.png" :alt="$root.t('userLocations_3')">
+                                    <img class="form-img" src="/resources/assets/images/profile/home.png" :alt="$root.t('userLocations_3')">
                                 </div>
                                 <div class="col-11">
                                     <input style="width:100%" type="text" v-model="location.title" :placeholder="$root.t('userLocations_4')">
@@ -24,7 +24,7 @@
                             </div>
                             <div class="form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/zip.png" :alt="$root.t('userLocations_5')">      
+                                    <img class="form-img" src="/resources/assets/images/profile/zip.png" :alt="$root.t('userLocations_5')">      
                                 </div>
                                 <div class="col-11">
                                     <tomSelect :viewSearchButton="false" v-if="primary_locations" :locations="primary_locations" :selectedValue="parseInt(location.location_id)" @tsChanged="location.location_id = $event"></tomSelect>
@@ -33,7 +33,7 @@
                             
                             <div class="form-group form-group row mb-4">
                                 <div class="col-1">
-                                    <img class="form-img" src="resources/assets/images/profile/location.png" :alt="$root.t('userLocations_6')">
+                                    <img class="form-img" src="/resources/assets/images/profile/location.png" :alt="$root.t('userLocations_6')">
                                 </div>
                                 <div class="col-11 d-flex justify-content-between">
                                     <input style="width:70%" type="text" :placeholder="$root.t('userLocations_7')" v-model="location.street_name">

@@ -6,15 +6,15 @@ use App\Mail\MailjetTemplateMailable;
 class GarbageCalendarMail extends MailjetTemplateMailable
 {
   //TODO: Replace with garbage calendar template
-  protected $templateId = 2732329;
-  public $url;
 
   /**
    * Create a new message instance.
    *
    * @return void
    */
-  public function __construct($subject, $body) {
-    $this->url = $body;
+  public function __construct($templateId, $subject, $body) {
+    $this->templateId = $templateId;
+    //$this->html($body);
+    //$this->subject($subject);
   }
 }

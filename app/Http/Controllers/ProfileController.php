@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
 use App\Mail\UserRegistrationMail;
-use App\Managers\RecaptchaManager;
 use DB;
-define('BOT_TOKEN', env('TG_BOT_TOKEN'));
+define('BOT_TOKEN', env('TELEGRAM_BOT_TOKEN'));
 class ProfileController extends Controller
 {
   public function __construct()

@@ -1,6 +1,7 @@
 <?php
 namespace App\Managers;
 use WeStacks\TeleBot\Laravel\TeleBot;
+use Illuminate\Support\Facades\Log;
 class TelegramManager
 {
   public static function checkHash($auth_data, $check_hash){
@@ -24,7 +25,31 @@ class TelegramManager
     return $hash;
   }
 
-  public static function consumeMessages(){
+  public static function consumeQueue(){
+    $messages = app('db')->select("SELECT id, body, telegram_id FROM telegram_queue
+                                WHERE sent_at IS NULL AND deliver_at >= NOW()");
+    $errors = false;
+    foreach($messages as $message){
+      try{
+        TelegramManager::send($message->telegram_id, $message->body);
+      }catch(\Exception $e){
+        $errors = true;
+        Log::error('TELEGRAM_QUEUE_ERROR: Message[ID '.$message->id.'] not sent to User[TELEGRAM_ID '.$message->telegram_id.']'."\n".'Exception:'."\n".$e);
+        continue;
+      }
+      app('db')->update("UPDATE telegram_queue
+                        SET sent_at = NOW()
+                        WHERE id = :id",
+                        ['id' => $message->id]);
+    }
+    return !$errors;
+  }
+
+  public static function send($telegram_id, $body){
+    return TeleBot::sendMessage([
+      'chat_id' =>  $telegram_id,
+      'text'    =>  $body
+    ]);
   }
 }
 

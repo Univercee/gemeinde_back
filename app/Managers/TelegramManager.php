@@ -14,14 +14,14 @@ class TelegramManager implements ChannelManagerInterface
 
   //implements
   public static function consumeQueue(){
-    $messages = app('db')->select("SELECT id, body, telegram_id FROM telegram_queue
-                                WHERE sent_at IS NULL AND deliver_at >= NOW()");
-    $errors = false;
+    $messages = app('db')->select("SELECT id, user_id, body, subject, template, email FROM ".self::getQueueTable()."
+                                  WHERE sent_at IS NULL AND deliver_at <= NOW() ORDER BY deliver_at LIMIT 50");
+    $success = true;
     foreach($messages as $message){
       try{
         self::send($message->telegram_id, $message->body);
       }catch(\Exception $e){
-        $errors = true;
+        $success = true;
         Log::error('TELEGRAM_QUEUE_ERROR: Message[ID '.$message->id.'] not sent to User[TELEGRAM_ID '.$message->telegram_id.']'."\n".'Exception:'."\n".$e);
         continue;
       }
@@ -30,7 +30,7 @@ class TelegramManager implements ChannelManagerInterface
                         WHERE id = :id",
                         ['id' => $message->id]);
     }
-    return ['sent'=>self::sentCount(), 'length'=>self::queueLength()];
+    return $success;
   }
   
   //implements

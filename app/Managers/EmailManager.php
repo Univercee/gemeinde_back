@@ -18,12 +18,12 @@ class EmailManager implements ChannelManagerInterface
     public static function consumeQueue(): Bool{
         $messages = app('db')->select("SELECT id, user_id, body, subject, template, email FROM ".self::getQueueTable()."
                                     WHERE sent_at IS NULL AND deliver_at <= NOW() ORDER BY deliver_at LIMIT 50");
-        $errors = false;
+        $success = true;
         foreach($messages as $message){
           try{
             self::send($message->email, $message->body, $message->subject, $message->template);
           }catch(\Exception $e){
-            $errors = true;
+            $success = false;
             Log::error('EMAIL_QUEUE_ERROR: Message[ID '.$message->id.'] not sent to Email['.$message->email.']'."\n".'Exception:'."\n".$e);
             continue;
           }
@@ -32,7 +32,7 @@ class EmailManager implements ChannelManagerInterface
                             WHERE id = :id",
                             ['id' => $message->id]);
         }
-        return $errors;
+        return $success;
       }
     
       //implements

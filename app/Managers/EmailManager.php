@@ -1,7 +1,7 @@
 <?php
 namespace App\Managers;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\GarbageCalendarMail;
+use App\Mail\ServiceNotificationMail;
 use Illuminate\Support\Facades\Log;
 use App\Interfaces\ChannelManagerInterface;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -16,7 +16,7 @@ class EmailManager implements ChannelManagerInterface
     
     //implements
     public static function consumeQueue(): Bool{
-        $messages = app('db')->select("SELECT id, user_id, body, subject, template, email FROM ".self::getQueueTable()."
+        $messages = app('db')->select("SELECT id, user_id, body, \"subject\", template, email FROM ".self::getQueueTable()."
                                     WHERE sent_at IS NULL AND deliver_at <= NOW() ORDER BY deliver_at LIMIT 50");
         $success = true;
         foreach($messages as $message){
@@ -37,7 +37,7 @@ class EmailManager implements ChannelManagerInterface
     
       //implements
       public static function send($identifier, $body, $subject = null, $template = null): Void{
-        Mail::to($identifier)->send(new GarbageCalendarMail($template, $subject, $body));
+        Mail::to($identifier)->send(new ServiceNotificationMail($template, $subject, $body));
       }
 
       //implements

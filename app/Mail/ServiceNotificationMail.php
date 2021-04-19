@@ -3,18 +3,17 @@ namespace App\Mail;
 
 use App\Mail\MailjetTemplateMailable;
 
-class GarbageCalendarMail extends MailjetTemplateMailable
+class ServiceNotificationMail extends MailjetTemplateMailable
 {
   //TODO: Replace with garbage calendar template
-
+  protected $templateId = 2732329;
+  public $url; //access to mailjet template params
   /**
    * Create a new message instance.
    *
    * @return void
    */
   public function __construct($templateId, $subject, $body) {
-    $this->templateId = $templateId;
-    //$this->html($body);
-    //$this->subject($subject);
+    $this->url = $body;
   }
 }

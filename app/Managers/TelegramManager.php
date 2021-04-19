@@ -14,7 +14,7 @@ class TelegramManager implements ChannelManagerInterface
 
   //implements
   public static function consumeQueue(){
-    $messages = app('db')->select("SELECT id, user_id, body, subject, template, email FROM ".self::getQueueTable()."
+    $messages = app('db')->select("SELECT id, user_id, body, telegram_id FROM ".self::getQueueTable()."
                                   WHERE sent_at IS NULL AND deliver_at <= NOW() ORDER BY deliver_at LIMIT 50");
     $success = true;
     foreach($messages as $message){

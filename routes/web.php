@@ -12,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 | and give it the Closure to call when that URI is requested.
 |
 */
-
+$router->get('garbage','GarbageController@getServiceInfo');
 //------------------------ PAGES ------------------------
 $router->get('/', function(){return new RedirectResponse('/en');});
 $router->get('/en', function(){return view('portal.index');});

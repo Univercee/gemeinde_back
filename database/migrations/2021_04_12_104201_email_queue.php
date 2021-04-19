@@ -23,7 +23,7 @@ class EmailQueue extends Migration
             $table->string('lang',2);
             $table->string('email');
             $table->timestamp('deliver_at')->nullable();
-    
+          
             $table->foreign('user_id')
               ->references('id')
               ->on('users')->onDelete('cascade');

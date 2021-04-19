@@ -190,7 +190,6 @@
       if(this.state == null) {
         this.setState('input')
       }
-      console.log(this.$props.isChannel);
 		}
 	}
 </script>

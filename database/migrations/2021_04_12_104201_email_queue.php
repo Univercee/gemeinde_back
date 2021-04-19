@@ -16,12 +16,14 @@ class EmailQueue extends Migration
         Schema::create('email_queue', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->timestamp('send_at');
+            $table->timestamp('sent_at')->nullable();
+            $table->string('subject');
             $table->text('body');
+            $table->string('template');
             $table->string('lang',2);
-            $table->string('telegram_id');
-            $table->timestamp('delivered_at')->nullable();
-
+            $table->string('email');
+            $table->timestamp('deliver_at')->nullable();
+          
             $table->foreign('user_id')
               ->references('id')
               ->on('users')->onDelete('cascade');

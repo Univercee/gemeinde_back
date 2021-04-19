@@ -7,6 +7,7 @@ use App\Managers\RecaptchaManager;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserLoginMail;
 use App\Mail\UserRegistrationMail;
+use App\Managers\EmailManager;
 
 class EmailAuthController extends Controller
 {
@@ -63,6 +64,10 @@ class EmailAuthController extends Controller
             $sessionKey = UsersManager::confirmLoginEmail($user->id);
             return response()->json(['status' => 'logged' ,'message' => __('auth.userLoggedIn'),'sessionkey' => $sessionKey]);
         }
+    }
+
+    public function consumeQueue(){
+        return EmailManager::consumeQueue();
     }
 
 }

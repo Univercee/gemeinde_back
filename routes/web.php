@@ -1,9 +1,7 @@
 <?php
 
 /** @var \Laravel\Lumen\Routing\Router $router */
-
-use GuzzleHttp\Middleware;
-
+use Illuminate\Http\RedirectResponse;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -16,23 +14,29 @@ use GuzzleHttp\Middleware;
 */
 $router->get('garbage','GarbageController@getServiceInfo');
 //------------------------ PAGES ------------------------
-$router->get('/', function(){return view('portal.index');});
+$router->get('/', function(){return new RedirectResponse('/en');});
+$router->get('/en', function(){return view('portal.index');});
+$router->get('/de', function(){return view('portal.index');});
 
+$router->get('/signup', function(){return new RedirectResponse('/en/signup');});
+$router->get('/en/signup', function(){return view('portal.signup');});
+$router->get('/de/signup', function(){return view('portal.signup');});
 
-$router->get('signup', function(){return view('portal.signup');});
-$router->get('de/signup', function(){return view('portal.signup');});
-$router->get('en/signup', function(){return view('portal.signup');});
 //app('translator')->setLocale($lang);
-$router->get('/profile',function(){return view('portal.profile');});
-
-
-$router->get('/file', function (){return view('portal.file');});
+$router->get('/profile',function(){return new RedirectResponse('/en/profile');});
+$router->get('/en/profile',function(){return view('portal.profile');});
+$router->get('/de/profile',function(){return view('portal.profile');});
 
 //------------------------ API ------------------------
 $router->group(['prefix' => 'api'], function ($router) {
 
   $router->get('/', function () use ($router) {
     return view('api.index');
+  });
+
+  $router->group(['prefix' => 'queue'], function ($router) {
+    $router->patch('/email', 'EmailAuthController@consumeQueue');
+    $router->patch('/tg', 'TelegramAuthController@consumeQueue');
   });
 
   $router->get('/keys', 'ConfigController@getKeys');

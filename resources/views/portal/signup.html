@@ -91,8 +91,7 @@
   <script src="https://unpkg.com/vue-i18n@next"></script>
   <script src="../resources/assets/js/sfc-loader.js"></script>
   <script src="../resources/assets/js/axios-defaults.js"></script>
-  <script src="../resources/plugins/langDetector.js"></script>
-  <script src="../resources/assets/js/i18n.js"></script>
+  <script src="../resources/plugins/localizator.js"></script>
   <script id="vuescript">
     const va = Vue.createApp({
       components: {
@@ -105,13 +104,10 @@
         return { t } // return render context that included `t`
       }
     });
-    va.use(i18n) //look for the 'i18n' in scf-loader.js
     va.directive('visible', function(el, binding) {
       el.style.visibility = !!binding.value ? 'visible' : 'hidden';
     });
-     console.log('signup', langDetector);
-
-     va.use(langDetector, {})
+    va.use(localizator)
     va.mount('#vueapp');
   </script>
 

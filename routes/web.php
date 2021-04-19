@@ -34,6 +34,11 @@ $router->group(['prefix' => 'api'], function ($router) {
     return view('api.index');
   });
 
+  $router->group(['prefix' => 'queue'], function ($router) {
+    $router->patch('/email', 'EmailAuthController@consumeQueue');
+    $router->patch('/tg', 'TelegramAuthController@consumeQueue');
+  });
+
   $router->get('/keys', 'ConfigController@getKeys');
 
   $router->group(['prefix' => 'auth'], function ($router) {

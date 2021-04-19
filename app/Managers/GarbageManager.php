@@ -12,6 +12,7 @@ class GarbageManager
   public static function makeBody($type, $gDate, $lang)
   {
     setlocale(LC_ALL, $lang);
+    app('translator')->setLocale($lang);
     return __('garbage.title').': '.__('garbage.types.'.$type.'.name').' '.__('garbage.next_day').', '.strftime("%A %e %B %G", strtotime($gDate)).'. '.__('garbage.types.'.$type.'.description');
   }
   public static function getNextDateEvents(){

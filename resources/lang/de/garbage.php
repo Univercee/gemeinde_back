@@ -1,13 +1,13 @@
 <?php
 return [
-  'title'=>'Reminder from waste calendar',
-  'next_day' => 'is tomorrow',
-  'next_week' => 'is next week',
+  'title'=>'Mahnung von Abfallkalender',
+  'next_day' => 'ist Morgen',
+  'next_week' => 'am nächste Woche',
   'types' =>
     [
       'A' => [
-        'name' => 'General waste collection',
-        'description' => 'Please prepare your canton bags before 7:00 AM'
+        'name' => 'Kehrichtabfuhr',
+        'description' => 'Bitte stellen Sie Ihre Kanton-Säcke vor 7:00 Uhr bereit.'
       ]
     ],
 ];

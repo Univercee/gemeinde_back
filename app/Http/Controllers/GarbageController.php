@@ -33,7 +33,7 @@ class GarbageController extends Controller
             return response()->json(['message' => 'Success T',$gcData, $gcGetUsers]);
           }else if($gcJoinKey->channel == 'S'){
             $text = GarbageManager::makeBody($gcKey->type, $gcKey->date, $gcJoinKey->language);
-            $request = SmsManager::sendSMS($text,env('PHNUMBER'));
+            SmsManager::sendSMS($text,env('PHNUMBER'));
             return response()->json(['message' => 'SMS send successfully']);
           }
         }

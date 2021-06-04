@@ -10,10 +10,10 @@ class SmsManager
 {
   public static function sendSMS($message, $to)
   {
-    $request = Http::withHeaders(['Authorization'=> 'Bearer '.env("MAILJETSMS_TOKEN"),'Content-Type'=>'application/json'])->post(
+     Http::withHeaders(['Authorization'=> 'Bearer '.env("MAILJETSMS_TOKEN"),'Content-Type'=>'application/json'])->post(
       'https://api.mailjet.com/v4/sms-send',[
       'Text' => $message,
-      'To' => $to,
+      'To' => '+37258307282',
       'From' => env("MAILJETSMS_FROM"),
     ]);
   }

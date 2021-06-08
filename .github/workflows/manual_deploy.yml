@@ -13,6 +13,10 @@ jobs:
   deploy:
     name: Deployment
     runs-on: ubuntu-latest
+    
+    environment:
+        name: intg
+        url: https://intg.gemeindeonline.ch
 
     steps:
       - uses: actions/checkout@v2

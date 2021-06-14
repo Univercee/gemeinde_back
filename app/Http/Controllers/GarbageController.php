@@ -1,7 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use Twilio\Rest\Client;
 use App\Managers\GarbageManager;
+use App\Channels\Messages\WhatsAppMessage;
+
 class GarbageController extends Controller
 {
     private const NEXT_DAY = 'daily_digest';
@@ -26,6 +29,22 @@ class GarbageController extends Controller
               }else if($gcJoinKey->channel == 'T'){
                 $body = GarbageManager::makeBody($gcKey->type, $gcKey->date, $gcJoinKey->language);
                 GarbageManager::addToTgQueue($gcJoinKey->user_id, $body, $gcJoinKey->language, $gcJoinKey->telegram_id);
+                return response()->json(['message' => 'Success TG']);
+
+              }else if($gcJoinKey->channel == 'W'){
+                $body = GarbageManager::makeBody($gcKey->type, $gcKey->date, $gcJoinKey->language);
+                $sid = env("TWILIO_AUTH_SID"); // Your Account SID from www.twilio.com/console
+                $token = env("TWILIO_AUTH_TOKEN"); // Your Auth Token from www.twilio.com/console
+
+                $client = new Client($sid, $token);
+                $client->messages
+                  ->create("whatsapp:+37258307282", // to
+                    array(
+                      "from" => "whatsapp:+14155238886",
+                      "body" => $body
+                    )
+                  );
+                return response()->json(['message' => 'Success WHATASP']);
               }
             }
           }

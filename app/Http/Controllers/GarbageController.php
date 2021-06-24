@@ -38,13 +38,13 @@ class GarbageController extends Controller
 
                 $client = new Client($sid, $token);
                 $client->messages
-                  ->create("whatsapp:+37258307282", // to
+                  ->create("whatsapp:".env('PHNUMBER'), // to your phone number
                     array(
-                      "from" => "whatsapp:+14155238886",
+                      "from" => "whatsapp:".env('TWILIO_WHATSAPP_FROM'), // twillio from
                       "body" => $body
                     )
                   );
-                return response()->json(['message' => 'Success WHATASP']);
+                return response()->json(['message' => "Whatsapp sent"]);
               }
             }
           }

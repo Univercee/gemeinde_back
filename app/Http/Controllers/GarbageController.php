@@ -3,16 +3,20 @@ namespace App\Http\Controllers;
 
 use Twilio\Rest\Client;
 use App\Managers\GarbageManager;
+
+use App\Managers\SmsManager;
+use Illuminate\Support\Facades\Http;
 use App\Channels\Messages\WhatsAppMessage;
+
 
 class GarbageController extends Controller
 {
-    private const NEXT_DAY = 'daily_digest';
+  private const NEXT_DAY = 'daily_digest';
 
-    public function __construct()
-    {
-      $this->middleware('enforceJson');
-    }
+  public function __construct()
+  {
+    $this->middleware('enforceJson');
+  }
 
     public function getServiceInfo(){
         $gcGetUsers = GarbageManager::getUsers(self::NEXT_DAY);
@@ -45,10 +49,15 @@ class GarbageController extends Controller
                     )
                   );
                 return response()->json(['message' => "Whatsapp sent"]);
+              }else if($gcJoinKey->channel == 'S'){
+                $text = GarbageManager::makeBody($gcKey->type, $gcKey->date, $gcJoinKey->language);
+                SmsManager::sendSMS($text,env('PHNUMBER'));
+                return response()->json(['message' => 'SMS send successfully']);
               }
-            }
           }
         }
-        return response()->json(['message' => 'Success']);
+      }
     }
+    return response()->json(['message' => 'Success']);
+  }
 }

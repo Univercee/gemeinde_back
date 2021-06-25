@@ -10,6 +10,7 @@
         "laravel/lumen-framework": "^8.0",
         "mailjet/laravel-mailjet": "^3.0",
         "nesbot/carbon": "^2.46",
+        "twilio/sdk": "^6.24",
         "westacks/telebot": "^1.9"
     },
     "require-dev": {

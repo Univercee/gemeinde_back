@@ -11,12 +11,8 @@
     },
     "servers": [
         {
-            "url": "/api/",
-            "description": "Zahhar Local environment"
-        },
-        {
-            "url": "/gena/api/",
-            "description": "Ahmed Local environment"
+            "url": "/",
+            "description": "Current environment"
         }
     ],
     "paths": {

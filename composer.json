@@ -3,7 +3,7 @@
     "description": "Gemeinde Online",
     "type": "project",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.4|^8.0",
         "flipbox/lumen-generator": "^8.2",
         "guzzlehttp/guzzle": "^7.2",
         "illuminate/mail": "^8.29",

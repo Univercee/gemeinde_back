@@ -7,3 +7,4 @@ Homestead.yaml
 /.vscode
 .log
 /resources/avatars
+*.code-workspace

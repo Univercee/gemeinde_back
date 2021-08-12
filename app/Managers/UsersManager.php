@@ -209,9 +209,12 @@ class UsersManager
       $title = trim($title);
       $street_name = trim($street_name);
       $street_number = trim($street_number);
-      return app('db')->insert("INSERT INTO user_locations(user_id, title, location_id, street_name, street_number)
-                        VALUES(?, ?, ?, ?, ?)",
-                        [$user_id, $title, $location_id, $street_name, $street_number]);
+      return DB::table('user_locations')->insertGetId(['user_id'=>$user_id,
+                                                      'title'=>$title, 
+                                                      'location_id'=>$location_id, 
+                                                      'street_name'=>$street_name,
+                                                      'street_number'=>$street_number]);
+      
     }
 
     public static function deleteUserLocation($user_id, $user_location_id){

@@ -20,7 +20,8 @@ class UserLocationServices extends Migration
 
         $table->foreign('user_location_id')
           ->references('id')
-          ->on('user_locations');
+          ->on('user_locations')
+          ->onDelete('cascade');
 
         $table->foreign('service_id')
           ->references('id')

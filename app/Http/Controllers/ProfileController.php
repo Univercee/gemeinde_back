@@ -103,14 +103,15 @@ class ProfileController extends Controller
     if(!$request->input('location_id')){
       abort(response()->json(['message'=>'Location not specified'], 400));
     }
-    if(UsersManager::addUserLocation($request->input('user_id'),
-                                  $request->input('location_id'),
-                                  $request->input('title'),
-                                  $request->input('street_name'),
-                                  $request->input('street_number')
-                                )){
-                                  return response()->json(['message'=>'Location added'], 200);
-                                };
+    $id = UsersManager::addUserLocation($request->input('user_id'),
+      $request->input('location_id'),
+      $request->input('title'),
+      $request->input('street_name'),
+      $request->input('street_number')
+    );
+    if($id){
+      return response()->json(['message'=>'Location added', 'id'=>$id], 200);
+    };
 
     abort(response()->json(['message'=>'Couldn\'t add location'], 422));
   }

@@ -22,6 +22,8 @@ class Locations extends Migration
             $table->double("lat");
             $table->double('lng');
             $table->string('language',2);
+            $table->double('elevation');
+            $table->point('position');
         });
     }
 

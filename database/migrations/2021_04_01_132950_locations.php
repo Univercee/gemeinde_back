@@ -23,7 +23,7 @@ class Locations extends Migration
             $table->double('lng');
             $table->string('language',2);
             $table->double('elevation');
-            $table->point('position');
+            $table->point('position', '4326');
         });
     }
 

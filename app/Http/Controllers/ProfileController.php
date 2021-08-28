@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Managers\AvatarsManager;
 use App\Managers\UsersManager;
-use App\Mail\UserRegistrationMail;
-use DB;
+use App\Mail\UserVerifyChannelMail;
+use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TELEGRAM_BOT_TOKEN'));
 class ProfileController extends Controller
 {
@@ -15,7 +15,7 @@ class ProfileController extends Controller
   {
     $this->middleware('enforceJson', ['except' => ['setAvatar']]);
     $this->middleware('enforceJson:true', ['only' => ['setAvatar']]);
-    $this->middleware('a10n');
+    $this->middleware('a10n', ['except' => ['emailChannelVerify']]);
   }
 
 
@@ -147,7 +147,7 @@ class ProfileController extends Controller
           abort(response()->json(['error' => 'Bad Request'], 400));
       }
       $key = UsersManager::setChannelVerificationKey($request->input('user_id'), $email);
-      Mail::to($email)->send(new UserRegistrationMail($key));
+      Mail::to($email)->send(new UserVerifyChannelMail($key));
       return response()->json(['message' => __('auth.mailSend')], 200);
       return response()->json(['message'=> __('auth.mailVerified')], 200);
   }

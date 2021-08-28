@@ -187,6 +187,9 @@ class UsersManager
       $user_locations = app('db')->select("SELECT id, location_id, title, street_name, street_number FROM user_locations
                                           WHERE user_id = :user_id",
                                           ['user_id' => $user_id]);
+      foreach($user_locations as $location){
+        $location->services = UsersManager::getUserServices($user_id, $location->location_id, $location->id);
+      }                                         
       return $user_locations;
     }
 
@@ -205,16 +208,20 @@ class UsersManager
                         'user_id' => $user_id]);
     }
 
-    public static function addUserLocation($user_id, $location_id, $title, $street_name, $street_number){
+    public static function addUserLocation($user_id, $location_id, $title, $street_name, $street_number, $services){
       $title = trim($title);
       $street_name = trim($street_name);
       $street_number = trim($street_number);
-      return DB::table('user_locations')->insertGetId(['user_id'=>$user_id,
+      $id = DB::table('user_locations')->insertGetId(['user_id'=>$user_id,
                                                       'title'=>$title, 
                                                       'location_id'=>$location_id, 
                                                       'street_name'=>$street_name,
                                                       'street_number'=>$street_number]);
-      
+      if($id){
+        UsersManager::setUserServices($services, $id);
+        return $id;
+      }
+      return false;                                     
     }
 
     public static function deleteUserLocation($user_id, $user_location_id){
@@ -224,5 +231,29 @@ class UsersManager
                         'user_id' => $user_id]);
     }
 
+    public static function getUserServices($user_id, $locationId, $user_location_id){
+      return app('db')->select("SELECT ls.service_id, s.name_en as name, channel, uls.frequency
+                                    FROM location_services AS ls
+                                    JOIN services s ON s.id = ls.service_id
+                                    JOIN locations l ON l.id = ls.location_id AND l.id = :location_id
+                                    LEFT JOIN user_locations ul ON ul.location_id = l.id AND user_id = :user_id AND ul.id = :user_location_id
+                                    LEFT JOIN user_location_services uls ON uls.user_location_id = ul.id AND uls.service_id =s.id",
+                                  ['user_id' => $user_id,
+                                  'location_id' => $locationId,
+                                  'user_location_id' => $user_location_id]);
+    }
 
+    public static function setUserServices($services, $user_location_id){
+      for($i=0; $i<count($services); $i++){
+        unset($services[$i]['name']);
+        $services[$i]['user_location_id'] = $user_location_id;
+      }
+      DB::table('user_location_services')->where('user_location_id', $user_location_id)->delete();
+      
+      //'== count($services)' because upsert function return number of updated/inserted rows
+      return DB::table('user_location_services')->upsert(
+        $services,
+        ['user_location_id', 'service_id'], ['channel', 'frequency']
+      ) == count($services);
+    }
 }

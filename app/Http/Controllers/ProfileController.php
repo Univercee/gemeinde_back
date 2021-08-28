@@ -83,17 +83,19 @@ class ProfileController extends Controller
     if(!$request->input('id') || !$request->input('location_id')){
       abort(response()->json(['message'=>'Location not specified'], 400));
     }
-    if(UsersManager::setUserLocation($request->input('user_id'),
-                                  $request->input('id'),
-                                  $request->input('location_id'),
-                                  $request->input('title'),
-                                  $request->input('street_name'),
-                                  $request->input('street_number')
-                                )){
-                                  return response()->json(['message'=>'Location updated'], 200);
-                                };
-
-  abort(response()->json(['message'=>'Couldn\'t update location'], 422));
+    $services_updated = UsersManager::setUserServices($request->input('services'), $request->input('id'));
+    $location_updated = UsersManager::setUserLocation($request->input('user_id'),
+                                                      $request->input('id'),
+                                                      $request->input('location_id'),
+                                                      $request->input('title'),
+                                                      $request->input('street_name'),
+                                                      $request->input('street_number'),
+                                                      $request->input('services')                                   
+                                                    );
+    if($location_updated || $services_updated){
+      return response()->json(['message'=>'Location updated'], 200);
+    };
+    abort(response()->json(['message'=>'Couldn\'t update location'], 422));
   }
 
 
@@ -107,7 +109,8 @@ class ProfileController extends Controller
       $request->input('location_id'),
       $request->input('title'),
       $request->input('street_name'),
-      $request->input('street_number')
+      $request->input('street_number'),
+      $request->input('services')
     );
     if($id){
       return response()->json(['message'=>'Location added', 'id'=>$id], 200);
@@ -227,33 +230,7 @@ class ProfileController extends Controller
 
   //TODO
   public function servicesFlow(Request $request, $locationId, $user_location_id){
-    $results = app('db')->select("SELECT ls.service_id, s.name_en as name, channel, uls.frequency
-                                  FROM location_services AS ls
-                                  JOIN services s ON s.id = ls.service_id
-                                  JOIN locations l ON l.id = ls.location_id AND l.id = :location_id
-                                  LEFT JOIN user_locations ul ON ul.location_id = l.id AND user_id = :user_id AND ul.id = :user_location_id
-                                  LEFT JOIN user_location_services uls ON uls.user_location_id = ul.id AND uls.service_id =s.id",
-                                ['user_id' => $request->input('user_id'),
-                                'location_id' => $locationId,
-                                'user_location_id' => $user_location_id]);
-
+    $results = UsersManager::getUserServices($request->input('user_id'), $locationId, $user_location_id);
     return response()->json(['results'=>$results]);
-  }
-
-  public function setUserServices(Request $request){
-    $services = $request->input('services');
-    $user_location_id = $request->input('user_location_id');
-    for($i=0; $i<count($services); $i++){
-      unset($services[$i]['name']);
-      $services[$i]['user_location_id'] = $user_location_id;
-    }
-    DB::table('user_location_services')->where('user_location_id', $user_location_id)->delete();
-    DB::table('user_location_services')->upsert(
-      $services,
-      ['user_location_id', 'service_id'], ['channel', 'frequency']
-    );
-  }
-  public function deleteUserServices(Request $request){
-    DB::table('user_location_services')->where('user_location_id', $request->input('user_location_id'))->delete();
   }
 }

@@ -63,7 +63,4 @@ $router->group(['prefix' => 'profile'], function ($router) {
   $router->delete('/channels/email/delete', 'ProfileController@deleteEmailChannel');
   $router->post('/channels/tg/verify', 'ProfileController@tgChannelVerify');
   $router->delete('/channels/tg/delete', 'ProfileController@deleteTgChannel');
-  //
-  $router->patch('/services', 'ProfileController@setUserServices');
-  $router->delete('/services', 'ProfileController@deleteUserServices');
 });

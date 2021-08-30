@@ -57,7 +57,8 @@ return [
                 'NO_ENGINE_SUBSTITUTION',
             ],
             'timezone' => env('DB_TIMEZONE', date('P')),
-            'sslmode' => env('DB_SSLMODE', 'prefer')        ]
+            'sslmode' => env('DB_SSLMODE', 'prefer')        
+        ]
     ],
 
     /*

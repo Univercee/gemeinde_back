@@ -57,11 +57,7 @@ return [
                 'NO_ENGINE_SUBSTITUTION',
             ],
             'timezone' => env('DB_TIMEZONE', date('P')),
-            'sslmode' => env('DB_SSLMODE', 'prefer'),
-            'options' => extension_loaded('pdo_mysql')
-              ? array_filter([PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),])
-              : [],
-        ]
+            'sslmode' => env('DB_SSLMODE', 'prefer')        ]
     ],
 
     /*

@@ -22,7 +22,6 @@ date_default_timezone_set(env('APP_TIMEZONE', 'Europe/Stockholm'));
 $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
-//$app->setLocale('de');
 
 $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');

@@ -16,7 +16,7 @@ class GarbageManager
     return __('garbage.title').': '.__('garbage.types.'.$type.'.name').' '.__('garbage.next_day').', '.strftime("%A %e %B %G", strtotime($gDate)).'. '.__('garbage.types.'.$type.'.description');
   }
   public static function getNextDateEvents(){
-    return app('db') -> select("SELECT * FROM garbage_calender WHERE date = date(NOW()) + INTERVAL 2 DAY"); //TODO +2 days
+    return app('db') -> select("SELECT * FROM garbage_calendar WHERE date = date(NOW()) + INTERVAL 2 DAY"); //TODO +2 days
   }
   public static function getUsers($frequency){
      return app('db')->select("SELECT location_id, channel, user_id, title, u.language, email, telegram_id

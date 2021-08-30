@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Production;
 
 use Illuminate\Database\Seeder;
 use DB;
@@ -14,10 +14,6 @@ class LocationServicesTableSeeder extends Seeder
     public function run()
     {
         DB::table('location_services')->insert([
-            [
-                'location_id' => 1,
-                'service_id' => 1,
-            ],
             [
                 'location_id' => 1,
                 'service_id' => 3,

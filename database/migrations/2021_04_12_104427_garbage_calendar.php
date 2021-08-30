@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class GarbageCalender extends Migration
+class GarbageCalendar extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class GarbageCalender extends Migration
      */
     public function up()
     {
-        Schema::create('garbage_calender', function (Blueprint $table) {
+        Schema::create('garbage_calendar', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('location_id')->unsigned();
             $table->date('date');
@@ -32,6 +32,6 @@ class GarbageCalender extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('garbage_calender');
+        Schema::dropIfExists('garbage_calendar');
     }
 }

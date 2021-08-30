@@ -26,6 +26,11 @@ class UsersManager
       return empty($user) ? null : $user[0];
     }
 
+    public static function getByTgId($telegram_id) {
+      $user = app('db')->select("SELECT * FROM users WHERE telegram_id = :telegram_id", ['telegram_id' => $telegram_id]);
+      return empty($user) ? null : $user[0];
+    }
+
     // [GENA-7]
     public static function add($email, $lang) {
       $key = bin2hex(random_bytes(32));

@@ -159,6 +159,14 @@ class ProfileController extends Controller
     if(!$user) {
         abort(response()->json(['error' => __('auth.notFound')], 404));
     }
+    else if(UsersManager::getByEmail($user->email_pending)){
+      app('db')->update("UPDATE users
+        SET users.verification_key_expires_at = null,
+            users.verification_key = null,
+            users.email_pending = null
+        WHERE users.id = :id",['id'=>$user->id]);
+      abort(response()->json(['error' => __('auth.emailAlreadyUsed')], 403));
+    }
     else if(strtotime($user->verification_key_expires_at) < time()) {
         app('db')->update("UPDATE users
         SET users.verification_key_expires_at = null,
@@ -199,6 +207,9 @@ class ProfileController extends Controller
     }
     if ((time() - $auth_data['auth_date']) > 86400) {
         return response()->json(['error' => __('auth.outDateData')], 400);
+    }
+    if(UsersManager::getByTgId($auth_data['id'])){
+      return response()->json(['error' => __('auth.tgAlreadyUsed')], 403);
     }
     app('db')->update("UPDATE users
                       SET telegram_id = :t_id,

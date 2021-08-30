@@ -15,4 +15,6 @@ return [
   'channelAdded'=>'Channel has been added',
   'notTgData'=>'Data is NOT from Telegram',
   'outDateData'=>'Data is NOT from Telegram',
+  'emailAlreadyUsed'=>'This email already used on another account',
+  'tgAlreadyUsed'=>'This telegram account already used on another account'
 ];

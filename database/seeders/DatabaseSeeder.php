@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,10 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(LocationsTableSeeder::class);
-        $this->call(ServicesTableSeeder::class);
-        $this->call(LocationServicesTableSeeder::class);
-        $this->call(UsersTableSeeder::class);
-        $this->call(UserLocationsTableSeeder::class);
+        //Real production data
+        $this->call(Production\LocationsTableSeeder::class);
+        $this->call(Production\ServicesTableSeeder::class);
+        $this->call(Production\LocationServicesTableSeeder::class);
+        $this->call(Production\GarbageCalendars2021\Schwerzenbach8603::class);
+
+        if (App::environment(['local','dev','test'])) {
+            //Demo and test data
+            $this->call(Test\UsersTableSeeder::class);
+            $this->call(Test\UserLocationsTableSeeder::class);
+        }
+
     }
 }

@@ -1,11 +1,22 @@
 <?php
 namespace App\Http\Controllers;
+use App\Managers\LocationManager;
+use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
     public function __construct()
     {
-      $this->middleware('enforceJson');
+      $this->middleware('enforceJson', ['except' => ['getNearestLocation']]);
+    }
+
+    public function getNearestLocation(Request $request){
+        $lat = floatval($request->query('lat'));
+        $lng = floatval($request->query('lng'));
+        if($lat<-90 || $lat>90 || $lng<-180 || $lng>180){
+            abort(400);
+        }
+        return response()->json(LocationManager::getNearestLocation($lat, $lng));
     }
 
     // [GENA-5]

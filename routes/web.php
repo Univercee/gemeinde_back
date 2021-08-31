@@ -39,6 +39,7 @@ $router->group(['prefix' => 'locations'], function ($router) {
   $router->get('/{zipcode}/services', "LocationController@getServicesByZipCode");
   $router->get('/', 'LocationController@getLocationsHaveServices');
   $router->get('/all', 'LocationController@getAllLocations');
+  $router->get('/nearest', 'LocationController@getNearestLocation');
   //location services
   $router->get('/services/{locationId}/{user_location_id}', 'ProfileController@servicesFlow');
 });

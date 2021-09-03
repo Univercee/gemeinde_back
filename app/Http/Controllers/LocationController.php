@@ -7,15 +7,15 @@ class LocationController extends Controller
 {
     public function __construct()
     {
-      $this->middleware('enforceJson', ['except' => ['getNearestLocation']]);
+      $this->middleware('enforceJson');
     }
 
     public function getNearestLocation(Request $request){
-        $lat = floatval($request->query('lat'));
-        $lng = floatval($request->query('lng'));
-        if($lat<-90 || $lat>90 || $lng<-180 || $lng>180){
+        $lat = $request->query('lat');
+        $lng = $request->query('lng');
+        if(!is_numeric($lat) || !is_numeric($lng) || $lat<-90 || $lat>90 || $lng<-180 || $lng>180){
             abort(400);
-        }
+        } 
         return response()->json(LocationManager::getNearestLocation($lat, $lng));
     }
 

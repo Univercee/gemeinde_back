@@ -22,6 +22,9 @@ class EnforceJson
         else if($request->isJson() || $allowUpload){
             return $next($request);
         }
+        else if(!$request->isMethod('post') && !$request->isMethod('put') && !$request->isMethod('patch')){
+            return $next($request);
+        }
         return response()->json(('Not a JSON format'), 415);
         
     }

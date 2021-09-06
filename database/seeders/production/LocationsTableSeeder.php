@@ -4147,8 +4147,7 @@ class LocationsTableSeeder extends Seeder
               array('id' => '4130','zipcode' => '9488','name_en' => NULL,'name_de' => 'Schellenberg','region' => 'LI','lat' => '47.2313652942057','lng' => '9.54600684065143','language' => 'de','elevation' => '634', 'position' => DB::raw("(ST_GeomFromText('POINT(47.2313652942057 9.54600684065143)'))")),
               array('id' => '4131','zipcode' => '9999','name_en' => NULL,'name_de' => 'Thunersee','region' => 'BE','lat' => '46.6880332797267','lng' => '7.71552456353929','language' => 'de','elevation' => '558', 'position' => DB::raw("(ST_GeomFromText('POINT(46.6880332797267 7.71552456353929)'))")),
               array('id' => '4132','zipcode' => '9999','name_en' => NULL,'name_de' => 'Brienzersee','region' => 'BE','lat' => '46.7285058384508','lng' => '7.97409670497368','language' => 'de','elevation' => '564', 'position' => DB::raw("(ST_GeomFromText('POINT(46.7285058384508 7.97409670497368)'))")),
-              array('id' => '4133','zipcode' => '9999','name_en' => NULL,'name_de' => 'Bielersee','region' => 'BE','lat' => '47.087236205115','lng' => '7.17869082047129','language' => 'de','elevation' => '430','position' => DB::raw("(ST_GeomFromText('POINT(47.087236205115 7.17869082047129)'))"))
-            
+              array('id' => '4133','zipcode' => '9999','name_en' => NULL,'name_de' => 'Bielersee','region' => 'BE','lat' => '47.087236205115','lng' => '7.17869082047129','language' => 'de','elevation' => '430','position' => DB::raw("(ST_GeomFromText('POINT(47.087236205115 7.17869082047129)'))"))    
             ]
         );
     }

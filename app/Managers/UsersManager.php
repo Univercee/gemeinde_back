@@ -33,7 +33,7 @@ class UsersManager
 
     // [GENA-7]
     public static function add($email, $lang) {
-      $key = bin2hex(random_bytes(32));
+      $key = random_int(100000, 999999);
       app('db')->insert("INSERT INTO users (email_pending, verification_key, verification_key_expires_at, language)
                         VALUES(?, ?, NOW() + INTERVAL 1 DAY, ?)",
                         [$email, $key, $lang]);
@@ -42,7 +42,7 @@ class UsersManager
 
     // [GENA-7]
     public static function setVerificationKey($email) {
-      $key = uniqid();
+      $key = random_int(100000, 999999);
       app('db')->update("UPDATE users
                     SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 5 MINUTE
                     WHERE email = :email",
@@ -52,7 +52,7 @@ class UsersManager
 
 
   public static function setVerificationRegistrationKey($email) {
-    $key = uniqid();
+    $key = random_int(100000, 999999);
     app('db')->update("UPDATE users
                     SET verification_key = :k, verification_key_expires_at = NOW() + INTERVAL 1 DAY
                     WHERE email = :email",

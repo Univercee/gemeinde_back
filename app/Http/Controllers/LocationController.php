@@ -14,9 +14,12 @@ class LocationController extends Controller
         $lat = $request->query('lat');
         $lng = $request->query('lng');
         if(!is_numeric($lat) || !is_numeric($lng) || $lat<-90 || $lat>90 || $lng<-180 || $lng>180){
-            abort(400);
+            abort(response()->json(['error' => 'Bad Request'], 400));
         } 
-        return response()->json(LocationManager::getNearestLocation($lat, $lng));
+        $results = app('db')->select("SELECT id, name_de AS name, CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, 
+        region, lat, lng, elevation, language, round(ST_Distance_Sphere(position, ST_GeomFromText('POINT($lat $lng)', 4326))) AS distance
+        FROM locations ORDER BY distance LIMIT 10");
+        return response()->json($results);
     }
 
     // [GENA-5]
@@ -55,7 +58,7 @@ class LocationController extends Controller
     // [GENA-4]
     public function getLocationsHaveServices(){
         $results = app('db')
-                ->select("SELECT DISTINCT locations.id, zipcode, name_de AS 'name', CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, region, lat, lng
+                ->select("SELECT DISTINCT locations.id, zipcode, name_de AS 'name', CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, region, lat, lng, elevation, language
                         FROM locations
                         JOIN location_services ON location_services.location_id = locations.id");
         return response()->json($results);
@@ -63,7 +66,7 @@ class LocationController extends Controller
 
     public function getAllLocations(){
         $results = app('db')
-                ->select("SELECT id, CONCAT(zipcode, ' ', name_de, ' ',region) as display_name FROM locations");
+                ->select("SELECT id, CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, region, lat, lng, elevation, language FROM locations");
         return response()->json($results);
     }
 }

@@ -17,7 +17,7 @@ class LocationController extends Controller
             abort(response()->json(['error' => 'Bad Request'], 400));
         } 
         $results = app('db')->select("SELECT id, name_de AS name, CONCAT(zipcode, ' ', name_de, ' ',region) as display_name, 
-        region, lat, lng, elevation, language, round(ST_Distance_Sphere(position, ST_GeomFromText('POINT($lat $lng)', 4326))) AS distance
+        region, lat, lng, elevation, language, round(ST_Distance_Sphere(position, ST_GeomFromText('POINT($lat $lng)'))) AS distance
         FROM locations ORDER BY distance LIMIT 10");
         return response()->json($results);
     }

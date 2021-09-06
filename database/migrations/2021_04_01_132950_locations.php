@@ -23,8 +23,10 @@ class Locations extends Migration
             $table->double('lng');
             $table->string('language',2);
             $table->double('elevation');
-            $table->point('position', '4326');
+            $table->point('position', 4326); //SRID=4326 must be integer
+            $table->spatialIndex('position');
         });
+        
     }
 
     /**

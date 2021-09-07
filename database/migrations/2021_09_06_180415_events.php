@@ -17,8 +17,8 @@ class Events extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('location_id')->unsigned();
+            $table->integer('service_id')->unsigned();
             $table->integer('external_id')->unsigned()->nullable();
-            $table->string('source');
             $table->timestamp('valid_from')->nullable();
             $table->timestamp('valid_until')->nullable();
             $table->string('title_en');
@@ -29,6 +29,9 @@ class Events extends Migration
             $table->foreign('location_id')
               ->references('id')
               ->on('locations');
+            $table->foreign('service_id')
+              ->references('id')
+              ->on('services');
           });
     }
 

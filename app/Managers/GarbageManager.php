@@ -5,16 +5,6 @@ class GarbageManager
   private const SERVICE_ID = 1;
   public const TEMPLATE_ID = 11;
 
-  public static function makeTitle($lang){
-    setlocale(LC_ALL, $lang);
-    return __('garbage.title');
-  }
-  public static function makeBody($type, $gDate, $lang)
-  {
-    setlocale(LC_ALL, $lang);
-    app('translator')->setLocale($lang);
-    return __('garbage.title').': '.__('garbage.types.'.$type.'.name').' '.__('garbage.next_day').', '.strftime("%A %e %B %G", strtotime($gDate)).'. '.__('garbage.types.'.$type.'.description');
-  }
   public static function getNextDateEvents(){
     return app('db') -> select("SELECT * FROM garbage_calendar WHERE date = date(NOW()) + INTERVAL 2 DAY"); //TODO +2 days
   }
@@ -36,5 +26,28 @@ class GarbageManager
     app('db')->insert("INSERT INTO telegram_queue
                 (user_id, body, lang, telegram_id)
                 VALUES ($userId, '$body', '$lang', $tgId)");
+  }
+
+  public static function makeBody($type, $date, $lang){
+    return trans('garbage.title',[],$lang).': '.trans('garbage.types.'.$type.'.name', [], $lang).' '.trans('garbage.next_day',[], $lang).', '.strftime("%A %e %B %G", strtotime($date)).'. '.trans('garbage.types.'.$type.'.description',[], $lang);
+  }
+  public static function makeTitle($lang){
+    return trans('garbage.title',[], $lang);
+  }
+
+  public static function putGarbCalendarInEvents(){
+    $gcData = self::getGarbCalendar();
+    foreach ($gcData as $key){
+      $enTitle = self::makeTitle('en');
+      $enBody = self::makeBody($key->type, $key->date, 'en');
+      $deTitle = self::makeTitle('de');
+      $deBody = self::makeBody($key->type, $key->date, 'de');
+      app('db')->insert("INSERT INTO events (location_id, source, valid_from, valid_until, title_en, text_en, title_de, text_de)
+                        VALUES ($key->location_id,'garbage', CURRENT_TIMESTAMP(), '$key->date', '$enTitle', '$enBody', '$deTitle', '$deBody')");
+    }
+  }
+
+  public static function getGarbCalendar(){
+    return app('db')->select("SELECT location_id, date, type FROM garbage_calendar");
   }
 }

@@ -12,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('garbageinevents','GarbageController@garbageCalenderInEvents');
+$router->get('garbageinevents','GarbageController@garbageInEvents');
 $router->get('garbage','GarbageController@getServiceInfo');
 //------------------------ PAGES ------------------------
 

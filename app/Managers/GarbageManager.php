@@ -36,7 +36,7 @@ class GarbageManager
     return trans('garbage.title',[], $lang);
   }
 
-  public static function putGarbCalendarInEvents(){
+  public static function addGarbageEvents(){
     $gcData = self::getGarbCalendar();
     foreach ($gcData as $key){
       $enTitle = self::makeTitle('en');

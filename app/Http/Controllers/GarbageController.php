@@ -17,8 +17,8 @@ class GarbageController extends Controller
   {
     $this->middleware('enforceJson');
   }
-    public function garbageCalenderInEvents(){
-      return response()->json(GarbageManager::putGarbCalendarInEvents());
+    public function garbageInEvents(){
+      return response()->json(GarbageManager::addGarbageEvents());
     }
     public function getServiceInfo(){
         $gcGetUsers = GarbageManager::getUsers(self::NEXT_DAY);

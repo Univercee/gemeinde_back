@@ -1,5 +1,6 @@
 <?php
 namespace App\Managers;
+use App\Managers\EventManager;
 class GarbageManager
 {
   private const SERVICE_ID = 1;
@@ -42,8 +43,7 @@ class GarbageManager
       $enBody = self::makeBody($key->type, $key->date, 'en');
       $deTitle = self::makeTitle('de');
       $deBody = self::makeBody($key->type, $key->date, 'de');
-      app('db')->insert("INSERT INTO events (location_id, source, valid_from, valid_until, title_en, text_en, title_de, text_de)
-                        VALUES ($key->location_id,'garbage', CURRENT_TIMESTAMP(), '$key->date', '$enTitle', '$enBody', '$deTitle', '$deBody')");
+      EventManager::addEvent($key->location_id, self::SERVICE_ID, now(),$key->date, $enTitle, $enBody, $deTitle, $deBody);
     }
   }
 

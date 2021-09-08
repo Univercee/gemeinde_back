@@ -21,9 +21,13 @@ $router->get('/', function () use ($router) {
 });
 
 //------------------------ API ------------------------
-$router->group(['prefix' => 'queue'], function ($router) {
-  $router->get('/email', 'EmailAuthController@consumeQueue');
-  $router->get('/tg', 'TelegramAuthController@consumeQueue');
+$router->group(['prefix' => 'events'], function ($router) {
+  $router->get('/dispatch/{event_id}', 'EventController@dispatchEvent');
+
+  $router->group(['prefix' => 'consume'], function ($router) {
+    $router->get('/email', 'EventController@consumeEmailQueue');
+    $router->get('/tg', 'EventController@consumeTgQueue');
+  });
 });
 
 $router->get('/keys', 'ConfigController@getKeys');

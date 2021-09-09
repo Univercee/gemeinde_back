@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Managers\EventManager;
 use App\Managers\Queues\QueueFactory;
+use App\Managers\Services\ServiceFactory;
 
 //TODO: create some "admin middleware and use it here"
 class EventController extends Controller
@@ -27,6 +28,12 @@ class EventController extends Controller
     public function consumeTgQueue()
     {
         return QueueFactory::telegram()->consumeQueue();
+    }
+
+    //
+    public function addGarbageEvents()
+    {
+        return ServiceFactory::garbage()->addEvents();
     }
 
 }

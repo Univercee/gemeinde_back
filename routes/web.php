@@ -12,8 +12,7 @@ use Illuminate\Http\RedirectResponse;
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('garbageinevents','GarbageController@garbageInEvents');
-$router->get('garbage','GarbageController@getServiceInfo');
+
 //------------------------ PAGES ------------------------
 
 $router->get('/', function () use ($router) {
@@ -27,6 +26,9 @@ $router->group(['prefix' => 'events'], function ($router) {
   $router->group(['prefix' => 'consume'], function ($router) {
     $router->get('/email', 'EventController@consumeEmailQueue');
     $router->get('/tg', 'EventController@consumeTgQueue');
+  });
+  $router->group(['prefix' => 'add'], function ($router) {
+    $router->get('/garbage','EventController@addGarbageEvents');
   });
 });
 

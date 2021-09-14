@@ -24,7 +24,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
           coverage: none
           tools: composer:v2, deployer:v7
       
@@ -39,4 +39,4 @@ jobs:
         with:
           private-key: ${{ secrets.ADMIN_5_101_123_4_PRIVATE_KEY }}
           known-hosts: ${{ secrets.KNOWN_HOSTS_5_101_123_4 }}
-          dep: deploy -vvv
+          dep: deploy

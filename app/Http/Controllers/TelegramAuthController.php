@@ -5,7 +5,6 @@ use App\Managers\UsersManager;
 use Illuminate\Http\Request;
 use App\Managers\SessionsManager;
 use App\Managers\TelegramManager;
-use Illuminate\Support\Facades\DB;
 define('BOT_TOKEN', env('TELEGRAM_BOT_TOKEN'));
 
 class TelegramAuthController extends Controller{
@@ -40,11 +39,5 @@ class TelegramAuthController extends Controller{
             return response()->json(['message' => 'User authorized','sessionkey' => SessionsManager::generateSessionKey($user->id)], 200);
         }
     }
-
-    public function consumeQueue(){
-        return TelegramManager::consumeQueue();
-    }
-
-
 }
 

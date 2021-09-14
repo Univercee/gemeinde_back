@@ -20,6 +20,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Check dependencies for known vulnerabilities
+      - uses: symfonycorp/security-checker-action@v2
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

@@ -39,4 +39,4 @@ jobs:
         with:
           private-key: ${{ secrets.ADMIN_5_101_123_4_PRIVATE_KEY }}
           known-hosts: ${{ secrets.KNOWN_HOSTS_5_101_123_4 }}
-          dep: deploy stage=${{ github.event.inputs.deploy_env }} -vvv
+          dep: deploy -vvv

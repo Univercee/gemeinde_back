@@ -15,7 +15,7 @@
         "westacks/telebot": "^1.9"
     },
     "require-dev": {
-        "deployer/dist": "^6.8",
+        "deployer/dist": "^7.0",
         "fakerphp/faker": "^1.9",
         "league/flysystem": "^1.1",
         "mockery/mockery": "^1.3",

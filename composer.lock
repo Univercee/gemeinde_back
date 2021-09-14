@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7a417d93cfaf8d7b46c7c7bb2e309b2",
+    "content-hash": "56c0ab593f6cbd19266b6b2e93d9ee29",
     "packages": [
         {
             "name": "brick/math",
@@ -912,16 +912,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.60.0",
+            "version": "v8.61.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "44f16a31a1d4ac8a51605550d7796e2273984a48"
+                "reference": "3d528d3d3c8ecb444b50a266c212a52973a6669b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/44f16a31a1d4ac8a51605550d7796e2273984a48",
-                "reference": "44f16a31a1d4ac8a51605550d7796e2273984a48",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3d528d3d3c8ecb444b50a266c212a52973a6669b",
+                "reference": "3d528d3d3c8ecb444b50a266c212a52973a6669b",
                 "shasum": ""
             },
             "require": {
@@ -958,7 +958,8 @@
                 "tightenco/collect": "<5.5.33"
             },
             "provide": {
-                "psr/container-implementation": "1.0"
+                "psr/container-implementation": "1.0",
+                "psr/simple-cache-implementation": "1.0"
             },
             "replace": {
                 "illuminate/auth": "self.version",
@@ -1076,7 +1077,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-09-08T13:37:21+00:00"
+            "time": "2021-09-14T13:31:32+00:00"
         },
         {
             "name": "laravel/lumen-framework",
@@ -1589,16 +1590,16 @@
         },
         {
             "name": "mailjet/mailjet-apiv3-php",
-            "version": "v1.5.3",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mailjet/mailjet-apiv3-php.git",
-                "reference": "77c4c44994c27a738ab46b93e67d76d39a0bf337"
+                "reference": "66a4093e3141e761519d2bc16dda065dd133558b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mailjet/mailjet-apiv3-php/zipball/77c4c44994c27a738ab46b93e67d76d39a0bf337",
-                "reference": "77c4c44994c27a738ab46b93e67d76d39a0bf337",
+                "url": "https://api.github.com/repos/mailjet/mailjet-apiv3-php/zipball/66a4093e3141e761519d2bc16dda065dd133558b",
+                "reference": "66a4093e3141e761519d2bc16dda065dd133558b",
                 "shasum": ""
             },
             "require": {
@@ -1640,9 +1641,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mailjet/mailjet-apiv3-php/issues",
-                "source": "https://github.com/mailjet/mailjet-apiv3-php/tree/v1.5.3"
+                "source": "https://github.com/mailjet/mailjet-apiv3-php/tree/v1.5.4"
             },
-            "time": "2021-08-12T12:24:50+00:00"
+            "time": "2021-09-14T12:51:49+00:00"
         },
         {
             "name": "mailjet/mailjet-swiftmailer",
@@ -5780,17 +5781,20 @@
         },
         {
             "name": "deployer/dist",
-            "version": "v6.8.0",
+            "version": "v7.0.0-beta.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deployphp/distribution.git",
-                "reference": "857158fa5466d5135ce87f07fe67779b6b6a13d2"
+                "reference": "54d825c8df6f80f24a2ebb96c9987ea441eb3695"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deployphp/distribution/zipball/857158fa5466d5135ce87f07fe67779b6b6a13d2",
-                "reference": "857158fa5466d5135ce87f07fe67779b6b6a13d2",
+                "url": "https://api.github.com/repos/deployphp/distribution/zipball/54d825c8df6f80f24a2ebb96c9987ea441eb3695",
+                "reference": "54d825c8df6f80f24a2ebb96c9987ea441eb3695",
                 "shasum": ""
+            },
+            "replace": {
+                "deployer/deployer": "self.version"
             },
             "bin": [
                 "dep"
@@ -5813,7 +5817,7 @@
                 "issues": "https://github.com/deployphp/deployer/issues",
                 "source": "https://github.com/deployphp/deployer"
             },
-            "time": "2020-04-25T18:48:50+00:00"
+            "time": "2021-07-01T20:19:13+00:00"
         },
         {
             "name": "doctrine/instantiator",

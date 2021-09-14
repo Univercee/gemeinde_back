@@ -18,11 +18,11 @@ set('application', 'gena-api');
 set('repository', 'git@github.com:bits-ee/gena.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
-set('git_tty', true); 
+//set('git_tty', true); 
 
 // Other config
 set('allow_anonymous_stats', false);
-set('default_stage', 'dev');
+set('keep_releases', 1);
 
 // Shared files/dirs between deploys 
 set('shared_files', [
@@ -36,30 +36,28 @@ set('writable_dirs', [
 
 // Hosts
 host('dev-api.gemeindeonline.ch')
-    ->stage('dev')
-    ->user('admin')
-    ->identityFile('~/.ssh/id_admin@5.101.123.4-external')
+    ->set('labels', ['stage' => 'dev'])
+    ->set('remote_user','admin')
     ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
     ->set('dotenv', '{{deploy_path}}/shared/.env');;
     
-// Tasks
 task('deploy', [
     'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
     'deploy:vendors',
-    'deploy:writable',
     'artisan:cache:clear',
     'artisan:optimize',
     'artisan:migrate:fresh',
     'artisan:db:seed',
-    'deploy:symlink',
-    'deploy:unlock',
-    'cleanup',
+    'deploy:publish',
 ]);
+
+task('restart-fpm', function () {
+    $output = run('sudo systemctl restart fp2-php74-fpm.service');
+    if(strlen(trim($output)) == 0) info("PHP-FPM restarted");
+    else info($output);
+});
 
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
+after('deploy:success','restart-fpm');

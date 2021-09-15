@@ -9,3 +9,4 @@ Homestead.yaml
 /resources/avatars
 *.code-workspace
 .DS_Store
+.phar

@@ -40,7 +40,8 @@ host('dev-api.gemeindeonline.ch')
     ->set('remote_user','admin')
     ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
     ->set('dotenv', '{{deploy_path}}/shared/.env')
-    ->set('multiplexing',false);
+    ->set('multiplexing',false)
+    ->set('identity_file','~/.ssh/id_admin@5.101.123.4-external');
     
 task('deploy', [
     'deploy:prepare',

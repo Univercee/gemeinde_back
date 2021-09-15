@@ -31,8 +31,10 @@ jobs:
         uses: symfonycorp/security-checker-action@v2
 
       - name: Deploy
-        uses: deployphp/action@master
-        with:
+        env:
           private-key: ${{ secrets.ADMIN_5_101_123_4_PRIVATE_KEY }}
           known-hosts: ${{ secrets.KNOWN_HOSTS_5_101_123_4 }}
           dep: deploy -vvv
+        run: |
+          chmod +x deployer.phar
+          php deployer.phar deploy -vvv

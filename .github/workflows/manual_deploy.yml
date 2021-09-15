@@ -12,6 +12,7 @@ on:
 env:
   hostname_dev: dev-api.gemeindeonline.ch
   key_filename: id_admin@5.101.123.4-external
+  deployer_url: https://deployer.org/releases/v7.0.0-beta.24/deployer.phar
 
 jobs:
   deploy:
@@ -45,7 +46,11 @@ jobs:
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null   
           ssh-add /home/runner/.ssh/${{ env.key_filename }}
 
+      - name: Download Deployer
+        run: |
+          wget -O deployer.phar ${{ env.deployer_url }}
+          chmod +x deployer.phar
+  
       - name: Deploy to host
         run: |
-          chmod +x deployer.phar
-          php deployer.phar deploy -vvv
+          php deployer.phar deploy stage=${{ github.event.inputs.deploy_to }}

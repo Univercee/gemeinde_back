@@ -98,7 +98,7 @@ task('deploy', [
 // -> sudo service sudo restart
 
 task('restart-fpm', function () {
-    $output = run('sudo systemctl restart fp2-php74-fpm.service');
+    $output = run('sudo systemctl restart fp2-php80-fpm.service');
     if(strlen(trim($output)) == 0) info("PHP-FPM restarted");
     else info($output);
 });

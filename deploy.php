@@ -39,7 +39,8 @@ host('dev-api.gemeindeonline.ch')
     ->set('labels', ['stage' => 'dev'])
     ->set('remote_user','admin')
     ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
-    ->set('dotenv', '{{deploy_path}}/shared/.env');;
+    ->set('dotenv', '{{deploy_path}}/shared/.env')
+    ->set('multiplexing',false);
     
 task('deploy', [
     'deploy:prepare',

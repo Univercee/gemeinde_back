@@ -4,19 +4,23 @@ name: Manual Deploy
 on:
   workflow_dispatch:
     inputs:
-      deploy_env:
-        description: 'Deploy Environment'
+      deploy_to:
+        description: 'Deploy to'
         required: true
         default: 'dev'
 
+env:
+  hostname_dev: dev-api.gemeindeonline.ch
+  key_filename: id_admin@5.101.123.4-external
+
 jobs:
   deploy:
-    name: Deployment
+    name: Deploy API
     runs-on: ubuntu-latest
     
     environment:
         name: dev
-        url: https://dev-api.gemeindeonline.ch
+        url: "https://${{ env.hostname_dev }}"
 
     steps:
       - uses: actions/checkout@v2
@@ -24,17 +28,24 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 7.4
           coverage: none
 
       - name: Check dependencies for known vulnerabilities
         uses: symfonycorp/security-checker-action@v2
-
-      - name: Deploy
+        
+      - name: Add SSH key
         env:
-          private-key: ${{ secrets.ADMIN_5_101_123_4_PRIVATE_KEY }}
-          known-hosts: ${{ secrets.KNOWN_HOSTS_5_101_123_4 }}
-          dep: deploy -vvv
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          mkdir -p /home/runner/.ssh
+          ssh-keyscan ${{ env.hostname_dev }} >> /home/runner/.ssh/known_hosts
+          echo "${{ secrets.ADMIN_5_101_123_4_PRIVATE_KEY }}" > /home/runner/.ssh/${{ env.key_filename }}
+          chmod 600 /home/runner/.ssh/${{ env.key_filename }}
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null   
+          ssh-add /home/runner/.ssh/${{ env.key_filename }}
+
+      - name: Deploy to host
         run: |
           chmod +x deployer.phar
           php deployer.phar deploy -vvv

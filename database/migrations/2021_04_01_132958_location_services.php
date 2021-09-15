@@ -14,17 +14,9 @@ class LocationServices extends Migration
     public function up()
     {
         Schema::create('location_services', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('location_id')->unsigned();
-            $table->integer('service_id')->unsigned();
-
-            $table->foreign('location_id')
-                ->references('id')
-                ->on('locations');
-
-            $table->foreign('service_id')
-                ->references('id')
-                ->on('services');
+            $table->id();
+            $table->foreignId('location_id')->constrained()->onDelete('cascade');
+            $table->foreignId('service_id')->constrained()->onDelete('cascade');
         });
     }
 

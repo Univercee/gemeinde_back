@@ -14,22 +14,11 @@ class UserLocationServices extends Migration
     public function up()
     {
       Schema::create('user_location_services', function (Blueprint $table) {
-        $table->increments('id');
-        $table->integer('user_location_id')->unsigned();
-        $table->integer('service_id')->unsigned();
-
-        $table->foreign('user_location_id')
-          ->references('id')
-          ->on('user_locations')
-          ->onDelete('cascade');
-
-        $table->foreign('service_id')
-          ->references('id')
-          ->on('services');
-
-
-        $table->string('channel')->nullable();
-        $table->string('frequency')->nullable();
+        $table->id();
+        $table->foreignId('service_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_location_id')->constrained()->onDelete('cascade');
+        $table->string('channel');
+        $table->string('frequency');
       });
     }
 

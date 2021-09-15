@@ -15,8 +15,8 @@ class LocationServicesTableSeeder extends Seeder
     {
         DB::table('location_services')->insert([
             [
-                'location_id' => 1,
-                'service_id' => 3,
+                'location_id' => 183, //8603 Schwerzenbach
+                'service_id' => 1,
             ],
             [
                 'location_id' => 2,

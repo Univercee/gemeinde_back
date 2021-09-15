@@ -1,8 +1,6 @@
 <?php
 return [
   'title'=>'Mahnung von Abfallkalender',
-  'next_day' => 'ist Morgen',
-  'next_week' => 'am nächste Woche',
   'types' =>
     [
       'A' => [
@@ -36,10 +34,6 @@ return [
       'S' => [
         'name' => 'Sonderabfälle',
         'description' => 'Sonderabfälle bis maximal 20kg pro Person und Jahr www.sonderabfall.zh.ch.'
-      ],
-      'L' => [
-        'name' => 'Luftibus',
-        'description' => 'Immer alle 2 Jahre. Nächster Termin im Jahr 2021.'
       ]
     ],
 ];

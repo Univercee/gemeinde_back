@@ -14,20 +14,10 @@ class UserLocations extends Migration
     public function up()
     {
       Schema::create('user_locations', function (Blueprint $table) {
-        $table->increments('id');
-        $table->integer('user_id')->unsigned();
-        $table->integer('location_id')->unsigned();
-
-        $table->foreign('user_id')
-          ->references('id')
-          ->on('users')->onDelete('cascade');
-
-        $table->foreign('location_id')
-          ->references('id')
-          ->on('locations')->onDelete('cascade');
-
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('location_id')->constrained()->onDelete('cascade');
         $table->string('title',255)->nullable();
-
         $table->string('street_name',255)->nullable();
         $table->string('street_number',255)->nullable();
       });

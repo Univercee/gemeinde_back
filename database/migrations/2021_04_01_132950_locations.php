@@ -15,7 +15,7 @@ class Locations extends Migration
     public function up()
     {
         Schema::create('locations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('zipcode',4);
             $table->string('name_en',255)->nullable();
             $table->string("name_de",255)->nullable();
@@ -23,7 +23,7 @@ class Locations extends Migration
             $table->double("lat");
             $table->double('lng');
             $table->string('language',2);
-            $table->double('elevation');
+            $table->integer('elevation');
             $table->point('position');
             $table->spatialIndex('position');
         });        

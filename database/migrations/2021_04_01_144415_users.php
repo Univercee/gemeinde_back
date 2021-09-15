@@ -15,7 +15,7 @@ class Users extends Migration
     {
         //
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('email',255)->nullable()->unique()->index();
             $table->string('email_pending',255)->nullable();
             $table->string('telegram_id',255)->nullable()->unique()->index();
@@ -27,6 +27,7 @@ class Users extends Migration
             $table->timestamp('registered_at')->nullable();
             $table->string('verification_key',255)->nullable();
             $table->timestamp('verification_key_expires_at')->nullable();
+            $table->timestamps();
         });
     }
 

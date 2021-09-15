@@ -14,20 +14,13 @@ class TelegramQueue extends Migration
     public function up()
     {
         Schema::create('telegram_queue', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('event_id')->unsigned();
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->string('telegram_id');
             $table->timestamp('deliver_at')->nullable();
             $table->timestamp('sent_at')->nullable();
             $table->text('body');
-
-            $table->foreign('user_id')
-              ->references('id')
-              ->on('users')->onDelete('cascade');
-            $table->foreign('event_id')
-              ->references('id')
-              ->on('events')->onDelete('cascade');
             $table->unique(['user_id', 'event_id']);
           });
     }

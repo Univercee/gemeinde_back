@@ -49,18 +49,19 @@ class EmailAuthController extends Controller
     }
 
     // [GENA-7]
-    public function verify($key){
+    public function verify(Request $request, $key){
         $user = UsersManager::getByKey($key);
+        $ip = $request->getClientIp();
         if(!$user) {
             abort(response()->json(['error' => __('auth.keyNotFound')], 404));
         } else if(strtotime($user->verification_key_expires_at) < time()) {
             UsersManager::onLinkExpire($user->id);
             abort(response()->json(['error' => __('auth.keyExpired')], 403));
         } else if(is_null($user->registered_at)) {
-            $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email_pending);
+            $sessionKey = UsersManager::confirmRegistrationEmail($user->id, $user->email_pending, $ip);
             return response()->json(['status' => 'registered','message' => __('auth.gzRegMsg'),'sessionkey' => $sessionKey]);
         } else {
-            $sessionKey = UsersManager::confirmLoginEmail($user->id);
+            $sessionKey = UsersManager::confirmLoginEmail($user->id, $ip);
             return response()->json(['status' => 'logged' ,'message' => __('auth.userLoggedIn'),'sessionkey' => $sessionKey]);
         }
     }

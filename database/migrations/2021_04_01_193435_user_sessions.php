@@ -20,7 +20,7 @@ class UserSessions extends Migration
             $table->string('session_key',255);
             $table->timestamp('issued_at')->useCurrent();
             $table->timestamp('expires_at')->nullable();
-            $table->ipAddress('ip_address')->nullable();
+            $table->ipAddress('ip_address');
         });
     }
 

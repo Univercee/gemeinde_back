@@ -62,7 +62,7 @@ class UsersManager
 
 
   // [GENA-9]
-  public static function confirmRegistration($auth_data){
+  public static function confirmRegistration($auth_data, $ip_address){
     $first_name = $auth_data['first_name'] ?? null;
     $last_name = $auth_data['last_name'] ?? null;
     $username = $auth_data['username'] ?? null;
@@ -74,7 +74,7 @@ class UsersManager
         'telegram_username' => $username,
         'avatar' => $avatar,]
     );
-    return SessionsManager::generateSessionKey($id);
+    return SessionsManager::generateSessionKey($id, $ip_address);
   }
 
   // [GENA-9]
@@ -88,7 +88,7 @@ class UsersManager
 ///////////////////
 
   // [GENA-7]
-  public static function confirmRegistrationEmail($id, $email){
+  public static function confirmRegistrationEmail($id, $email, $ip_address){
 
     $avatar = AvatarsManager::getGravatar($email);
     if(!$avatar) $avatar = AvatarsManager::getAvataaars();
@@ -101,16 +101,16 @@ class UsersManager
                             users.email_pending = null
                         WHERE users.id = :id",['id'=>$id, 'avatar'=>$avatar]);
     Mail::to($email)->send(new UserWelcomeMail(null));
-    return SessionsManager::generateSessionKey($id);
+    return SessionsManager::generateSessionKey($id, $ip_address);
   }
 
   // [GENA-7]
-  public static function confirmLoginEmail($id){
+  public static function confirmLoginEmail($id, $ip_address){
     app('db')->update("UPDATE users
                         SET users.verification_key_expires_at = null,
                             users.verification_key = null
                         WHERE users.id = :id",['id'=>$id]);
-    return SessionsManager::generateSessionKey($id);
+    return SessionsManager::generateSessionKey($id, $ip_address);
   }
 
   // [GENA-7]

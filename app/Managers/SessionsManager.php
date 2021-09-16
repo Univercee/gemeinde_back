@@ -3,11 +3,11 @@ namespace App\Managers;
 
 class SessionsManager
 {
-    public static function generateSessionKey($user_id) {
+    public static function generateSessionKey($user_id, $ip_address) {
         $sessionKey = bin2hex(random_bytes(32));
-        app('db')->insert("INSERT INTO user_sessions (user_id, session_key, issued_at, expires_at)
-                            VALUES(?, ?, NOW(), NOW()+INTERVAL 1 DAY)",
-                            [$user_id, $sessionKey]);
+        app('db')->insert("INSERT INTO user_sessions (user_id, session_key, issued_at, expires_at, ip_address)
+                            VALUES(?, ?, NOW(), NOW()+INTERVAL 1 DAY, ?)",
+                            [$user_id, $sessionKey, $ip_address]);
         return $sessionKey;
     }
 

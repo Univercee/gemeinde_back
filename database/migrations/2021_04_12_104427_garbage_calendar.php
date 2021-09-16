@@ -14,14 +14,10 @@ class GarbageCalendar extends Migration
     public function up()
     {
         Schema::create('garbage_calendar', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('location_id')->unsigned();
+            $table->id();
+            $table->foreignId('location_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->string('type',2);
-    
-            $table->foreign('location_id')
-              ->references('id')
-              ->on('locations')->onDelete('cascade');
           });
     }
 

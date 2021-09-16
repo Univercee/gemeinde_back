@@ -14,12 +14,12 @@ class Services extends Migration
     public function up()
     {
         Schema::create('services', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('name_en',255)->nullable();
             $table->string('name_de',255)->nullable();
             $table->text('description_en',255)->nullable();
             $table->text('description_de',255)->nullable();
-            $table->string('frequency',255)->nullable();
+            $table->boolean('is_everywhere')->default(false);
         });
     }
 

@@ -18,31 +18,38 @@ class GarbageServiceManager extends ServiceManager
   //implements
   //garbage calendar event valid from 1 day before it expires
   //TODO: it must be changed for weekly events
-  protected function getValidFrom(array $service_data): string
+  protected function getStartsAt(array $service_data): string
   {
-    $valid_from = new DateTime($service_data["date"]);
-    return $valid_from->modify("-1 day")->format("Y-m-d H:i:s");
+     $dt = new DateTime($service_data["date"]);
+     return $dt->modify("midnight")->format("Y-m-d H:i:s");
   }
-
 
   //implements
-  protected function getValidUntil(array $service_data): string
+  protected function getEndsAt(array $service_data): string
   {
-    return $service_data["date"];
+    $dt =  new DateTime($service_data["date"]);
+    return $dt->modify("tomorrow -1 second")->format("Y-m-d H:i:s");
   }
 
+  //implements
+  protected function getNotifyEarliestAt(array $service_data): string
+  {
+    $dt = new DateTime($service_data["date"]);
+    return $dt->modify("-1 day midnight")->format("Y-m-d H:i:s");
+  }
+
+  //implements
+  protected function getNotifyLatestAt(array $service_data): string
+  {
+    $dt = new DateTime($service_data["date"]);
+    return $dt->modify("noon -5 hours")->format("Y-m-d H:i:s");
+  }
 
   //implements
   protected function getBody(array $service_data, string $lang): string
   {
-    return trans('garbage.title', [], $lang).
-          ': '.
-          trans('garbage.types.'.$service_data["type"].'.name', [], $lang).
-          ' '.
-          trans('garbage.next_day', [], $lang).
-          ', '.
-          strftime("%A %e %B %G", strtotime($service_data["date"])).
-          '. '.
+    return trans('garbage.types.'.$service_data["type"].'.name', [], $lang).' '.
+          strftime("%A %e %B %G", strtotime($service_data["date"])).'. '.
           trans('garbage.types.'.$service_data["type"].'.description', [], $lang);
   }
 
@@ -53,11 +60,16 @@ class GarbageServiceManager extends ServiceManager
     return trans('garbage.title', [], $lang);
   }
 
+  //implements
+  protected function getExternalId(array $service_data): int
+  {
+    return $service_data["id"];
+  }
   
   //implements
   protected function getServiceData(): array
   {
-    $data = app('db')->select("SELECT location_id, date, type FROM garbage_calendar");
+    $data = app('db')->select("SELECT id, location_id, date, type FROM garbage_calendar");
     return json_decode(json_encode($data), true);
   }
 }

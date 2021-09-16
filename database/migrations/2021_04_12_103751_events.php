@@ -15,23 +15,18 @@ class Events extends Migration
     {
         //
         Schema::create('events', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('location_id')->unsigned();
-            $table->integer('service_id')->unsigned();
-            $table->integer('external_id')->unsigned()->nullable();
-            $table->timestamp('valid_from')->nullable();
-            $table->timestamp('valid_until')->nullable();
+            $table->id();
+            $table->foreignId('location_id')->constrained()->onDelete('cascade');
+            $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('external_id')->nullable();
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+            $table->timestamp('notify_earliest_at')->nullable();
+            $table->timestamp('notify_latest_at')->nullable();
             $table->string('title_en');
             $table->text('text_en');
             $table->string('title_de');
             $table->text('text_de');
-          
-            $table->foreign('location_id')
-              ->references('id')
-              ->on('locations');
-            $table->foreign('service_id')
-              ->references('id')
-              ->on('services');
           });
     }
 

@@ -15,14 +15,12 @@ class UserSessions extends Migration
     {
         //
         Schema::create('user_sessions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->string('session_key',255)->nullable();
-            $table->timestamp('issued_at')->nullable();
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('session_key',255);
+            $table->timestamp('issued_at')->useCurrent();
             $table->timestamp('expires_at')->nullable();
-            $table->string('ip_address',255)->nullable();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->ipAddress('ip_address');
         });
     }
 

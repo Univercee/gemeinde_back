@@ -7,14 +7,16 @@ class EventManager
 {
 
     //
-    public static function addEvent($location_id, $service_id, $valid_from, $valid_until, $title_en, $text_en, $title_de, $text_de, $external_id = null)
+    public static function addEvent($location_id, $service_id, $starts_at, $ends_at, $notify_earliest_at, $notify_latest_at, $title_en, $text_en, $title_de, $text_de, $external_id = null)
     {
-        DB::table('events')->insert(['location_id'=>$location_id,
+        return DB::table('events')->insert(['location_id'=>$location_id,
                                     'service_id'=>$service_id, 
-                                    'valid_from'=>$valid_from, 
-                                    'valid_until'=>$valid_until,
-                                    'title_en'=>$title_en,
+                                    'starts_at'=>$starts_at, 
+                                    'ends_at'=>$ends_at,
+                                    'notify_earliest_at'=>$notify_earliest_at,
+                                    'notify_latest_at'=>$notify_latest_at,
                                     'text_en'=>$text_en,
+                                    'title_en'=>$title_en,
                                     'title_de'=>$title_de,
                                     'text_de'=>$text_de,
                                     'external_id'=>$external_id]);
@@ -43,7 +45,7 @@ class EventManager
             JOIN user_locations ul ON ul.id = uls.user_location_id
             JOIN users u ON u.id = ul.user_id
             JOIN events e ON e.location_id = ul.location_id AND e.service_id = uls.service_id 
-            WHERE e.id = :event_id AND e.valid_from <= NOW() AND e.valid_until > NOW()",
+            WHERE e.id = :event_id",
             ["event_id" => $event_id]
         );
         $messages = json_decode(json_encode($messages), true); //convert stdClass to array

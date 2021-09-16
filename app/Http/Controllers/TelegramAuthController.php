@@ -18,7 +18,7 @@ class TelegramAuthController extends Controller{
     // code from https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
     public function authentication(Request $request) {
         $auth_data = $request->input('auth_data');
-        $ip = $request->getClientIp();
+        $ip = $request->ip();
 
         $check_hash = $auth_data['hash'];
         unset($auth_data['hash']);

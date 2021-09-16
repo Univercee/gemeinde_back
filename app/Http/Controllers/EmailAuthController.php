@@ -51,7 +51,7 @@ class EmailAuthController extends Controller
     // [GENA-7]
     public function verify(Request $request, $key){
         $user = UsersManager::getByKey($key);
-        $ip = $request->getClientIp();
+        $ip = $request->ip();
         if(!$user) {
             abort(response()->json(['error' => __('auth.keyNotFound')], 404));
         } else if(strtotime($user->verification_key_expires_at) < time()) {

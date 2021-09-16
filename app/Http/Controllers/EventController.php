@@ -36,4 +36,9 @@ class EventController extends Controller
         return ServiceFactory::garbage()->addEvents();
     }
 
+    //
+    public function getCalendar(int $location_id){
+        return response()->json(ServiceFactory::garbage()->getCalendar($location_id));
+    }
+
 }

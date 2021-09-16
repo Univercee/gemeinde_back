@@ -72,4 +72,12 @@ class GarbageServiceManager extends ServiceManager
     $data = app('db')->select("SELECT id, location_id, date, type FROM garbage_calendar");
     return json_decode(json_encode($data), true);
   }
+
+  public function getCalendar($location_id){
+    return app('db')->select(
+      "SELECT location_id, date, type 
+      FROM garbage_calendar WHERE location_id = :location_id", 
+      ["location_id" => $location_id]
+    );
+  }
 }

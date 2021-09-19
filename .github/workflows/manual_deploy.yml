@@ -4,15 +4,15 @@ name: Manual Deploy
 on:
   workflow_dispatch:
     inputs:
-      deploy_to:
-        description: 'Deploy to'
+      stage:
+        description: 'Stage (dev|test|prod)'
         required: true
         default: 'dev'
 
 env:
   hostname_dev: dev-api.gemeindeonline.ch
   key_filename: id_admin@5.101.123.4-external
-  deployer_url: https://deployer.org/deployer.phar
+  deployer_url: https://deployer.org/releases/v7.0.0-beta.25/deployer.phar
 
 jobs:
   deploy:
@@ -29,7 +29,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
           coverage: none
 
       - name: Check dependencies for known vulnerabilities
@@ -53,4 +53,4 @@ jobs:
   
       - name: Deploy to host
         run: |
-          php deployer.phar deploy ${{ github.event.inputs.deploy_to }}
+          php deployer.phar deploy stage=${{ github.event.inputs.stage }}

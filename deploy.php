@@ -4,11 +4,11 @@ namespace Deployer;
 require 'recipe/laravel.php';
 
 set('bin/php', function () {
-    return '/opt/php74/bin/php';
+    return '/opt/php80/bin/php';
 });
 
 set('bin/composer', function () {
-    return '/opt/php74/bin/php /usr/local/bin/composer';
+    return '/opt/php80/bin/php /usr/local/bin/composer';
 });
 
 // Project name
@@ -35,54 +35,54 @@ set('writable_dirs', [
 ]);
 
 // Deployer 6.x only
-set('default_stage', 'dev');
+//set('default_stage', 'dev');
 
-host('dev-api.gemeindeonline.ch')
-    ->stage('dev')
-    ->user('admin')
-    ->identityFile('~/.ssh/id_admin@5.101.123.4-external')
-    ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
-    ->set('dotenv', '{{deploy_path}}/shared/.env')
-    ->multiplexing(false);
-
-// Deployer 7.x only
 //host('dev-api.gemeindeonline.ch')
-//    ->set('labels', ['stage' => 'dev']) // Deployer 7.x only
-//    ->set('remote_user','admin')
+//    ->stage('dev')
+//    ->user('admin')
+//    ->identityFile('~/.ssh/id_admin@5.101.123.4-external')
 //    ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
 //    ->set('dotenv', '{{deploy_path}}/shared/.env')
-//    ->set('multiplexing',false)
-//    ->set('identity_file','~/.ssh/id_admin@5.101.123.4-external');
+//    ->multiplexing(false);
+
+// Deployer 7.x only
+host('dev-api.gemeindeonline.ch')
+    ->set('labels', ['stage' => 'dev'])
+    ->set('remote_user','admin')
+    ->set('deploy_path', '/var/www/admin/www/dev-api.gemeindeonline.ch')
+    ->set('dotenv', '{{deploy_path}}/shared/.env')
+    ->set('multiplexing',false)
+    ->set('identity_file','~/.ssh/id_admin@5.101.123.4-external');
 
 // Deployer 7.x Lumen tasks    
-//task('deploy', [
-//    'deploy:prepare',
-//    'deploy:vendors',
-//    'artisan:cache:clear',
-//    'artisan:optimize',
-//    'artisan:migrate:fresh',
-//    'artisan:db:seed',
-//    'deploy:publish',
-//]);
-
-// Deployer 6.x Lumen task
 task('deploy', [
-    'deploy:info',
     'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
     'deploy:vendors',
-    'deploy:writable',
     'artisan:cache:clear',
     'artisan:optimize',
     'artisan:migrate:fresh',
     'artisan:db:seed',
-    'deploy:symlink',
-    'deploy:unlock',
-    'cleanup',
+    'deploy:publish',
 ]);
+
+// Deployer 6.x Lumen task
+//task('deploy', [
+//    'deploy:info',
+//    'deploy:prepare',
+//    'deploy:lock',
+//    'deploy:release',
+//    'deploy:update_code',
+//    'deploy:shared',
+//    'deploy:vendors',
+//    'deploy:writable',
+//    'artisan:cache:clear',
+//    'artisan:optimize',
+//    'artisan:migrate:fresh',
+//    'artisan:db:seed',
+//    'deploy:symlink',
+//    'deploy:unlock',
+//    'cleanup',
+//]);
 
 //Deployment finishes with re-pointing /current symplink from previour release to the new one
 //However most of the webservers have configuration cached, and will route traffic to old old path
@@ -104,7 +104,9 @@ task('restart-fpm', function () {
 });
 
 
-// [Optional] if deploy fails automatically unlock.
+// If deploy fails - unlock automatically
 after('deploy:failed', 'deploy:unlock');
-//after('deploy:success','restart-fpm'); //Deployer 7.x success hook
-after('success','restart-fpm'); //Deployer 6.x success hook
+
+// If deploe success - restart FPM to avoid symlink caching
+after('deploy:success','restart-fpm'); //Deployer 7.x success hook
+//after('success','restart-fpm'); //Deployer 6.x success hook

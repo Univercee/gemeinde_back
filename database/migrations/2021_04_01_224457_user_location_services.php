@@ -17,8 +17,8 @@ class UserLocationServices extends Migration
         $table->id();
         $table->foreignId('service_id')->constrained()->onDelete('cascade');
         $table->foreignId('user_location_id')->constrained()->onDelete('cascade');
-        $table->string('channel');
-        $table->string('frequency');
+        $table->string('channel')->nullable();
+        $table->string('frequency')->nullable();
       });
     }
 

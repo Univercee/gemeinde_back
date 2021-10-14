@@ -29,6 +29,7 @@ $router->group(['prefix' => 'events'], function ($router) {
   });
   $router->group(['prefix' => 'add'], function ($router) {
     $router->get('/garbage','EventController@addGarbageEvents');
+    $router->get('/swisscom','EventController@addSwisscomEvents');
   });
 });
 

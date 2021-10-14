@@ -1,5 +1,5 @@
 <?php
-namespace App\Managers;
+namespace App\Managers\Events;
 
 use App\Managers\Queues\QueueFactory;
 use Illuminate\Support\Facades\DB;
@@ -7,19 +7,17 @@ class EventManager
 {
 
     //
-    public static function addEvent($location_id, $service_id, $starts_at, $ends_at, $notify_earliest_at, $notify_latest_at, $title_en, $text_en, $title_de, $text_de, $external_id = null)
+    public static function add(Event $event)
     {
-        return DB::table('events')->insert(['location_id'=>$location_id,
-                                    'service_id'=>$service_id, 
-                                    'starts_at'=>$starts_at, 
-                                    'ends_at'=>$ends_at,
-                                    'notify_earliest_at'=>$notify_earliest_at,
-                                    'notify_latest_at'=>$notify_latest_at,
-                                    'text_en'=>$text_en,
-                                    'title_en'=>$title_en,
-                                    'title_de'=>$title_de,
-                                    'text_de'=>$text_de,
-                                    'external_id'=>$external_id]);
+        return DB::table('events')->insertOrIgnore($event->getArray());
+    }
+
+    //
+    public static function addAll(EventList $event_list)
+    {
+        foreach($event_list->get() as $event){
+            self::add($event);
+        }
     }
 
     //
@@ -45,7 +43,11 @@ class EventManager
             JOIN user_locations ul ON ul.id = uls.user_location_id
             JOIN users u ON u.id = ul.user_id
             JOIN events e ON e.location_id = ul.location_id AND e.service_id = uls.service_id 
-            WHERE e.id = :event_id",
+            WHERE e.id = :event_id
+            AND e.starts_at >= NOW()
+            AND e.notify_earliest_at >= NOW()
+            AND (e.ends_at < NOW() OR e.ends_at IS NULL)
+            AND (e.notify_latest_at < NOW() OR e.notify_latest_at IS NULL)",
             ["event_id" => $event_id]
         );
         $messages = json_decode(json_encode($messages), true); //convert stdClass to array

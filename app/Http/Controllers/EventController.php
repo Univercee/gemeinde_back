@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Managers\EventManager;
+use App\Managers\Events\EventManager;
 use App\Managers\Queues\QueueFactory;
 use App\Managers\Services\ServiceFactory;
 
@@ -34,6 +34,12 @@ class EventController extends Controller
     public function addGarbageEvents()
     {
         return ServiceFactory::garbage()->addEvents();
+    }
+
+    //
+    public function addSwisscomEvents()
+    {
+        return ServiceFactory::swisscom()->addEvents();
     }
 
 }

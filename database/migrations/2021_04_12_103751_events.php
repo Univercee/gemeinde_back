@@ -18,7 +18,7 @@ class Events extends Migration
             $table->id();
             $table->foreignId('location_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->unsignedInteger('external_id')->nullable();
+            $table->unsignedInteger('external_id');
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->timestamp('notify_earliest_at')->nullable();
@@ -27,6 +27,7 @@ class Events extends Migration
             $table->text('text_en');
             $table->string('title_de');
             $table->text('text_de');
+            $table->unique(['service_id', 'external_id']);
           });
     }
 

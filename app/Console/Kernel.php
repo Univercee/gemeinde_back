@@ -13,7 +13,12 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\GenerateGarbageCalendarEvents::class
+        Commands\GenerateGarbageCalendarEvents::class,
+        Commands\GenerateSwisscomEvents::class,
+        Commands\DispatchCalendarEvents::class,
+        Commands\DispatchSwisscomEvents::class,
+        Commands\SendEmails::class,
+        Commands\SendTelegram::class
     ];
 
     /**
@@ -24,6 +29,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command("gena:generate_garbage_calendar_events")->everyMinute();
+        $schedule->command("gena:generate_swisscom_events")->everyMinute();
+
+        $schedule->command("gena:dispatch_calendar_events")->everyMinute();
+        $schedule->command("gena:dispatch_swisscom_events")->everyMinute();
+
+        $schedule->command("gena:send_emails")->everyMinute()->withoutOverlapping()->between('8:00','20:00');
+        $schedule->command("gena:send_telegram")->everyMinute()->withoutOverlapping()->between('8:00','20:00');
     }
 }

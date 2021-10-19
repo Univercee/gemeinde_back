@@ -13,9 +13,9 @@ class EventController extends Controller
     }
 
     //
-    public function dispatchEvent(int $event_id)
+    public function dispatchEvent(int $service_id)
     {
-        return EventManager::dispatch($event_id);
+        return EventManager::dispatchById($service_id);
     }
 
     //

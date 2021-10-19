@@ -2,7 +2,9 @@
 namespace App\Managers\Events;
 
 use App\Managers\Queues\QueueFactory;
+use App\Managers\Services\ServiceManager;
 use Illuminate\Support\Facades\DB;
+
 class EventManager
 {
 
@@ -15,13 +17,18 @@ class EventManager
     //
     public static function addAll(EventList $event_list)
     {
-        foreach($event_list->get() as $event){
-            self::add($event);
-        }
+        return DB::table('events')->insertOrIgnore($event_list->getArray());
     }
 
     //
-    public static function dispatch(int $event_id) //TODO: deliver_at depend on frequency; logging?
+    public static function dispatch(ServiceManager $sm)
+    {
+        $service_id = $sm->getServiceId();
+        self::dispatchById($service_id);
+    }
+
+    //
+    public static function dispatchById(int $service_id) //TODO: deliver_at depend on frequency; logging?
     {
         $messages = app('db')->select(
             "SELECT u.id as user_id, e.id as event_id, u.email, u.telegram_id, uls.channel, NOW() as deliver_at,
@@ -43,12 +50,12 @@ class EventManager
             JOIN user_locations ul ON ul.id = uls.user_location_id
             JOIN users u ON u.id = ul.user_id
             JOIN events e ON e.location_id = ul.location_id AND e.service_id = uls.service_id 
-            WHERE e.id = :event_id
-            AND e.starts_at >= NOW()
-            AND e.notify_earliest_at >= NOW()
-            AND (e.ends_at < NOW() OR e.ends_at IS NULL)
-            AND (e.notify_latest_at < NOW() OR e.notify_latest_at IS NULL)",
-            ["event_id" => $event_id]
+            WHERE e.service_id = :service_id
+            AND e.starts_at <= NOW()
+            AND e.notify_earliest_at <= NOW()
+            AND (e.ends_at > NOW() OR e.ends_at IS NULL)
+            AND (e.notify_latest_at > NOW() OR e.notify_latest_at IS NULL)",
+            ["service_id" => $service_id]
         );
         $messages = json_decode(json_encode($messages), true); //convert stdClass to array
 

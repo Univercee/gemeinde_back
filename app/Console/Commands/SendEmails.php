@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Managers\Queues\EmailQueueManager;
-use App\Managers\Queues\QueueFactory;
 use Illuminate\Console\Command;
 
 class SendEmails extends Command

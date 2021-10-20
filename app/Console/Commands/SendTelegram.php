@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Managers\Queues\QueueFactory;
 use App\Managers\Queues\TelegramQueueManager;
 use Illuminate\Console\Command;
 

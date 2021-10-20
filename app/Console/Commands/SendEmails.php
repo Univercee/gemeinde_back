@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Managers\Queues\QueueFactory;
+use App\Managers\Queues\EmailQueueManager;
 use Illuminate\Console\Command;
 
 class SendEmails extends Command
@@ -38,6 +38,9 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        QueueFactory::email()->consumeQueue();
+        $eqm = new EmailQueueManager;
+        if($eqm->queueLength()){
+            $eqm->consumeQueue();
+        }
     }
 }

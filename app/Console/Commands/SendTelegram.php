@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Managers\Queues\QueueFactory;
+use App\Managers\Queues\TelegramQueueManager;
 use Illuminate\Console\Command;
 
 class SendTelegram extends Command
@@ -38,6 +39,9 @@ class SendTelegram extends Command
      */
     public function handle()
     {
-        QueueFactory::telegram()->consumeQueue();
+        $tqm = new TelegramQueueManager;
+        if($tqm->queueLength()){
+            $tqm->consumeQueue();
+        }
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Managers;
 
 use App\Mail\UserWelcomeMail;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -150,10 +151,22 @@ class UsersManager
     public static function deleteEmailChannel($user_id){
       $channels = UsersManager::getChannels($user_id);
       if($channels->tg){
-        return app('db')->delete("UPDATE users
-                          SET email = null
-                          WHERE id = :user_id",
-                          ['user_id' => $user_id]);
+        return 
+        app('db')->delete(
+          "UPDATE users
+          SET email = null
+          WHERE id = :user_id",
+          ['user_id' => $user_id]
+        )
+        &&
+        app('db')->delete(
+          "DELETE uls
+          FROM user_location_services uls
+          JOIN user_locations ul ON ul.id = uls.user_location_id
+          WHERE ul.user_id = :user_id
+          AND uls.channel = 'Email'",
+          ["user_id" => $user_id]
+        );
       }
       return false;
     }
@@ -161,24 +174,42 @@ class UsersManager
     public static function deleteTgChannel($user_id){
       $channels = UsersManager::getChannels($user_id);
       if($channels->email){
-        return app('db')->delete("UPDATE users
-                          SET telegram_id = null, telegram_username = null
-                          WHERE id = :user_id",
-                          ['user_id' => $user_id]);
+        return 
+        app('db')->delete(
+          "UPDATE users
+          SET telegram_id = null, telegram_username = null
+          WHERE id = :user_id",
+          ['user_id' => $user_id]
+        )
+        &&
+        app('db')->delete(
+          "DELETE uls
+          FROM user_location_services uls
+          JOIN user_locations ul ON ul.id = uls.user_location_id
+          WHERE ul.user_id = :user_id
+          AND uls.channel = 'Telegram'",
+          ["user_id" => $user_id]
+        );
       }
       return false;
     }
 
     public static function setPersonalDetails($user_id, $firstname, $lastname, $language){
-      $firstname = trim($firstname);
-      $lastname = trim($lastname);
-      $firstname = ($firstname == "") ? null : $firstname;
-      $lastname = ($lastname == "") ? null : $lastname;
-      $language = ($language == 'en' || $language == 'de') ? $language : 'en';
-      return app('db')->update("UPDATE users
+      try{
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
+        $firstname = ($firstname == "") ? null : $firstname;
+        $lastname = ($lastname == "") ? null : $lastname;
+        $language = ($language == 'en' || $language == 'de') ? $language : 'en';
+        app('db')->update("UPDATE users
                           SET first_name = :firstname, last_name = :lastname, language = :language
                           WHERE id = :user_id",
                           ['firstname' => $firstname, 'lastname' => $lastname, 'language' => $language, 'user_id' => $user_id]);
+        return true;
+      }
+      catch(Exception $e){
+        return false;
+      }
     }
 
     public static function getPersonalDetails($user_id){
@@ -199,10 +230,11 @@ class UsersManager
     }
 
     public static function setUserLocation($user_id, $user_location_id, $location_id, $title, $street_name, $street_number){
-      $title = trim($title);
-      $street_name = trim($street_name);
-      $street_number = trim($street_number);
-      return app('db')->update("UPDATE user_locations
+      try{
+        $title = trim($title);
+        $street_name = trim($street_name);
+        $street_number = trim($street_number);
+        app('db')->update("UPDATE user_locations
                         SET title = :title, location_id = :location_id, street_name = :street_name, street_number = :street_number
                         WHERE user_id = :user_id AND id = :id",
                         ['title' => $title,
@@ -211,6 +243,11 @@ class UsersManager
                         'street_number' => $street_number,
                         'id' => $user_location_id,
                         'user_id' => $user_id]);
+        return true;
+      }
+      catch(Exception $e){
+        return false;
+      }
     }
 
     public static function addUserLocation($user_id, $location_id, $title, $street_name, $street_number, $services){

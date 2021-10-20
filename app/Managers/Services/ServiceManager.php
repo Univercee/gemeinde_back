@@ -6,14 +6,34 @@ use App\Managers\Events\EventManager;
 
 abstract class ServiceManager{
 
-  protected static $SERVICE_ID;
-  protected static $TEMPLATE_ID;
+  protected int $SERVICE_ID;
+  protected int $TEMPLATE_ID;
   
-  abstract protected static function getEvents(): EventList;
+  abstract protected function getEvents(): EventList;
 
+  //
+  function __construct(int $service_id, int $template_id)
+  {
+    $this->SERVICE_ID = $service_id;
+    $this->TEMPLATE_ID = $template_id;
+  }
+
+  //
   public function addEvents()
   {
-    EventManager::addAll($this->getEvents());
+    return EventManager::addAll($this->getEvents());
+  }
+
+  //
+  public function getServiceId(): int
+  {
+    return $this->SERVICE_ID;
+  }
+
+  //
+  public function getTemplateId(): int
+  {
+    return $this->TEMPLATE_ID;
   }
 }
 ?>

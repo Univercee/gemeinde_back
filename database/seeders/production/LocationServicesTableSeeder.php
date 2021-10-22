@@ -19,6 +19,10 @@ class LocationServicesTableSeeder extends Seeder
                 'service_id' => 1,
             ],
             [
+                'location_id' => 183, //8603 Schwerzenbach
+                'service_id' => 7,
+            ],
+            [
                 'location_id' => 2,
                 'service_id' => 1,
             ],

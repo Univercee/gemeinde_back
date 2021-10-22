@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             //Demo and test data
             $this->call(Test\UsersTableSeeder::class);
             $this->call(Test\UserLocationsTableSeeder::class);
+            $this->call(Test\UserLocationServicesTableSeeder::class);
         }
 
     }

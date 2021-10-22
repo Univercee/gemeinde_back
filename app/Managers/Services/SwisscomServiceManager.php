@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class SwisscomServiceManager extends ServiceManager
 {
-    const GLOBAL_LOCATION_ID = 1;
+    const GLOBAL_LOCATION_ID = null;
     const SERVICE_ID = 7;
     const TEMPLATE_ID = -1;
 

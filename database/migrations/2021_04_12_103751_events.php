@@ -16,7 +16,7 @@ class Events extends Migration
         //
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('location_id')->constrained()->onDelete('cascade');
+            $table->foreignId('location_id')->constrained()->onDelete('cascade')->nullable();
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
             $table->unsignedInteger('external_id');
             $table->timestamp('starts_at')->nullable();

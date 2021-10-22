@@ -19,30 +19,12 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             [
                 'id' => 1,
-                'email' => "alert+lukas@gemeindeonline.ch",
-                'first_name' => "Lukas",
-                'last_name' => "Andersson",
-                'registered_at' => $t
-            ],
-            [
-                'id' => 2,
-                'email' => "alert+josy@gemeindeonline.ch",
-                'first_name' => "Josy",
-                'last_name' => "Lindberg",
-                'registered_at' => $t
-            ],
-            [
-                'id' => 3,
-                'email' => "alert+ernst@gemeindeonline.ch",
-                'first_name' => "Ernst",
-                'last_name' => "Lindberg",
-                'registered_at' => $t
-            ],
-            [
-                'id' => 4,
-                'email' => "alert+stefan@gemeindeonline.ch",
-                'first_name' => "Stefan",
-                'last_name' => "Meyer",
+                'email' => "zahhar@gmail.com",
+                'first_name' => "Zahhar",
+                'last_name' => "Kirillov",
+                'telegram_id' => "3234077",
+                'telegram_username' => "zahhar",
+                'avatar' => "https://t.me/i/userpic/320/hMo-wpWRBSy64Ig7ICZapzDwRazKcVKQERztQzGAksM.jpg",
                 'registered_at' => $t
             ]
         ]);

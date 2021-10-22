@@ -25,6 +25,7 @@ class EventManager
     {
         $service_id = $sm->getServiceId();
         self::dispatchById($service_id);
+        //TODO: add self::dispatchCountryWideEvents($service_id);
     }
 
     //
@@ -51,9 +52,7 @@ class EventManager
             JOIN users u ON u.id = ul.user_id
             JOIN events e ON e.location_id = ul.location_id AND e.service_id = uls.service_id 
             WHERE e.service_id = :service_id
-            AND e.starts_at <= NOW()
             AND e.notify_earliest_at <= NOW()
-            AND (e.ends_at > NOW() OR e.ends_at IS NULL)
             AND (e.notify_latest_at > NOW() OR e.notify_latest_at IS NULL)",
             ["service_id" => $service_id]
         );

@@ -3,7 +3,8 @@ namespace App\Managers\Events;
 
 class Event {
 
-    private int $location_id;
+    private int|null $id;
+    private int|null $location_id;
     private int $service_id; 
     private int $external_id;
     private string|null $starts_at; 
@@ -26,6 +27,7 @@ class Event {
                         $title_en, $text_en,
                         $title_de, $text_de)
     {
+        $this->id = null;
         $this->location_id = $location_id;
         $this->service_id = $service_id; 
         $this->external_id = $external_id;
@@ -45,11 +47,15 @@ class Event {
           return $this->$property;
         }
     }
+    public function setId(int|null $id){
+        $this->id = $id;
+    }
 
     //
     public function getArray(): array
     {
         return [
+            "id" => $this->id,
             "location_id" => $this->location_id,
             "service_id" => $this->service_id, 
             "external_id" => $this->external_id,

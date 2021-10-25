@@ -10,6 +10,7 @@ abstract class ServiceManager{
   protected int $TEMPLATE_ID;
   
   abstract protected function getEvents(): EventList;
+  abstract protected function beforeAdd(EventList $event_list): EventList;
 
   //
   function __construct(int $service_id, int $template_id)
@@ -21,7 +22,9 @@ abstract class ServiceManager{
   //
   public function addEvents()
   {
-    return EventManager::addAll($this->getEvents());
+    $events = $this->getEvents();
+    $events = $this->beforeAdd($events);
+    return EventManager::addAll($events);
   }
 
   //

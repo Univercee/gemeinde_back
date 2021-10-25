@@ -19,6 +19,12 @@ class GarbageServiceManager extends ServiceManager
   }
 
   //implements
+  public function beforeAdd(EventList $event_list): EventList
+  {
+    return $event_list;
+  }
+
+  //implements
   public function getEvents(): EventList
   {
     $events = array();

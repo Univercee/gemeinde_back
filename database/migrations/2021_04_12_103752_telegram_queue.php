@@ -16,7 +16,7 @@ class TelegramQueue extends Migration
         Schema::create('telegram_queue', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained();
             $table->string('telegram_id');
             $table->timestamp('deliver_at')->nullable();
             $table->timestamp('sent_at')->nullable();

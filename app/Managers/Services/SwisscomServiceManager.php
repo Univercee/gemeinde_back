@@ -18,7 +18,20 @@ class SwisscomServiceManager extends ServiceManager
         parent::__construct(self::SERVICE_ID, self::TEMPLATE_ID);
     }
 
-    //
+    //implements
+    public function beforeAdd(EventList $event_list): EventList
+    {
+        $events = $event_list->get();
+        for($i=0; $i<count($events); $i++){
+            $row = DB::table("events")->where("service_id", $events[$i]->service_id)->where("external_id", $events[$i]->external_id)->select("id")->get();
+            $id = $row[0]->id??null;
+            DB::table("events")->delete($id);
+            $events[$i]->setId($id);
+        }
+        return new EventList(... $events);
+    }
+
+    //implements
     public function getEvents(): EventList
     {
         $responses_list = array_merge($this->getGlobal(), $this->getLocal());

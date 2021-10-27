@@ -13,11 +13,6 @@ class SwisscomServiceManager extends ServiceManager
     const SERVICE_ID = 7;
     const TEMPLATE_ID = -1;
 
-    function __construct()
-    {
-        parent::__construct(self::SERVICE_ID, self::TEMPLATE_ID);
-    }
-
     //implements
     public function beforeAdd(EventList $event_list): EventList
     {
@@ -46,7 +41,7 @@ class SwisscomServiceManager extends ServiceManager
             $notify_latest_at = $time_attributes["notify_latest_at"];
 
             $event = new Event($responses_list[$i]['location'],
-                            $this->SERVICE_ID,
+                            self::SERVICE_ID,
                             $responses_list[$i]['id'],
                             $starts_at,
                             $ends_at,

@@ -13,11 +13,6 @@ class GarbageServiceManager extends ServiceManager
   const SERVICE_ID = 1;
   const TEMPLATE_ID = 11;
 
-  function __construct()
-  {
-    parent::__construct(self::SERVICE_ID, self::TEMPLATE_ID);
-  }
-
   //implements
   public function beforeAdd(EventList $event_list): EventList
   {
@@ -31,7 +26,7 @@ class GarbageServiceManager extends ServiceManager
     foreach($this->getServiceData() as $service_data){
       $event = new Event(
           $this->getLocationId($service_data),
-          $this->SERVICE_ID,
+          self::SERVICE_ID,
           $this->getExternalId($service_data),
           $this->getStartsAt($service_data),
           $this->getEndsAt($service_data),

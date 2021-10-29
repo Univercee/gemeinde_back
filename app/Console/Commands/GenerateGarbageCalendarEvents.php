@@ -12,7 +12,7 @@ class GenerateGarbageCalendarEvents extends Command
      *
      * @var string
      */
-    protected $signature = 'gena:generate_garbage_calendar_events';
+    protected $signature = 'generate:garbage_calendar';
 
     /**
      * The console command description.

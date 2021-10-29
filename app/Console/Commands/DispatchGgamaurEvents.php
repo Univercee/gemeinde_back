@@ -3,24 +3,25 @@
 namespace App\Console\Commands;
 
 use App\Managers\Events\EventManager;
-use App\Managers\Services\GarbageServiceManager;
+use App\Managers\Services\GgamaurServiceManager;
+use App\Managers\Services\SwisscomServiceManager;
 use Illuminate\Console\Command;
 
-class DispatchCalendarEvents extends Command
+class DispatchGgamaurEvents extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'dispatch:calendar';
+    protected $signature = 'dispatch:ggamaur';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Produces garbage calendar message queues';
+    protected $description = 'Produces ggamaur message queues';
 
     /**
      * Create a new command instance.
@@ -39,6 +40,6 @@ class DispatchCalendarEvents extends Command
      */
     public function handle()
     {
-        EventManager::dispatch(new GarbageServiceManager);
+        EventManager::dispatch(new GgamaurServiceManager);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Managers\Services\GgamaurServiceManager;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -15,8 +16,12 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\GenerateGarbageCalendarEvents::class,
         Commands\GenerateSwisscomEvents::class,
+        Commands\GenerateGgamaurEvents::class,
+        
         Commands\DispatchCalendarEvents::class,
         Commands\DispatchSwisscomEvents::class,
+        Commands\DispatchGgamaurEvents::class,
+
         Commands\SendEmails::class,
         Commands\SendTelegram::class
     ];
@@ -29,13 +34,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command("gena:generate_garbage_calendar_events")->everyMinute();
-        $schedule->command("gena:generate_swisscom_events")->everyMinute();
+        $schedule->command("generate:ggamaur")->everyMinute();
+        $schedule->command("generate:garbage_calendar")->everyMinute();
+        $schedule->command("generate:swisscom")->everyMinute();
 
-        $schedule->command("gena:dispatch_calendar_events")->everyMinute();
-        $schedule->command("gena:dispatch_swisscom_events")->everyMinute();
+        $schedule->command("dispatch:ggamaur")->everyMinute();
+        $schedule->command("dispatch:garbage_calendar")->everyMinute();
+        $schedule->command("dispatch:swisscom")->everyMinute();
 
-        $schedule->command("gena:send_emails")->everyMinute()->withoutOverlapping()->between('8:00','20:00');
-        $schedule->command("gena:send_telegram")->everyMinute()->withoutOverlapping()->between('8:00','20:00');
+        $schedule->command("send:emails")->everyMinute()->withoutOverlapping();
+        $schedule->command("send:telegram")->everyMinute()->withoutOverlapping();
     }
 }

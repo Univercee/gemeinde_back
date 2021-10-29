@@ -12,7 +12,7 @@ class SendTelegram extends Command
      *
      * @var string
      */
-    protected $signature = 'gena:send_telegram';
+    protected $signature = 'send:telegram';
 
     /**
      * The console command description.

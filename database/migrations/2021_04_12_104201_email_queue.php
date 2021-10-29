@@ -16,7 +16,7 @@ class EmailQueue extends Migration
         Schema::create('email_queue', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('event_id')->constrained();
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->string('email');
             $table->timestamp('deliver_at')->nullable();
             $table->timestamp('sent_at')->nullable();

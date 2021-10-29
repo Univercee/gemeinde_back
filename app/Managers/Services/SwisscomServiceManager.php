@@ -20,7 +20,6 @@ class SwisscomServiceManager extends ServiceManager
         for($i=0; $i<count($events); $i++){
             $row = DB::table("events")->where("service_id", $events[$i]->service_id)->where("external_id", $events[$i]->external_id)->select("id")->get();
             $id = $row[0]->id??null;
-            DB::table("events")->delete($id);
             $events[$i]->setId($id);
         }
         return new EventList(... $events);

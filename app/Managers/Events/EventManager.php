@@ -17,7 +17,11 @@ class EventManager
     //
     public static function addAll(EventList $event_list)
     {
-        return DB::table('events')->insertOrIgnore($event_list->getArray());
+        return DB::table('events')->upsert
+        (
+            $event_list->getArray(),
+            ['service_id', 'external_id']
+        );
     }
 
     //

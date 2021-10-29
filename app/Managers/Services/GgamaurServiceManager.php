@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class GgamaurServiceManager extends ServiceManager
 {
-    protected int $SERVICE_ID = 2;
+    protected int $SERVICE_ID = 6;
     protected int $TEMPLATE_ID = -1;
     const BASE_URL = 'https://www.gga-maur.ch/iframe/Support_Ereignisuebersicht.php';
 

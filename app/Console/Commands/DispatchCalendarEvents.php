@@ -13,7 +13,7 @@ class DispatchCalendarEvents extends Command
      *
      * @var string
      */
-    protected $signature = 'dispatch:calendar';
+    protected $signature = 'dispatch:garbage_calendar';
 
     /**
      * The console command description.

@@ -3,7 +3,6 @@ namespace App\Managers\Services;
 
 use App\Managers\Events\Event;
 use App\Managers\Events\EventList;
-use Illuminate\Support\Facades\Log;
 use Weidner\Goutte\GoutteFacade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;

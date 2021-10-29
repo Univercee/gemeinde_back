@@ -12,7 +12,7 @@ class GenerateSwisscomEvents extends Command
      *
      * @var string
      */
-    protected $signature = 'gena:generate_swisscom_events';
+    protected $signature = 'generate:swisscom';
 
     /**
      * The console command description.

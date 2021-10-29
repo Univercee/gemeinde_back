@@ -13,7 +13,7 @@ class DispatchSwisscomEvents extends Command
      *
      * @var string
      */
-    protected $signature = 'gena:dispatch_swisscom_events';
+    protected $signature = 'dispatch:swisscom';
 
     /**
      * The console command description.

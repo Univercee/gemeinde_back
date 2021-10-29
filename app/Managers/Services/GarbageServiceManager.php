@@ -10,13 +10,8 @@ use DateTime;
 
 class GarbageServiceManager extends ServiceManager
 {
-  const SERVICE_ID = 1;
-  const TEMPLATE_ID = 11;
-
-  function __construct()
-  {
-    parent::__construct(self::SERVICE_ID, self::TEMPLATE_ID);
-  }
+  protected int $SERVICE_ID = 1;
+  protected int $TEMPLATE_ID = 11;
 
   //implements
   public function beforeAdd(EventList $event_list): EventList

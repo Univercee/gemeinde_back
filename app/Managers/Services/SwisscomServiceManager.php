@@ -10,13 +10,8 @@ use Illuminate\Support\Facades\Http;
 class SwisscomServiceManager extends ServiceManager
 {
     const GLOBAL_LOCATION_ID = null;
-    const SERVICE_ID = 7;
-    const TEMPLATE_ID = -1;
-
-    function __construct()
-    {
-        parent::__construct(self::SERVICE_ID, self::TEMPLATE_ID);
-    }
+    protected int $SERVICE_ID = 7;
+    protected int $TEMPLATE_ID = -1;
 
     //implements
     public function beforeAdd(EventList $event_list): EventList

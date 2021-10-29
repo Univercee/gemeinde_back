@@ -12,7 +12,7 @@ class SendEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'gena:send_emails';
+    protected $signature = 'send:emails';
 
     /**
      * The console command description.

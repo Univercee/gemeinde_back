@@ -18,7 +18,6 @@ abstract class ServiceManager{
   {
     $events = $this->getEvents();
     $events = $this->beforeAdd($events);
-    Log::info($events->get());
     return EventManager::addAll($events);
   }
 

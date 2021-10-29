@@ -10,8 +10,8 @@ use DateTime;
 
 class GarbageServiceManager extends ServiceManager
 {
-  const SERVICE_ID = 1;
-  const TEMPLATE_ID = 11;
+  protected int $SERVICE_ID = 1;
+  protected int $TEMPLATE_ID = 11;
 
   //implements
   public function beforeAdd(EventList $event_list): EventList
@@ -26,7 +26,7 @@ class GarbageServiceManager extends ServiceManager
     foreach($this->getServiceData() as $service_data){
       $event = new Event(
           $this->getLocationId($service_data),
-          self::SERVICE_ID,
+          $this->SERVICE_ID,
           $this->getExternalId($service_data),
           $this->getStartsAt($service_data),
           $this->getEndsAt($service_data),

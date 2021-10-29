@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Http;
 class SwisscomServiceManager extends ServiceManager
 {
     const GLOBAL_LOCATION_ID = null;
-    const SERVICE_ID = 7;
-    const TEMPLATE_ID = -1;
+    protected int $SERVICE_ID = 7;
+    protected int $TEMPLATE_ID = -1;
 
     //implements
     public function beforeAdd(EventList $event_list): EventList
@@ -41,7 +41,7 @@ class SwisscomServiceManager extends ServiceManager
             $notify_latest_at = $time_attributes["notify_latest_at"];
 
             $event = new Event($responses_list[$i]['location'],
-                            self::SERVICE_ID,
+                            $this->SERVICE_ID,
                             $responses_list[$i]['id'],
                             $starts_at,
                             $ends_at,

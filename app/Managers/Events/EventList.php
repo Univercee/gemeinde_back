@@ -28,6 +28,18 @@ class EventList {
     {
         return $this->array_list;
     }
+
+    //
+    public function merge(EventList $event_list): EventList
+    {
+        $this->event_list = array_merge($this->get(), $event_list->get());
+
+        $this->array_list = array();
+        foreach($this->event_list as $event){
+            array_push($this->array_list, $event->getArray());
+        }
+        return $this;
+    }
 }
 
 ?>

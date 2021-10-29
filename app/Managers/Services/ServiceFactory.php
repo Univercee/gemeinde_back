@@ -1,9 +1,5 @@
 <?php
 namespace App\Managers\Services;
-
-use App\Managers\Services\GarbageServiceManager;
-use App\Managers\Services\SwisscomServiceManager;
-
 class ServiceFactory{
 
     //
@@ -17,5 +13,12 @@ class ServiceFactory{
     {
         return new SwisscomServiceManager();
     }
+
+    //
+    public static function ggamaur()
+    {
+        return new GgamaurServiceManager();
+    }
+    
 
 }
